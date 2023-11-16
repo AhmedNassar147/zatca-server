@@ -13,5 +13,14 @@
   },
   "files.trimTrailingWhitespace": true,
   "editor.rulers": [100],
-  "cSpell.words": ["genkey", "noout", "pubout", "secp", "zatca"]
+  "cSpell.words": [
+    "CSID",
+    "csids",
+    "genkey",
+    "noout",
+    "precompliance",
+    "pubout",
+    "secp",
+    "zatca"
+  ]
 }

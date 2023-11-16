@@ -5,9 +5,18 @@
  */
 
 import createZatcaRequest from "./createZatcaRequest.mjs";
-import { BASE_API_HEADERS, SERVER_CONFIG } from "../constants.mjs";
+import {
+  BASE_API_HEADERS,
+  SERVER_CONFIG,
+  API_IDS_NAMES,
+} from "../constants.mjs";
 
 const { otp } = SERVER_CONFIG;
+const { POST_ZATCA_COMPLIANCE } = API_IDS_NAMES;
+
+// after final csid
+// invoices/reporting/single for simplified
+// invoices/clearance/single for standard
 
 const fetchZatcaCompliance = async (encodedPayerTaxCert) => {
   const bodyData = {
@@ -21,6 +30,7 @@ const fetchZatcaCompliance = async (encodedPayerTaxCert) => {
   };
 
   const response = await createZatcaRequest({
+    resourceName: POST_ZATCA_COMPLIANCE,
     bodyData,
     requestHeaders,
   });

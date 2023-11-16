@@ -17,6 +17,7 @@ const createZatcaRequest = async ({
   retryTimes,
   retryDelay,
   requestHeaders,
+  resourceName,
 }) => {
   const baseAPiUrl = production ? ZATCA_PRODUCTION : ZATCA_DEVELOPMENT;
 
@@ -24,6 +25,7 @@ const createZatcaRequest = async ({
     baseAPiUrl,
     requestParams,
     requestHeaders,
+    resourceName,
     transformApiResults,
     body: bodyData,
     retryTimes,
