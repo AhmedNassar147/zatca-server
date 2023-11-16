@@ -1,0 +1,23 @@
+{
+  "name": "@zatca-server/server",
+  "version": "1.0.0",
+  "private": true,
+  "author": "ahmed nassar",
+  "license": "ISC",
+  "sideEffects": false,
+  "main": "src/index.js",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "start": "nodemon --ignore results/ -q ./src/index.js"
+  },
+  "peerDependencies": {
+    "@zatca-server/helpers": "1.0.0",
+    "axios": "^0.x.x",
+    "nodemon": "^2.x.x",
+    "express": "^4.x.x",
+    "body-parser": "^1.x.x"
+  }
+}

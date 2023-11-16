@@ -1,0 +1,26 @@
+{
+  "name": "@zatca-server/start-zatca-server",
+  "version": "1.0.0",
+  "private": true,
+  "author": "ahmed nassar",
+  "license": "ISC",
+  "sideEffects": false,
+  "main": "src/index.js",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "bin": {
+    "start-zatca-server": "./bin/start-zatca-server.js"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@zatca-server/helpers": "1.0.0"
+  },
+  "peerDependencies": {
+    "axios": "^0.x.x",
+    "chalk": "^5.x.x"
+  }
+}

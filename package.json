@@ -1,0 +1,40 @@
+{
+  "name": "zatca-server",
+  "version": "1.0.0",
+  "description": "Contains a server for zatca functions",
+  "author": "ahmed nassar",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "clean": "rm -rf ./node_modules",
+    "clean-locks": "rm -rf ./yarn.lock",
+    "bootstrap": "lerna bootstrap",
+    "reset": "yarn clean && yarn clean-locks && yarn bootstrap",
+    "prepare": "node createClientCerts.mjs && yarn workspace @zatca-server/start-zatca-server start",
+    "start": "yarn workspace @zatca-server/server start",
+    "// dev": "yarn start --dev --exsys-base-url=http://149.102.140.8",
+    "dev": "yarn start --dev",
+    "prod": "yarn start --production"
+  },
+  "dependencies": {
+    "@zatca-server/helpers": "1.0.0",
+    "@zatca-server/server": "1.0.0",
+    "@zatca-server/start-zatca-server": "1.0.0",
+    "axios": "^1.4.0",
+    "body-parser": "^1.20.0",
+    "chalk": "^5.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.1"
+  },
+  "engines": {
+    "node": ">= 16.5.0",
+    "yarn": ">= 1.22.15",
+    "npm": ">= 7.19.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
