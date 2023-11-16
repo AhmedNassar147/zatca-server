@@ -19,13 +19,35 @@ const executeCommandIfFileNotExsist = async (filePath, cmd) => {
   const isFileFound = await checkPathExists(filePath);
 
   if (!isFileFound) {
-    const { stdout } = await execPromise(cmd);
+    await execPromise(cmd);
+  }
+};
 
-    if (
-      stdout.includes(
-        "'openssl' is not recognized as an internal or external command"
-      )
-    ) {
+(async () => {
+  await executeCommandIfFileNotExsist(
+    certsFolderName,
+    `mkdir ${certsFolderName}`
+  );
+
+  try {
+    await executeCommandIfFileNotExsist(
+      privateCertPath,
+      `openssl ecparam -name secp256k1 -genkey -noout -out ${privateCertPath}`
+    );
+
+    await executeCommandIfFileNotExsist(
+      publicCertPath,
+      `openssl ec -in ${privateCertPath} -pubout -out ${publicCertPath}`
+    );
+
+    await executeCommandIfFileNotExsist(
+      taxPayerPath,
+      `openssl req -new -sha256 -key ${privateCertPath} -extensions v3_req -config configuration.cnf -out ${taxPayerPath}`
+    );
+  } catch (error) {
+    const { message } = error || {};
+
+    if ((message || "").includes("openssl")) {
       console.log(
         chalk.red(
           `Please install ${chalk.bold(
@@ -36,26 +58,4 @@ const executeCommandIfFileNotExsist = async (filePath, cmd) => {
       process.kill(process.pid);
     }
   }
-};
-
-(async () => {
-  await executeCommandIfFileNotExsist(
-    certsFolderName,
-    `mkdir ${certsFolderName}`
-  );
-
-  await executeCommandIfFileNotExsist(
-    privateCertPath,
-    `openssl ecparam -name secp256k1 -genkey -noout -out ${privateCertPath}`
-  );
-
-  await executeCommandIfFileNotExsist(
-    publicCertPath,
-    `openssl ec -in ${privateCertPath} -pubout -out ${publicCertPath}`
-  );
-
-  await executeCommandIfFileNotExsist(
-    taxPayerPath,
-    `openssl req -new -sha256 -key ${privateCertPath} -extensions v3_req -config configuration.cnf -out ${taxPayerPath}`
-  );
 })();
