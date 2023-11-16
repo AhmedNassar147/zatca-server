@@ -1,6 +1,7 @@
 import { promisify } from "util";
 import { exec } from "child_process";
 import { stat } from "fs/promises";
+import chalk from "chalk";
 
 const execPromise = promisify(exec);
 
@@ -18,7 +19,22 @@ const executeCommandIfFileNotExsist = async (filePath, cmd) => {
   const isFileFound = await checkPathExists(filePath);
 
   if (!isFileFound) {
-    await execPromise(cmd);
+    const { stdout } = await execPromise(cmd);
+
+    if (
+      stdout.includes(
+        "'openssl' is not recognized as an internal or external command"
+      )
+    ) {
+      console.log(
+        chalk.red(
+          `Please install ${chalk.bold(
+            "openssl"
+          )} via https://kb.firedaemon.com/support/solutions/articles/4000121705#Download-OpenSSL `
+        )
+      );
+      process.kill(process.pid);
+    }
   }
 };
 
