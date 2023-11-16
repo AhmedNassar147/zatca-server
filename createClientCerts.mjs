@@ -50,9 +50,9 @@ const executeCommandIfFileNotExsist = async (filePath, cmd) => {
     if ((message || "").includes("openssl")) {
       console.log(
         chalk.red(
-          `Please install ${chalk.bold(
-            "openssl"
-          )} via https://kb.firedaemon.com/support/solutions/articles/4000121705#Download-OpenSSL `
+          `Please install ${chalk.bold.white("openssl")} via ${chalk.bold.white(
+            "https://kb.firedaemon.com/support/solutions/articles/4000121705#Download-OpenSSL"
+          )}`
         )
       );
       process.kill(process.pid);
