@@ -29,6 +29,7 @@ import fixContentType from "./fixContentType.mjs";
 import isAlreadyReversedDate from "./isAlreadyReversedDate.mjs";
 import getRemoteFilePathData from "./getRemoteFilePathData.mjs";
 import encodeStringToBase64 from "./encodeStringToBase64.mjs";
+import decodeBase64ToString from "./decodeBase64ToString.mjs";
 import readAndEncodeCertToBase64 from "./readAndEncodeCertToBase64.mjs";
 
 export {
@@ -59,6 +60,7 @@ export {
   getRemoteFilePathData,
   encodeStringToBase64,
   readAndEncodeCertToBase64,
+  decodeBase64ToString,
 };
 
 export * from "./constants.mjs";
