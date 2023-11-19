@@ -79,4 +79,4 @@ export const CERTS_FILE_NAMES = {
   taxPayerPath: "certs/taxpayer.csr",
 };
 
-export const CSID_FILE_PATH = "certs/csid.json";
+export const CSID_FILE_PATH = `${rootYarnWorkSpacePath}/certs/csid.json`;
