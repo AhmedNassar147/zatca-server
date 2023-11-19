@@ -78,3 +78,5 @@ export const CERTS_FILE_NAMES = {
   publicCertPath: "certs/publicKey.pem",
   taxPayerPath: "certs/taxpayer.csr",
 };
+
+export const CSID_FILE_PATH = "certs/csid.json";

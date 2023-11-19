@@ -12,8 +12,9 @@ import {
   restartProcess,
   RESTART_SERVER_MS,
   createCmdMessage,
+  readJsonFile,
 } from "@zatca-server/helpers";
-import { SERVER_PORT, CERTS_FILE_NAMES } from "./constants.mjs";
+import { SERVER_PORT, CERTS_FILE_NAMES, CSID_FILE_PATH } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import fetchZatcaCompliance from "./api-helpers/fetchZatcaCompliance.mjs";
 
@@ -23,8 +24,16 @@ const { taxPayerPath } = CERTS_FILE_NAMES;
   await stopTheProcessIfCertificateNotFound(false);
 
   const encodedPayerTaxCert = await readAndEncodeCertToBase64(taxPayerPath);
-  const response = await fetchZatcaCompliance(encodedPayerTaxCert);
-  console.log("response", response);
+  const errors = await fetchZatcaCompliance(encodedPayerTaxCert);
+
+  if (errors) {
+    console.log("CSID ERRORS", errors);
+    process.kill(process.pid);
+  }
+
+  const result = await readJsonFile(CSID_FILE_PATH, true);
+
+  console.log("result", result);
 
   // const app = express();
   // app.use(cors());
