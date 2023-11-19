@@ -15,34 +15,49 @@ const checkPathExists = async (filePath) =>
     .then(() => filePath)
     .catch(() => false);
 
-const executeCommandIfFileNotExsist = async (filePath, cmd) => {
+const executeCommandIfFileNotExsist = async (
+  filePath,
+  cmd,
+  isWindowsPlatform
+) => {
   const isFileFound = await checkPathExists(filePath);
 
   if (!isFileFound) {
-    await execPromise(cmd);
+    const shellOptions = isWindowsPlatform
+      ? {
+          shell: "powershell.exe",
+        }
+      : undefined;
+    await execPromise(cmd, shellOptions);
   }
 };
 
 (async () => {
+  const isWindowsPlatform = ["win32", "win64"].includes(process.platform);
+
   await executeCommandIfFileNotExsist(
     certsFolderName,
-    `mkdir ${certsFolderName}`
+    `mkdir ${certsFolderName}`,
+    isWindowsPlatform
   );
 
   try {
     await executeCommandIfFileNotExsist(
       privateCertPath,
-      `openssl ecparam -name secp256k1 -genkey -noout -out ${privateCertPath}`
+      `openssl ecparam -name secp256k1 -genkey -noout -out ${privateCertPath}`,
+      isWindowsPlatform
     );
 
     await executeCommandIfFileNotExsist(
       publicCertPath,
-      `openssl ec -in ${privateCertPath} -pubout -out ${publicCertPath}`
+      `openssl ec -in ${privateCertPath} -pubout -out ${publicCertPath}`,
+      isWindowsPlatform
     );
 
     await executeCommandIfFileNotExsist(
       taxPayerPath,
-      `openssl req -new -sha256 -key ${privateCertPath} -extensions v3_req -config configuration.cnf -out ${taxPayerPath}`
+      `openssl req -new -sha256 -key ${privateCertPath} -extensions v3_req -config configuration.cnf -out ${taxPayerPath}`,
+      isWindowsPlatform
     );
   } catch (error) {
     const { message } = error || {};
