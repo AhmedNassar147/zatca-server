@@ -36,7 +36,7 @@ const executeCommandIfFileNotExsist = async (
   const isWindowsPlatform = ["win32", "win64"].includes(process.platform);
 
   if (isWindowsPlatform) {
-    await execPromise("makeCerts.bat", {
+    await execPromise("./makeCerts.bat", {
       shell: "powershell.exe",
     });
     return;
