@@ -39,6 +39,11 @@ const executeCommandIfFileNotExsist = async (
     await execPromise("./makeCerts.bat", {
       shell: "powershell.exe",
     });
+    console.log(
+      chalk.red(
+        `Please run the ${chalk.bold.white("makeCerts.bat")} file instead`
+      )
+    );
     return;
   }
 
