@@ -51,7 +51,7 @@ const executeCommandIfFileNotExsist = async (filePath, cmd) => {
       console.log(
         chalk.red(
           `Please install ${chalk.bold.white("openssl")} via ${chalk.bold.white(
-            "https://kb.firedaemon.com/support/solutions/articles/4000121705#Download-OpenSSL"
+            "https://thesecmaster.com/procedure-to-install-openssl-on-the-windows-platform"
           )}`
         )
       );
