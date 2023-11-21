@@ -10,10 +10,11 @@ const formalizeValue = (value) => {
 
 const defaultOptions = {
   returnReversedDate: true,
+  useAmAndPmSegments: false,
 };
 
 const createDateFromNativeDate = (nativeDate, options) => {
-  const { returnReversedDate } = {
+  const { returnReversedDate, useAmAndPmSegments } = {
     ...defaultOptions,
     ...(options || null),
   };
@@ -31,7 +32,11 @@ const createDateFromNativeDate = (nativeDate, options) => {
   const seconds = formalizeValue(date.getSeconds());
   const amOrPm = date.getHours() < 12 ? "am" : "pm";
 
-  const time = `${hours}:${minutes}:${seconds} ${amOrPm}`;
+  let time = `${hours}:${minutes}:${seconds}`;
+  if (useAmAndPmSegments) {
+    time += ` ${amOrPm}`;
+  }
+
   const dateArray = [day, month, year];
 
   return {

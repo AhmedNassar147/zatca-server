@@ -19,7 +19,7 @@ export const SERVER_CONFIG = await readJsonFile(configFilePath, true);
 
 export const FILES_ENCODING_LIMIT = "60mb";
 
-export const SERVER_PORT = 5000;
+export const SERVER_PORT = 5050;
 export const RETRY_TIMES = 1;
 export const RETRY_DELAY = 10000;
 export const EXSYS_POLLS_TIMEOUT = 10000;
@@ -80,3 +80,23 @@ export const CERTS_FILE_NAMES = {
 };
 
 export const CSID_FILE_PATH = `${rootYarnWorkSpacePath}/certs/csid.json`;
+
+export const ZATCA_INVOICE_TRANSACTION_TYPE_CODES = {
+  CREDIT_INVOICE_NOTE: "381",
+  DEBIT_INVOICE_NOTE: "383",
+  PAYMENT_INVOICE: "386",
+  TAX_INVOICE: "388",
+};
+
+export const ZATCA_INVOICE_TYPE_CODE = {
+  STANDARD: "0100000",
+  SIMPLIFIED: "0200000",
+};
+
+// 11.2.5 Payment means type code
+export const ZATCA_PAYMENT_METHODS = {
+  CASH: "10",
+  CREDIT: "30",
+  BANK_ACCOUNT: "42",
+  BANK_CARD: "48",
+};

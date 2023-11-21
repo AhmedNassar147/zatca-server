@@ -20,6 +20,7 @@
     "prod": "yarn start --production"
   },
   "dependencies": {
+    "@fidm/x509": "^1.2.1",
     "@zatca-server/helpers": "1.0.0",
     "@zatca-server/server": "1.0.0",
     "@zatca-server/start-zatca-server": "1.0.0",
@@ -27,7 +28,13 @@
     "body-parser": "^1.20.0",
     "chalk": "^5.0.1",
     "cors": "^2.8.5",
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "fast-xml-parser": "^4.3.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "xml2js": "^0.6.2",
+    "xmldom": "^0.6.0",
+    "xmldsigjs": "^2.5.1"
   },
   "engines": {
     "node": ">= 16.5.0",
@@ -35,6 +42,7 @@
     "npm": ">= 7.19.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "xml-crypto": "^4.1.0"
   }
 }

@@ -14,13 +14,22 @@
   "files.trimTrailingWhitespace": true,
   "editor.rulers": [100],
   "cSpell.words": [
+    "Canonicalization",
+    "Canonicalize",
+    "canonicalized",
+    "Canonicalizer",
     "CSID",
     "csids",
+    "dsig",
+    "fidm",
     "genkey",
     "noout",
     "precompliance",
     "pubout",
     "secp",
+    "Subentity",
+    "xades",
+    "xmldsigjs",
     "zatca"
   ]
 }

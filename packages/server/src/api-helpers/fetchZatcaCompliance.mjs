@@ -52,7 +52,7 @@ const fetchZatcaCompliance = async (encodedPayerTaxCert) => {
       dispositionMessage,
       secret,
       binarySecurityToken,
-      decodedToken,
+      decodedToken: `-----BEGIN CERTIFICATE-----\n${decodedToken}\n-----END CERTIFICATE-----`,
     };
 
     await writeFile(CSID_FILE_PATH, JSON.stringify(data, null, 2));
