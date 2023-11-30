@@ -12,7 +12,7 @@ import {
   CSID_FILE_PATH,
 } from "../constants.mjs";
 
-const { POST_ZATCA_CHECK_COMPLIANCE_INVOICES } = API_IDS_NAMES;
+const { POST_ZATCA_COMPLIANCE_INVOICES } = API_IDS_NAMES;
 
 const createZatcaComplianceInvoicesRequest = async ({
   invoiceHash,
@@ -39,7 +39,7 @@ const createZatcaComplianceInvoicesRequest = async ({
   };
 
   const response = await createZatcaRequest({
-    resourceName: POST_ZATCA_CHECK_COMPLIANCE_INVOICES,
+    resourceName: POST_ZATCA_COMPLIANCE_INVOICES,
     bodyData,
     requestHeaders,
   });
