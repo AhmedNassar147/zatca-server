@@ -53,7 +53,8 @@ export const API_VALUES = {
 };
 
 export const API_BASE_URLS = {
-  ZATCA_DEVELOPMENT: "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation",
+  ZATCA_DEVELOPMENT:
+    "https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal",
   ZATCA_PRODUCTION: "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation",
 };
 
