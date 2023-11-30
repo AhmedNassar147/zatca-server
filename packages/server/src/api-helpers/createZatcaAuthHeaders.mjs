@@ -12,7 +12,7 @@ import {
 const createZatcaAuthHeaders = (certificate, secret) => {
   if (certificate && secret) {
     let finalCertificate = certificate;
-    const isRawCertificate = "certificate".startsWith("-----");
+    const isRawCertificate = certificate.startsWith("-----");
 
     if (isRawCertificate) {
       const cleanedCertificate = removeCertificateUnwantedLines(
