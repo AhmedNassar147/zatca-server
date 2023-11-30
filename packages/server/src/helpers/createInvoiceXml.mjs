@@ -207,16 +207,14 @@ const createInvoiceXml = ({
 
   const invoiceLinesXml = products.map(createProductLineXml).join("");
 
+  const paymentInstructionXml = paymentInstructionNote
+    ? `<cbc:InstructionNote>${paymentInstructionNote}</cbc:InstructionNote>`
+    : "";
+
   const paymentMeansSection = !!paymentMeansCode
     ? `<cac:PaymentMeans>
         <cbc:PaymentMeansCode>${paymentMeansCode}</cbc:PaymentMeansCode>
-        ${
-          !!paymentInstructionNote ? (
-            <cbc:InstructionNote>${paymentInstructionNote}</cbc:InstructionNote>
-          ) : (
-            ""
-          )
-        }
+        ${paymentInstructionXml}
       </cac:PaymentMeans>`
     : "";
 
