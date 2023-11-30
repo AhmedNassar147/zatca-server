@@ -38,6 +38,11 @@ const createZatcaComplianceInvoicesRequest = async ({
     ...authHeaders,
   };
 
+  return {
+    bodyData,
+    requestHeaders,
+  };
+
   const response = await createZatcaRequest({
     resourceName: POST_ZATCA_COMPLIANCE_INVOICES,
     bodyData,
