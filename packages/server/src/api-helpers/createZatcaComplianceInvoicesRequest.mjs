@@ -27,9 +27,12 @@ const createZatcaComplianceInvoicesRequest = async ({
     invoice: encodedInvoice,
   };
 
-  const { decodedToken, secret } = await readJsonFile(CSID_FILE_PATH, true);
+  const { binarySecurityToken, secret } = await readJsonFile(
+    CSID_FILE_PATH,
+    true
+  );
 
-  const authHeaders = createZatcaAuthHeaders(decodedToken, secret);
+  const authHeaders = createZatcaAuthHeaders(binarySecurityToken, secret);
 
   const requestHeaders = {
     ...BASE_API_HEADERS,
