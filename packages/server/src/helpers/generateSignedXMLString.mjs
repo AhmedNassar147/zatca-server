@@ -3,13 +3,15 @@
  * Helper: `generateSignedXMLString`.
  *
  */
-import { covertDateToStandardDate } from "@zatca-server/helpers";
+import { covertDateToStandardDate, readJsonFile } from "@zatca-server/helpers";
 import getCertificateInfo from "./getCertificateInfo.mjs";
 import createInvoiceHash from "./createInvoiceHash.mjs";
 import createInvoiceDigitalSignature from "./createInvoiceDigitalSignature.mjs";
 import generateQRCode from "./generateQRCode.mjs";
 import XMLDocument from "./xmlParser.mjs";
+import createInvoiceXml from "./createInvoiceXml.mjs";
 import createFinalUblExtensionsSectionXml from "./createFinalUblExtensionsSectionXml.mjs";
+import { CSID_FILE_PATH } from "../constants.mjs";
 
 /**
  * This hurts to do :'(. I hope that it's only temporary and ZATCA decides to just minify the XML before doing any hashing on it.
@@ -32,7 +34,13 @@ const signedPropertiesIndentationFix = (signedInvoiceString) => {
   return fixer;
 };
 
-const generateSignedXMLString = async (invoiceXml, eInvoiceCertificate) => {
+const generateSignedXMLString = async (invoiceData) => {
+  const { decodedToken: eInvoiceCertificate } = await readJsonFile(
+    CSID_FILE_PATH,
+    true
+  );
+
+  const invoiceXml = createInvoiceXml(invoiceData);
   const invoiceCopy = new XMLDocument(invoiceXml.toString(false));
 
   const {
@@ -74,11 +82,11 @@ const generateSignedXMLString = async (invoiceXml, eInvoiceCertificate) => {
 
   const signedInvoice = new XMLDocument(unsignedInvoiceString);
 
-  // const signedInvoiceString = signedPropertiesIndentationFix(
-  //   signedInvoice.toString(false)
-  // );
+  const signedInvoiceString = signedPropertiesIndentationFix(
+    signedInvoice.toString(false)
+  );
 
-  const signedInvoiceString = signedInvoice.toString(false);
+  // const signedInvoiceString = signedInvoice.toString(false);
 
   return {
     signedInvoiceString,

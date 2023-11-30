@@ -13,49 +13,43 @@ import {
   // restartProcess,
   // RESTART_SERVER_MS,
   createCmdMessage,
-  readJsonFile,
+  // readJsonFile,
   readAndEncodeCertToBase64,
   findRootYarnWorkSpaces,
 } from "@zatca-server/helpers";
-import { SERVER_PORT, CERTS_FILE_NAMES, CSID_FILE_PATH } from "./constants.mjs";
+import { SERVER_PORT, CERTS_FILE_NAMES } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
-import fetchZatcaCompliance from "./api-helpers/fetchZatcaCompliance.mjs";
-import createInvoiceXml from "./helpers/createInvoiceXml.mjs";
+import fetchZatcaComplianceCertificate from "./api-helpers/fetchZatcaComplianceCertificate.mjs";
+import createZatcaComplianceInvoicesRequest from "./api-helpers/createZatcaComplianceInvoicesRequest.mjs";
 import generateSignedXMLString from "./helpers/generateSignedXMLString.mjs";
 
 const { taxPayerPath } = CERTS_FILE_NAMES;
 
 const invoiceData = {
   invoiceSerialNo: "I12345",
-  uuid: randomUUID(),
-  issueDate: "2023-11-22",
-  issueTime: "10:05:08",
+  uuid: "",
+  issueDate: "2023-11-29",
+  issueTime: "13:28:08",
   transactionTypeCode: "0200000",
   invoiceTypeCode: "388",
-  cancelledInvoiceNo: "",
-  paymentMeansCode: 10,
-  // invoiceNote: "some notes",
-  // invoiceNoteLang: "AR",
-  invoiceCounterNo: 1,
+  invoiceNoteLang: "ar",
+  invoiceNote: "ABC",
+  invoiceCounterNo: 10,
+  // cancelledInvoiceNo: "",
+  // paymentMeansCode: "10",
+  // paymentInstructionNote,
   previousInvoiceHash:
     "NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==",
-  totalDiscountAmount: "0.00",
-  discountReasonCode: "95",
-  discountReason: "Discount",
-  totalTaxAmount: "1.5",
-  totalTaxPercent: "15.00",
-  totalWithoutTax: "10.00",
-  totalWithTax: "11.50",
   products: [
     {
       id: "1",
+      quantity: 1,
       totalWithoutTax: "10.00",
       taxAmount: "1.50",
-      taxCategory: "S",
-      taxPercent: "15.00",
-      quantity: 1,
       totalWithTax: "11.50",
       productName: "phone",
+      taxCategory: "S",
+      taxPercent: "15.00",
       price: "10.00",
       unitCode: "PCE",
       discount: 0,
@@ -63,67 +57,85 @@ const invoiceData = {
       discountReason: "Discount",
     },
   ],
+  totalDiscountAmount: "0.0",
+  discountReasonCode: "95",
+  discountReason: "Discount",
+  totalTaxPercent: "15.00",
+  totalTaxAmount: "1.50",
+  totalWithoutTax: "10.00",
+  totalWithTax: "11.50",
   supplier: {
-    streetName: "ahmed",
-    additionalStreetName: "ahmed",
-    buildingNumber: "111",
-    plotIdentification: "sas",
-    citySubdivisionName: "ahmed",
-    cityName: "ahmed",
-    postalZone: "11",
-    countrySubentity: "SSA",
+    crnNo: "00000000",
+    streetName: "إسم الشارع",
+    additionalStreetName: "إسم الشارع الإضافي",
+    buildingNumber: "4444",
+    plotIdentification: "الرقم الإضافي",
+    citySubdivisionName: "الحي",
+    cityName: "المدينة",
+    postalZone: "55555",
+    countrySubentity: "المديرية",
     countryIdCode: "SA",
-    vatName: "ahmed",
-    crnNo: "1222",
-    vatNumber: "1122522", // REQUIRED HERE,
+    vatName: "pilatusalarabia",
+    vatNumber: "310056781100003", // REQUIRED HERE,
   },
-  customer: {
-    streetName: "ahmed",
-    additionalStreetName: "ahmed",
-    buildingNumber: "111",
-    plotIdentification: "sas",
-    citySubdivisionName: "ahmed",
-    cityName: "ahmed",
-    postalZone: "11",
-    countrySubentity: "SSA",
-    countryIdCode: "SA",
-    vatName: "ahmed",
-    crnNo: "5522",
-    // vatNumber: "1122522" IF FOUND,
-  },
+  // customer: {
+  //   streetName: "ahmed",
+  //   additionalStreetName: "ahmed",
+  //   buildingNumber: "111",
+  //   plotIdentification: "sas",
+  //   citySubdivisionName: "ahmed",
+  //   cityName: "ahmed",
+  //   postalZone: "11",
+  //   countrySubentity: "SSA",
+  //   countryIdCode: "SA",
+  //   vatName: "ahmed",
+  //   crnNo: "5522",
+  //   // vatNumber: "1122522" IF FOUND,
+  // },
 };
 
 (async () => {
   await stopTheProcessIfCertificateNotFound(false);
 
   // don't remove cert headers
-  // const encodedPayerTaxCert = await readAndEncodeCertToBase64(taxPayerPath);
-  // const errors = await fetchZatcaCompliance(encodedPayerTaxCert);
+  const encodedPayerTaxCert = await readAndEncodeCertToBase64(taxPayerPath);
+  const errors = await fetchZatcaComplianceCertificate(encodedPayerTaxCert);
 
-  // if (errors) {
-  //   console.log("CSID ERRORS", errors);
-  //   process.kill(process.pid);
-  // }
+  if (errors) {
+    createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
+    process.kill(process.pid);
+  }
 
-  const result = await readJsonFile(CSID_FILE_PATH, true);
+  const uuid = randomUUID();
 
-  console.log("result", result);
-  const { decodedToken } = result;
+  const { signedInvoiceString, invoiceHash } = await generateSignedXMLString({
+    ...invoiceData,
+    uuid,
+  });
 
-  const invoiceXml = createInvoiceXml(invoiceData);
-
-  const { signedInvoiceString, ...signedInvoiceValues } =
-    await generateSignedXMLString(invoiceXml, decodedToken);
+  const complianceInvoiceData = await createZatcaComplianceInvoicesRequest({
+    invoiceHash,
+    uuid,
+    invoice: signedInvoiceString,
+  });
 
   const root = await findRootYarnWorkSpaces();
 
   await writeFile(
-    `${root}/results/values.json`,
-    JSON.stringify(signedInvoiceValues, null, 2)
-  );
-  await writeFile(
     `${root}/results/withoutFixSignedInvoiceXml.xml`,
     signedInvoiceString
+  );
+
+  await writeFile(
+    `${root}/results/values.json`,
+    JSON.stringify(
+      {
+        invoiceHash,
+        complianceInvoiceData,
+      },
+      null,
+      2
+    )
   );
 
   // const app = express();

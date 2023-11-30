@@ -60,14 +60,14 @@ const createAccountingSupplierOrCustomerXml = (
     </cac:${mainTagName}>`;
 };
 
-const hasNoNumberValue = (value) => !value || value === "0.00";
+const hasNoNumberValue = (value) => !value || ["0.00", "0.0"].includes(value);
 
-const createAllowanceChargeXml = (
+const createAllowanceChargeXml = ({
   totalDiscountAmount,
   totalTaxPercent,
   discountReasonCode = "95",
-  discountReason = "Discount"
-) => {
+  discountReason = "Discount",
+}) => {
   const taxSection = !hasNoNumberValue(totalTaxPercent)
     ? `<cac:TaxCategory>
         <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
@@ -82,7 +82,7 @@ const createAllowanceChargeXml = (
     <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
     <cbc:AllowanceChargeReasonCode>${discountReasonCode}</cbc:AllowanceChargeReasonCode>
     <cbc:AllowanceChargeReason>${discountReason}</cbc:AllowanceChargeReason>
-    <cbc:Amount currencyID="SAR">${totalDiscountAmount}</cbc:Amount>
+    <cbc:Amount currencyID="SAR">${totalDiscountAmount || "0.0"}</cbc:Amount>
     ${taxSection}
     </cac:AllowanceCharge>
   `;
@@ -135,13 +135,11 @@ const createProductLineXml = ({
   discountReasonCode,
   discountReason,
 }) => {
-  const allowanceChargeXml = !hasNoNumberValue(discount)
-    ? createAllowanceChargeXml({
-        totalDiscountAmount: discount,
-        discountReasonCode,
-        discountReason,
-      })
-    : "";
+  const allowanceChargeXml = createAllowanceChargeXml({
+    totalDiscountAmount: discount,
+    discountReasonCode,
+    discountReason,
+  });
 
   return `<cac:InvoiceLine>
   <cbc:ID>${id}</cbc:ID>
@@ -178,16 +176,16 @@ const createInvoiceXml = ({
   invoiceNote,
   invoiceNoteLang,
   cancelledInvoiceNo,
-  cancellationPaymentCode,
-  cancellationPaymentReason,
+  paymentMeansCode,
+  paymentInstructionNote,
   invoiceCounterNo,
   previousInvoiceHash,
   products,
+  totalDiscountAmount,
   discountReasonCode,
   discountReason,
-  totalDiscountAmount,
-  totalTaxAmount,
   totalTaxPercent,
+  totalTaxAmount,
   totalWithoutTax,
   totalWithTax,
   supplier,
@@ -209,10 +207,16 @@ const createInvoiceXml = ({
 
   const invoiceLinesXml = products.map(createProductLineXml).join("");
 
-  const paymentMeansSection = !!cancellationPaymentCode
+  const paymentMeansSection = !!paymentMeansCode
     ? `<cac:PaymentMeans>
-        <cbc:PaymentMeansCode>${cancellationPaymentCode}</cbc:PaymentMeansCode>
-        <cbc:InstructionNote>${cancellationPaymentReason}</cbc:InstructionNote>
+        <cbc:PaymentMeansCode>${paymentMeansCode}</cbc:PaymentMeansCode>
+        ${
+          !!paymentInstructionNote ? (
+            <cbc:InstructionNote>${paymentInstructionNote}</cbc:InstructionNote>
+          ) : (
+            ""
+          )
+        }
       </cac:PaymentMeans>`
     : "";
 
@@ -224,14 +228,12 @@ const createInvoiceXml = ({
       </cac:BillingReference>`
     : "";
 
-  const allowanceChargeXml = !hasNoNumberValue(totalDiscountAmount)
-    ? createAllowanceChargeXml({
-        totalDiscountAmount,
-        totalTaxPercent,
-        discountReasonCode,
-        discountReason,
-      })
-    : "";
+  const allowanceChargeXml = createAllowanceChargeXml({
+    totalDiscountAmount,
+    totalTaxPercent,
+    discountReasonCode,
+    discountReason,
+  });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
     <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">

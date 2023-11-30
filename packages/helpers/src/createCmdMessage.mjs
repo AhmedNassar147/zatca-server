@@ -11,11 +11,12 @@ const CHALK_COLOR = {
   info: "cyan",
 };
 
-const createCmdMessage = ({ type, message }) =>
+const createCmdMessage = ({ type, message, data }) =>
   console.log(
-    `${chalk.bold.magenta("[zatca-server]:")} ${chalk[
-      CHALK_COLOR[type]
-    ](message)}`
+    `${chalk.bold.magenta("[zatca-server]:")} ${chalk[CHALK_COLOR[type]](
+      message
+    )}`,
+    !!data ? JSON.stringify(data, null, 2) : undefined
   );
 
 export default createCmdMessage;

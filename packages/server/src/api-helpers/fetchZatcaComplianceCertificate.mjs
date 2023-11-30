@@ -1,6 +1,6 @@
 /*
  *
- * Helper: `fetchZatcaCompliance`.
+ * Helper: `fetchZatcaComplianceCertificate`.
  *
  */
 import { writeFile } from "fs/promises";
@@ -20,7 +20,7 @@ const { POST_ZATCA_COMPLIANCE } = API_IDS_NAMES;
 // invoices/reporting/single for simplified
 // invoices/clearance/single for standard
 
-const fetchZatcaCompliance = async (encodedPayerTaxCert) => {
+const fetchZatcaComplianceCertificate = async (encodedPayerTaxCert) => {
   const bodyData = {
     csr: encodedPayerTaxCert,
   };
@@ -59,4 +59,4 @@ const fetchZatcaCompliance = async (encodedPayerTaxCert) => {
   }
 };
 
-export default fetchZatcaCompliance;
+export default fetchZatcaComplianceCertificate;
