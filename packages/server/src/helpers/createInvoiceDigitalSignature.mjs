@@ -17,11 +17,6 @@ const createInvoiceDigitalSignature = async (invoiceHash) => {
   const sign = createSign("sha256");
   sign.update(invoiceHashBytes);
 
-  console.log(
-    "createInvoiceDigitalSignature => privateKeyContent",
-    privateKeyContent
-  );
-
   const signature = Buffer.from(sign.sign(privateKeyContent)).toString(
     "base64"
   );
