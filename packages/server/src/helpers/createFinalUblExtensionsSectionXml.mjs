@@ -41,8 +41,7 @@ const createFinalUblExtensionsSectionXml = ({
 			<sac:SignatureInformation>
 				<cbc:ID>urn:oasis:names:specification:ubl:signature:1</cbc:ID>
 				<sbc:ReferencedSignatureID>urn:oasis:names:specification:ubl:signature:Invoice</sbc:ReferencedSignatureID>
-				<ds:Signature Id="signature"
-					xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+				<ds:Signature Id="signature" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 					<ds:SignedInfo>
 						<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2006/12/xml-c14n11"/>
 						<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
@@ -75,7 +74,7 @@ const createFinalUblExtensionsSectionXml = ({
 					</ds:KeyInfo>
 					<ds:Object>
 						<xades:QualifyingProperties Target="signature" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#">
-              ${ublExtensionsAfterSigningXml}
+            	${ublExtensionsAfterSigningXml}
 						</xades:QualifyingProperties>
 					</ds:Object>
 				</ds:Signature>

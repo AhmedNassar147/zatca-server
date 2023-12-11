@@ -108,10 +108,11 @@ const invoiceData = {
 
   const uuid = randomUUID();
 
-  const { signedInvoiceString, invoiceHash } = await generateSignedXMLString({
-    ...invoiceData,
-    uuid,
-  });
+  const { signedInvoiceString, invoiceHash, unsignedInvoiceString } =
+    await generateSignedXMLString({
+      ...invoiceData,
+      uuid,
+    });
 
   const complianceInvoiceData = await createZatcaComplianceInvoicesRequest({
     invoiceHash,
@@ -160,6 +161,10 @@ const invoiceData = {
   await writeFile(
     `${root}/results/withoutFixSignedInvoiceXml.xml`,
     signedInvoiceString
+  );
+  await writeFile(
+    `${root}/results/unsignedInvoiceString.xml`,
+    unsignedInvoiceString
   );
 
   await writeFile(

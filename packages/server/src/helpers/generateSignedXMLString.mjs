@@ -56,12 +56,23 @@ const generateSignedXMLString = async (invoiceData) => {
 
   const digitalSignature = await createInvoiceDigitalSignature(invoiceHash);
 
+  const { issueDate, issueTime, totalTaxAmount, totalWithTax, supplier } =
+    invoiceData;
+
+  const { vatName, vatNumber } = supplier || {};
+
   const qrBase64 = generateQRCode({
     invoiceXml: invoiceCopy,
     digitalSignature,
     certificatePublicKeyBuffer,
     certificateSignature,
     invoiceHash,
+    supplierVatName: vatName,
+    supplierVatNumber: vatNumber,
+    totalWithTax,
+    totalTaxAmount,
+    issueDate,
+    issueTime,
   });
 
   const signTimestamp = covertDateToStandardDate(new Date());
@@ -76,22 +87,23 @@ const generateSignedXMLString = async (invoiceData) => {
     cleanedCertificate,
   });
 
+  const unsignedInvoiceString = invoiceCopy.toString(false);
+
   // Set signing elements
-  const unsignedInvoiceString = invoiceCopy
+  const signedInvoiceString = invoiceCopy
     .toString(false)
     .replace("SET_UBL_EXTENSIONS_STRING", ublSignatureXmlString)
     .replace("SET_QR_CODE_DATA", qrBase64);
 
-  const signedInvoice = new XMLDocument(unsignedInvoiceString);
+  const signedInvoice = new XMLDocument(signedInvoiceString).toString();
 
   // const signedInvoiceString = signedPropertiesIndentationFix(
   //   signedInvoice.toString(false)
   // );
 
-  const signedInvoiceString = signedInvoice.toString(false);
-
   return {
-    signedInvoiceString,
+    signedInvoiceString: signedInvoice,
+    unsignedInvoiceString,
     invoiceHash,
     qrBase64,
   };

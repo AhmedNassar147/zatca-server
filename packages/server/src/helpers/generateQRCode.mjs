@@ -20,51 +20,17 @@ const TLV = (tags) => {
 };
 
 const generateQRCode = ({
-  invoiceXml,
   digitalSignature,
   certificatePublicKeyBuffer,
   certificateSignature,
   invoiceHash,
+  supplierVatName,
+  supplierVatNumber,
+  totalWithTax,
+  totalTaxAmount,
+  issueDate,
+  issueTime,
 }) => {
-  let sellerName = invoiceXml.get(
-    "Invoice/cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:RegistrationName"
-  );
-
-  if (sellerName) {
-    sellerName = sellerName[0];
-  }
-
-  let vatNumber = invoiceXml.get(
-    "Invoice/cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme/cbc:CompanyID"
-  );
-
-  if (vatNumber) {
-    vatNumber = (vatNumber[0] || "").toString();
-  }
-
-  let invoiceTotal = invoiceXml.get(
-    "Invoice/cac:LegalMonetaryTotal/cbc:TaxInclusiveAmount"
-  );
-
-  if (invoiceTotal) {
-    const [{ "#text": value }] = invoiceTotal;
-    invoiceTotal = (value || "").toString();
-  }
-
-  let vatTotal = invoiceXml.get("Invoice/cac:TaxTotal");
-
-  if (vatTotal) {
-    const [
-      {
-        "cbc:TaxAmount": { "#text": value },
-      },
-    ] = vatTotal;
-    vatTotal = (value || "").toString();
-  }
-
-  const [issueDate] = invoiceXml.get("Invoice/cbc:IssueDate") || [];
-  const [issueTime] = invoiceXml.get("Invoice/cbc:IssueTime") || [];
-
   // Detect if simplified invoice or not (not used currently assuming all simplified tax invoice)
   // const invoice_type = invoiceXml
   //   .get("Invoice/cbc:InvoiceTypeCode")?.[0]
@@ -74,11 +40,11 @@ const generateQRCode = ({
   const formattedDatetime = covertDateToStandardDate(datetime);
 
   const qr_tlv = TLV([
-    sellerName,
-    vatNumber,
+    supplierVatName,
+    supplierVatNumber,
     formattedDatetime,
-    invoiceTotal,
-    vatTotal,
+    totalWithTax,
+    totalTaxAmount,
     invoiceHash,
     Buffer.from(digitalSignature),
     certificatePublicKeyBuffer,
