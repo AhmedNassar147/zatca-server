@@ -41,7 +41,9 @@ const generateSignedXMLString = async (invoiceData) => {
   );
 
   const invoiceXml = createInvoiceXml(invoiceData);
-  const invoiceCopy = new XMLDocument(invoiceXml.toString(false));
+  const invoiceCopy = new XMLDocument(invoiceXml);
+
+  const invoiceHash = createInvoiceHash(invoiceCopy);
 
   const {
     certificateHash,
@@ -52,7 +54,6 @@ const generateSignedXMLString = async (invoiceData) => {
     cleanedCertificate,
   } = getCertificateInfo(eInvoiceCertificate);
 
-  const invoiceHash = createInvoiceHash(invoiceXml);
   const digitalSignature = await createInvoiceDigitalSignature(invoiceHash);
 
   const qrBase64 = generateQRCode({
@@ -60,6 +61,7 @@ const generateSignedXMLString = async (invoiceData) => {
     digitalSignature,
     certificatePublicKeyBuffer,
     certificateSignature,
+    invoiceHash,
   });
 
   const signTimestamp = covertDateToStandardDate(new Date());
@@ -82,11 +84,11 @@ const generateSignedXMLString = async (invoiceData) => {
 
   const signedInvoice = new XMLDocument(unsignedInvoiceString);
 
-  const signedInvoiceString = signedPropertiesIndentationFix(
-    signedInvoice.toString(false)
-  );
+  // const signedInvoiceString = signedPropertiesIndentationFix(
+  //   signedInvoice.toString(false)
+  // );
 
-  // const signedInvoiceString = signedInvoice.toString(false);
+  const signedInvoiceString = signedInvoice.toString(false);
 
   return {
     signedInvoiceString,

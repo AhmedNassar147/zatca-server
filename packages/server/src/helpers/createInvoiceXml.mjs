@@ -84,8 +84,7 @@ const createAllowanceChargeXml = ({
     <cbc:AllowanceChargeReason>${discountReason}</cbc:AllowanceChargeReason>
     <cbc:Amount currencyID="SAR">${totalDiscountAmount || "0.0"}</cbc:Amount>
     ${taxSection}
-    </cac:AllowanceCharge>
-  `;
+    </cac:AllowanceCharge>`;
 };
 
 const createTaxTotalXml = (totalTaxAmount, products) => {
@@ -108,7 +107,7 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
           </cac:TaxCategory>
         </cac:TaxSubtotal>`
     )
-    .join("");
+    .join("\n");
 
   return `<cac:TaxTotal>
     <cbc:TaxAmount currencyID="SAR">${totalTaxAmount}</cbc:TaxAmount>
@@ -205,7 +204,7 @@ const createInvoiceXml = ({
 
   const totalTaxXml = createTaxTotalXml(totalTaxAmount, products);
 
-  const invoiceLinesXml = products.map(createProductLineXml).join("");
+  const invoiceLinesXml = products.map(createProductLineXml).join("\n");
 
   const paymentInstructionXml = paymentInstructionNote
     ? `<cbc:InstructionNote>${paymentInstructionNote}</cbc:InstructionNote>`
@@ -234,59 +233,60 @@ const createInvoiceXml = ({
   });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-    <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
-      <ext:UBLExtensions>
-        SET_UBL_EXTENSIONS_STRING
-      </ext:UBLExtensions>
-      <cbc:ProfileID>reporting:1.0</cbc:ProfileID>
-      <cbc:ID>${invoiceSerialNo}</cbc:ID>
-      <cbc:UUID>${uuid}</cbc:UUID>
-      <cbc:IssueDate>${issueDate}</cbc:IssueDate>
-      <cbc:IssueTime>${issueTime}</cbc:IssueTime>
-      <cbc:InvoiceTypeCode name="${transactionTypeCode}">${invoiceTypeCode}</cbc:InvoiceTypeCode>
-      ${noteSection}
-      <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
-      <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
-      ${billingReferenceXml}
-      <cac:AdditionalDocumentReference>
-        <cbc:ID>ICV</cbc:ID>
-        <cbc:UUID>${invoiceCounterNo}</cbc:UUID>
-      </cac:AdditionalDocumentReference>
-      <cac:AdditionalDocumentReference>
-        <cbc:ID>PIH</cbc:ID>
-        <cac:Attachment>
-          <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">${previousInvoiceHash}</cbc:EmbeddedDocumentBinaryObject>
-        </cac:Attachment>
-      </cac:AdditionalDocumentReference>
-      <cac:AdditionalDocumentReference>
-        <cbc:ID>QR</cbc:ID>
-        <cac:Attachment>
-          <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">SET_QR_CODE_DATA</cbc:EmbeddedDocumentBinaryObject>
-        </cac:Attachment>
-      </cac:AdditionalDocumentReference>
-      <cac:Signature>
-        <cbc:ID>urn:oasis:names:specification:ubl:signature:Invoice</cbc:ID>
-        <cbc:SignatureMethod>urn:oasis:names:specification:ubl:dsig:enveloped:xades</cbc:SignatureMethod>
-      </cac:Signature>
-      ${accountingSupplierXml}
-      ${accountingCustomerXml}
-      ${paymentMeansSection}
-      ${allowanceChargeXml}
-      ${totalTaxXml}
-      <cac:LegalMonetaryTotal>
-        <cbc:LineExtensionAmount currencyID="SAR">${totalWithoutTax}</cbc:LineExtensionAmount>
-        <cbc:TaxExclusiveAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxExclusiveAmount>
-        <cbc:TaxInclusiveAmount currencyID="SAR">${totalWithTax}</cbc:TaxInclusiveAmount>
-        <cbc:AllowanceTotalAmount currencyID="SAR">${
-          totalDiscountAmount || "0.00"
-        }</cbc:AllowanceTotalAmount>
-        <cbc:PrepaidAmount currencyID="SAR">0.00</cbc:PrepaidAmount>
-        <cbc:PayableAmount currencyID="SAR">${totalWithTax}</cbc:PayableAmount>
-      </cac:LegalMonetaryTotal>
-      ${invoiceLinesXml}
-    </Invoice>`;
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+  <ext:UBLExtensions>
+    SET_UBL_EXTENSIONS_STRING
+  </ext:UBLExtensions>
+  <cbc:ProfileID>reporting:1.0</cbc:ProfileID>
+  <cbc:ID>${invoiceSerialNo}</cbc:ID>
+  <cbc:UUID>${uuid}</cbc:UUID>
+  <cbc:IssueDate>${issueDate}</cbc:IssueDate>
+  <cbc:IssueTime>${issueTime}</cbc:IssueTime>
+  <cbc:InvoiceTypeCode name="${transactionTypeCode}">${invoiceTypeCode}</cbc:InvoiceTypeCode>
+  ${noteSection}
+  <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
+  <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
+  ${billingReferenceXml}
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>ICV</cbc:ID>
+    <cbc:UUID>${invoiceCounterNo}</cbc:UUID>
+  </cac:AdditionalDocumentReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>PIH</cbc:ID>
+    <cac:Attachment>
+      <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">${previousInvoiceHash}</cbc:EmbeddedDocumentBinaryObject>
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>QR</cbc:ID>
+    <cac:Attachment>
+      <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">SET_QR_CODE_DATA</cbc:EmbeddedDocumentBinaryObject>
+    </cac:Attachment>
+  </cac:AdditionalDocumentReference>
+  <cac:Signature>
+    <cbc:ID>urn:oasis:names:specification:ubl:signature:Invoice</cbc:ID>
+    <cbc:SignatureMethod>urn:oasis:names:specification:ubl:dsig:enveloped:xades</cbc:SignatureMethod>
+  </cac:Signature>
+  ${accountingSupplierXml}
+  ${accountingCustomerXml}
+  ${paymentMeansSection}
+  ${allowanceChargeXml}
+  ${totalTaxXml}
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="SAR">${totalWithoutTax}</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="SAR">${totalWithTax}</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="SAR">${
+      totalDiscountAmount || "0.00"
+    }</cbc:AllowanceTotalAmount>
+    <cbc:PrepaidAmount currencyID="SAR">0.00</cbc:PrepaidAmount>
+    <cbc:PayableAmount currencyID="SAR">${totalWithTax}</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  ${invoiceLinesXml}
+</Invoice>`;
 
-  return xml.replace(/\n|\s{2,}/g, "");
+  // return xml.replace(/\n|\s{2,}/g, "");
+  return xml;
 };
 
 export default createInvoiceXml;

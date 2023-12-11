@@ -4,7 +4,6 @@
  *
  */
 import { covertDateToStandardDate } from "@zatca-server/helpers";
-import createInvoiceHash from "./createInvoiceHash.mjs";
 
 const TLV = (tags) => {
   const tlvTags = [];
@@ -25,9 +24,8 @@ const generateQRCode = ({
   digitalSignature,
   certificatePublicKeyBuffer,
   certificateSignature,
+  invoiceHash,
 }) => {
-  const invoiceHash = createInvoiceHash(invoiceXml);
-
   let sellerName = invoiceXml.get(
     "Invoice/cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cbc:RegistrationName"
   );

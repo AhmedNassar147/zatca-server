@@ -119,6 +119,42 @@ const invoiceData = {
     invoice: signedInvoiceString,
   });
 
+  //   {
+  //     "validationResults": {
+  //         "infoMessages": [],
+  //         "warningMessages": [
+  //             {
+  //                 "type": "WARNING",
+  //                 "code": "invoiceTimeStamp_QRCODE_INVALID",
+  //                 "category": "QRCODE_VALIDATION",
+  //                 "message": "Time on QR Code does not match with Invoice Issue Time (KSA-25). If ZATCA's SDK was used to generate QR Code, kindly use the latest version of SDK",
+  //                 "status": "WARNING"
+  //             }
+  //         ],
+  //         "errorMessages": [
+  //             {
+  //                 "type": "ERROR",
+  //                 "code": "invalid-invoice-hash",
+  //                 "category": "INVOICE_HASHING_ERRORS",
+  //                 "message": "The invoice hash API body does not match the (calculated) Hash of the XML",
+  //                 "status": "ERROR"
+  //             },
+  //             {
+  //                 "type": "ERROR",
+  //                 "code": "XSD_ZATCA_INVALID",
+  //                 "category": "XSD validation",
+  //                 "message": "Schema validation failed; XML does not comply with UBL 2.1 standards in line with ZATCA specifications",
+  //                 "status": "ERROR"
+  //             }
+  //         ],
+  //         "status": "ERROR"
+  //     },
+  //     "reportingStatus": "NOT_REPORTED",
+  //     "clearanceStatus": null,
+  //     "qrSellertStatus": null,
+  //     "qrBuyertStatus": null
+  // }
+
   const root = await findRootYarnWorkSpaces();
 
   await writeFile(

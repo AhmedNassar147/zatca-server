@@ -163,13 +163,13 @@ class XMLDocument {
   }
 
   toString(no_header) {
-    const builder_options = {
+    const builderOptions = {
       ...this.parser_options,
       format: true,
       indentBy: "  ",
     };
 
-    const builder = new XMLBuilder(builder_options);
+    const builder = new XMLBuilder(builderOptions);
 
     let xml_str = builder.build(this.xml_object);
 
