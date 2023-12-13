@@ -87,8 +87,6 @@ const generateSignedXMLString = async (invoiceData) => {
     cleanedCertificate,
   });
 
-  const unsignedInvoiceString = invoiceCopy.toString(false);
-
   // Set signing elements
   const signedInvoiceString = invoiceCopy
     .toString(false)
@@ -102,7 +100,6 @@ const generateSignedXMLString = async (invoiceData) => {
 
   return {
     signedInvoiceString: signedInvoiceIndentationFixedString,
-    unsignedInvoiceString,
     invoiceHash,
     qrBase64,
   };

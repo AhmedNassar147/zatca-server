@@ -171,15 +171,18 @@ class XMLDocument {
 
     const builder = new XMLBuilder(builderOptions);
 
-    let xml_str = builder.build(this.xml_object);
+    let xmlString = builder.build(this.xml_object);
 
     if (no_header) {
-      xml_str = xml_str.replace(`<?xml version="1.0" encoding="UTF-8"?>`, "");
+      xmlString = xmlString.replace(
+        `<?xml version="1.0" encoding="UTF-8"?>`,
+        ""
+      );
     }
 
-    xml_str.replace(/&apos;/g, "'");
+    xmlString = xmlString.replace(/&apos;/g, "'");
 
-    return xml_str;
+    return xmlString;
   }
 }
 

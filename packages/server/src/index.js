@@ -163,14 +163,7 @@ const invoiceData = {
 
   const root = await findRootYarnWorkSpaces();
 
-  await writeFile(
-    `${root}/results/withoutFixSignedInvoiceXml.xml`,
-    signedInvoiceString
-  );
-  await writeFile(
-    `${root}/results/unsignedInvoiceString.xml`,
-    unsignedInvoiceString
-  );
+  await writeFile(`${root}/results/signedInvoiceXml.xml`, signedInvoiceString);
 
   await writeFile(
     `${root}/results/values.json`,
