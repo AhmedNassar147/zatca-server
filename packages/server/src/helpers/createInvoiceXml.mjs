@@ -160,7 +160,6 @@ const createProductLineXml = ({
   </cac:Item>
   <cac:Price>
     <cbc:PriceAmount currencyID="SAR">${price}</cbc:PriceAmount>
-    ${allowanceChargeXml}
   </cac:Price>
 </cac:InvoiceLine>`;
 };
@@ -200,7 +199,9 @@ const createInvoiceXml = ({
 
   const accountingCustomerXml = customer
     ? createAccountingSupplierOrCustomerXml("customer", customer)
-    : "";
+    : `<cac:AccountingCustomerParty>
+		<cac:Party />
+	</cac:AccountingCustomerParty>`;
 
   const totalTaxXml = createTaxTotalXml(totalTaxAmount, products);
 
@@ -237,6 +238,7 @@ const createInvoiceXml = ({
   <ext:UBLExtensions>
     SET_UBL_EXTENSIONS_STRING
   </ext:UBLExtensions>
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
   <cbc:ProfileID>reporting:1.0</cbc:ProfileID>
   <cbc:ID>${invoiceSerialNo}</cbc:ID>
   <cbc:UUID>${uuid}</cbc:UUID>
