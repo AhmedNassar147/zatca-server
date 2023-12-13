@@ -12,6 +12,7 @@ const getPureInvoiceString = (invoiceXml) => {
   const invoiceCopy = new XMLDocument(invoiceXml.toString());
 
   invoiceCopy.delete("Invoice/ext:UBLExtensions");
+  invoiceCopy.delete("Invoice/cbc:UBLVersionID");
   invoiceCopy.delete("Invoice/cac:Signature");
   invoiceCopy.delete("Invoice/cac:AdditionalDocumentReference", {
     "cbc:ID": "QR",
