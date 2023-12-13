@@ -21,17 +21,11 @@ const createFinalUblExtensionsSectionXml = ({
 				<xades:Cert>
 					<xades:CertDigest>
 						<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-							<ds:DigestValue xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-								${certificateHash}
-							</ds:DigestValue>
+							<ds:DigestValue xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateHash}</ds:DigestValue>
 						</xades:CertDigest>
 						<xades:IssuerSerial>
-							<ds:X509IssuerName xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-								${certificateIssuer}
-							</ds:X509IssuerName>
-							<ds:X509SerialNumber xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-								${certificateSerialNumber}
-							</ds:X509SerialNumber>
+							<ds:X509IssuerName xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateIssuer}</ds:X509IssuerName>
+							<ds:X509SerialNumber xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateSerialNumber}</ds:X509SerialNumber>
 						</xades:IssuerSerial>
 					</xades:Cert>
 				</xades:SigningCertificate>
@@ -56,7 +50,7 @@ const createFinalUblExtensionsSectionXml = ({
 				<sac:SignatureInformation>
 					<cbc:ID>urn:oasis:names:specification:ubl:signature:1</cbc:ID>
 					<sbc:ReferencedSignatureID>urn:oasis:names:specification:ubl:signature:Invoice</sbc:ReferencedSignatureID>
-					<ds:Signature Id="signature" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+					<ds:Signature Id="signature">
 						<ds:SignedInfo>
 							<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2006/12/xml-c14n11"/>
 							<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
@@ -88,8 +82,8 @@ const createFinalUblExtensionsSectionXml = ({
 							</ds:X509Data>
 						</ds:KeyInfo>
 						<ds:Object>
-							<xades:QualifyingProperties Target="signature" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#">
-								<xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
+							<xades:QualifyingProperties Target="signature">
+								<xades:SignedProperties Id="xadesSignedProperties">
 									<xades:SignedSignatureProperties>
 										<xades:SigningTime>${signTimestamp}</xades:SigningTime>
 										<xades:SigningCertificate>
