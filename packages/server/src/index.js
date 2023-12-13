@@ -16,6 +16,7 @@ import {
   // readJsonFile,
   readAndEncodeCertToBase64,
   findRootYarnWorkSpaces,
+  getCurrentDate,
 } from "@zatca-server/helpers";
 import { SERVER_PORT, CERTS_FILE_NAMES } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
@@ -108,9 +109,13 @@ const invoiceData = {
 
   const uuid = randomUUID();
 
+  const { dateString, time } = getCurrentDate(true);
+
   const { signedInvoiceString, invoiceHash, unsignedInvoiceString } =
     await generateSignedXMLString({
       ...invoiceData,
+      issueDate: dateString,
+      issueTime: time,
       uuid,
     });
 
