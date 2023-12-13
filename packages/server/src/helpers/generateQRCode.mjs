@@ -3,8 +3,6 @@
  * Helper: `generateQRCode`.
  *
  */
-import { covertDateToStandardDate } from "@zatca-server/helpers";
-
 const TLV = (tags) => {
   const tlvTags = [];
   tags.forEach((tag, i) => {
@@ -28,16 +26,12 @@ const generateQRCode = ({
   supplierVatNumber,
   totalWithTax,
   totalTaxAmount,
-  issueDate,
-  issueTime,
+  formattedDatetime,
 }) => {
   // Detect if simplified invoice or not (not used currently assuming all simplified tax invoice)
   // const invoice_type = invoiceXml
   //   .get("Invoice/cbc:InvoiceTypeCode")?.[0]
   //   ["@_name"].toString();
-
-  const datetime = `${issueDate} ${issueTime}`;
-  const formattedDatetime = covertDateToStandardDate(datetime);
 
   const qr_tlv = TLV([
     supplierVatName,

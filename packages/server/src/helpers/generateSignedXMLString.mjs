@@ -60,9 +60,10 @@ const generateSignedXMLString = async (invoiceData) => {
     invoiceData;
 
   const { vatName, vatNumber } = supplier || {};
+  const datetime = `${issueDate} ${issueTime}`;
+  const signTimestamp = covertDateToStandardDate(datetime);
 
   const qrBase64 = generateQRCode({
-    invoiceXml: invoiceCopy,
     digitalSignature,
     certificatePublicKeyBuffer,
     certificateSignature,
@@ -71,11 +72,8 @@ const generateSignedXMLString = async (invoiceData) => {
     supplierVatNumber: vatNumber,
     totalWithTax,
     totalTaxAmount,
-    issueDate,
-    issueTime,
+    formattedDatetime: signTimestamp,
   });
-
-  const signTimestamp = covertDateToStandardDate(new Date());
 
   const ublSignatureXmlString = createFinalUblExtensionsSectionXml({
     signTimestamp,
@@ -89,7 +87,7 @@ const generateSignedXMLString = async (invoiceData) => {
 
   // Set signing elements
   const signedInvoiceString = invoiceCopy
-    .toString(false)
+    .toString()
     .replace("SET_UBL_EXTENSIONS_STRING", ublSignatureXmlString)
     .replace("SET_QR_CODE_DATA", qrBase64);
 
