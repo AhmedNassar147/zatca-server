@@ -29,34 +29,36 @@ const createAccountingSupplierOrCustomerXml = (
     ? `<cbc:CompanyID>${vatNumber}</cbc:CompanyID>`
     : "";
 
+  const restValue = !crnNo
+    ? ""
+    : `\n<cac:PartyIdentification>
+    <cbc:ID schemeID="CRN">${crnNo}</cbc:ID>
+  </cac:PartyIdentification>
+  <cac:PostalAddress>
+    <cbc:StreetName>${streetName}</cbc:StreetName>
+    <cbc:AdditionalStreetName>${additionalStreetName}</cbc:AdditionalStreetName>
+    <cbc:BuildingNumber>${buildingNumber}</cbc:BuildingNumber>
+    <cbc:PlotIdentification>${plotIdentification}</cbc:PlotIdentification>
+    <cbc:CitySubdivisionName>${citySubdivisionName}</cbc:CitySubdivisionName>
+    <cbc:CityName>${cityName}</cbc:CityName>
+    <cbc:PostalZone>${postalZone}</cbc:PostalZone>
+    <cbc:CountrySubentity>${countrySubentity}</cbc:CountrySubentity>
+    <cac:Country>
+      <cbc:IdentificationCode>${countryIdCode}</cbc:IdentificationCode>
+    </cac:Country>
+  </cac:PostalAddress>
+  <cac:PartyTaxScheme>
+    ${companyIdXml}
+    <cac:TaxScheme>
+      <cbc:ID>VAT</cbc:ID>
+    </cac:TaxScheme>
+  </cac:PartyTaxScheme>
+  <cac:PartyLegalEntity>
+    <cbc:RegistrationName>${vatName}</cbc:RegistrationName>
+  </cac:PartyLegalEntity>\n`;
+
   return `<cac:${mainTagName}>
-      <cac:Party>
-        <cac:PartyIdentification>
-          <cbc:ID schemeID="CRN">${crnNo}</cbc:ID>
-        </cac:PartyIdentification>
-        <cac:PostalAddress>
-          <cbc:StreetName>${streetName}</cbc:StreetName>
-          <cbc:AdditionalStreetName>${additionalStreetName}</cbc:AdditionalStreetName>
-          <cbc:BuildingNumber>${buildingNumber}</cbc:BuildingNumber>
-          <cbc:PlotIdentification>${plotIdentification}</cbc:PlotIdentification>
-          <cbc:CitySubdivisionName>${citySubdivisionName}</cbc:CitySubdivisionName>
-          <cbc:CityName>${cityName}</cbc:CityName>
-          <cbc:PostalZone>${postalZone}</cbc:PostalZone>
-          <cbc:CountrySubentity>${countrySubentity}</cbc:CountrySubentity>
-          <cac:Country>
-            <cbc:IdentificationCode>${countryIdCode}</cbc:IdentificationCode>
-          </cac:Country>
-        </cac:PostalAddress>
-        <cac:PartyTaxScheme>
-          ${companyIdXml}
-          <cac:TaxScheme>
-            <cbc:ID>VAT</cbc:ID>
-          </cac:TaxScheme>
-        </cac:PartyTaxScheme>
-        <cac:PartyLegalEntity>
-          <cbc:RegistrationName>${vatName}</cbc:RegistrationName>
-        </cac:PartyLegalEntity>
-      </cac:Party>
+      <cac:Party>${restValue}</cac:Party>
     </cac:${mainTagName}>`;
 };
 
@@ -99,10 +101,10 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
           <cbc:TaxableAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxableAmount>
           <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
           <cac:TaxCategory>
-            <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">${taxCategory}</cbc:ID>
+            <cbc:ID>${taxCategory}</cbc:ID>
             <cbc:Percent>${taxPercent}</cbc:Percent>
             <cac:TaxScheme>
-              <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+              <cbc:ID>VAT</cbc:ID>
             </cac:TaxScheme>
           </cac:TaxCategory>
         </cac:TaxSubtotal>`
@@ -111,12 +113,12 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
 
   return `<cac:TaxTotal>
     <cbc:TaxAmount currencyID="SAR">${totalTaxAmount}</cbc:TaxAmount>
+    ${subtotalsXml}
   </cac:TaxTotal>
-
   <cac:TaxTotal>
     <cbc:TaxAmount currencyID="SAR">${totalTaxAmount}</cbc:TaxAmount>
-    ${subtotalsXml}
-  </cac:TaxTotal>`;
+  </cac:TaxTotal>
+  `;
 };
 
 const createProductLineXml = ({
@@ -173,7 +175,7 @@ const createInvoiceXml = ({
   transactionTypeCode,
   invoiceTypeCode,
   invoiceNote,
-  invoiceNoteLang,
+  invoiceNoteLang = "ar",
   cancelledInvoiceNo,
   paymentMeansCode,
   paymentInstructionNote,
@@ -190,21 +192,15 @@ const createInvoiceXml = ({
   supplier,
   customer,
 }) => {
-  const noteSection = !!(invoiceNote && invoiceNoteLang)
-    ? `<cbc:Note languageID="${invoiceNoteLang}">${invoiceNote}</cbc:Note>`
-    : "";
+  const accountingSupplierXml = createAccountingSupplierOrCustomerXml(
+    "supplier",
+    supplier
+  );
 
-  const accountingSupplierXml = supplier
-    ? createAccountingSupplierOrCustomerXml("supplier", supplier)
-    : "";
-
-  const accountingCustomerXml = customer
-    ? createAccountingSupplierOrCustomerXml("customer", customer)
-    : "";
-
-  //   <cac:AccountingCustomerParty>
-  // 	<cac:Party />
-  // </cac:AccountingCustomerParty>
+  const accountingCustomerXml = createAccountingSupplierOrCustomerXml(
+    "customer",
+    customer
+  );
 
   const totalTaxXml = createTaxTotalXml(totalTaxAmount, products);
 
@@ -248,7 +244,7 @@ const createInvoiceXml = ({
   <cbc:IssueDate>${issueDate}</cbc:IssueDate>
   <cbc:IssueTime>${issueTime}Z</cbc:IssueTime>
   <cbc:InvoiceTypeCode name="${transactionTypeCode}">${invoiceTypeCode}</cbc:InvoiceTypeCode>
-  ${noteSection}
+  <cbc:Note languageID="${invoiceNoteLang}">${invoiceNote || ""}</cbc:Note>
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
   <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
   ${billingReferenceXml}
@@ -262,8 +258,6 @@ const createInvoiceXml = ({
       <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">${previousInvoiceHash}</cbc:EmbeddedDocumentBinaryObject>
     </cac:Attachment>
   </cac:AdditionalDocumentReference>
-
-
   <cac:AdditionalDocumentReference>
     <cbc:ID>QR</cbc:ID>
     <cac:Attachment>
