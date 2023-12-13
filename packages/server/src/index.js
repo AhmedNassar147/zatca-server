@@ -65,7 +65,7 @@ const invoiceData = {
   totalWithoutTax: "10.00",
   totalWithTax: "11.50",
   supplier: {
-    crnNo: "00000000",
+    crnNo: "Iccsiporex",
     streetName: "King Fahahd st",
     additionalStreetName: "street name",
     buildingNumber: "0000",
