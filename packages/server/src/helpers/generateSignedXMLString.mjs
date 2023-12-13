@@ -18,7 +18,7 @@ import { CSID_FILE_PATH } from "../constants.mjs";
  * there is no logical reason why the validation expects an incorrectly indented XML.
  * Anyway, this is a function that fucks up the indentation in order to match validator hashing.
  */
-const signedPropertiesIndentationFix = (signedInvoiceString) => {
+const fixSignedPropertiesIndentation = (signedInvoiceString) => {
   let fixer = signedInvoiceString;
   let signedPropsLines = fixer
     .split("<ds:Object>")[1]
@@ -91,10 +91,19 @@ const generateSignedXMLString = async (invoiceData) => {
     .replace("SET_UBL_EXTENSIONS_STRING", ublSignatureXmlString)
     .replace("SET_QR_CODE_DATA", qrBase64);
 
-  const signedInvoice = new XMLDocument(signedInvoiceString).toString();
+  let signedInvoice = new XMLDocument(signedInvoiceString).toString();
+
+  signedInvoice = signedInvoice.replace(
+    "<cbc:ProfileID>",
+    "\n    <cbc:ProfileID>"
+  );
+  signedInvoice = signedInvoice.replace(
+    "<cac:AccountingSupplierParty>",
+    "\n    \n    <cac:AccountingSupplierParty>"
+  );
 
   const signedInvoiceIndentationFixedString =
-    signedPropertiesIndentationFix(signedInvoice);
+    fixSignedPropertiesIndentation(signedInvoice);
 
   return {
     signedInvoiceString: signedInvoiceIndentationFixedString,
