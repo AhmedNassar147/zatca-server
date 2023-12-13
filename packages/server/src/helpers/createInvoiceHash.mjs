@@ -32,12 +32,14 @@ const createInvoiceHash = (invoiceXml) => {
   // A dumb workaround for whatever reason ZATCA XML devs decided to include those trailing spaces and a newlines. (without it the hash is incorrect)
   let pureInvoiceString = getPureInvoiceString(invoiceXml);
 
-  pureInvoiceString = pureInvoiceString
-    .replace("<cbc:ProfileID>", "\n    <cbc:ProfileID>")
-    .replace(
-      "<cac:AccountingSupplierParty>",
-      "\n    \n    <cac:AccountingSupplierParty>"
-    );
+  pureInvoiceString = pureInvoiceString.replace(
+    "<cbc:ProfileID>",
+    "\n    <cbc:ProfileID>"
+  );
+  pureInvoiceString = pureInvoiceString.replace(
+    "<cac:AccountingSupplierParty>",
+    "\n    \n    <cac:AccountingSupplierParty>"
+  );
 
   return createHash("sha256").update(pureInvoiceString).digest("base64");
 };

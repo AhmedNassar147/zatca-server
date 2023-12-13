@@ -200,9 +200,11 @@ const createInvoiceXml = ({
 
   const accountingCustomerXml = customer
     ? createAccountingSupplierOrCustomerXml("customer", customer)
-    : `<cac:AccountingCustomerParty>
-		<cac:Party />
-	</cac:AccountingCustomerParty>`;
+    : "";
+
+  //   <cac:AccountingCustomerParty>
+  // 	<cac:Party />
+  // </cac:AccountingCustomerParty>
 
   const totalTaxXml = createTaxTotalXml(totalTaxAmount, products);
 
