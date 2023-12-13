@@ -160,6 +160,7 @@ const createProductLineXml = ({
   </cac:Item>
   <cac:Price>
     <cbc:PriceAmount currencyID="SAR">${price}</cbc:PriceAmount>
+    ${allowanceChargeXml}
   </cac:Price>
 </cac:InvoiceLine>`;
 };
