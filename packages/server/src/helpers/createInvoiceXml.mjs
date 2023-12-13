@@ -3,9 +3,8 @@
  * Helper: `createInvoiceXml`.
  *
  */
-const createAccountingSupplierOrCustomerXml = (
-  type,
-  {
+const createAccountingSupplierOrCustomerXml = (type, data) => {
+  const {
     streetName,
     additionalStreetName,
     buildingNumber,
@@ -18,8 +17,8 @@ const createAccountingSupplierOrCustomerXml = (
     vatName,
     vatNumber,
     crnNo,
-  }
-) => {
+  } = data || {};
+
   const isSupplier = type === "supplier";
   const mainTagName = isSupplier
     ? "AccountingSupplierParty"
