@@ -91,16 +91,7 @@ const generateSignedXMLString = async (invoiceData) => {
     .replace("SET_UBL_EXTENSIONS_STRING", ublSignatureXmlString)
     .replace("SET_QR_CODE_DATA", qrBase64);
 
-  let signedInvoice = new XMLDocument(signedInvoiceString).toString();
-
-  signedInvoice = signedInvoice.replace(
-    "<cbc:ProfileID>",
-    "\n    <cbc:ProfileID>"
-  );
-  signedInvoice = signedInvoice.replace(
-    "<cac:AccountingSupplierParty>",
-    "\n    \n    <cac:AccountingSupplierParty>"
-  );
+  const signedInvoice = new XMLDocument(signedInvoiceString).toString();
 
   const signedInvoiceIndentationFixedString =
     fixSignedPropertiesIndentation(signedInvoice);
