@@ -68,15 +68,15 @@ const invoiceData = {
   supplier: {
     crnNo: "00000000",
     streetName: "King Fahahd st",
-    additionalStreetName: "additional street name",
+    additionalStreetName: "street name",
     buildingNumber: "0000",
     plotIdentification: "0000",
     citySubdivisionName: "West",
     cityName: "Khobar",
     postalZone: "31952",
-    countrySubentity: "المديرية",
+    countrySubentity: "moderia",
     countryIdCode: "SA",
-    vatName: "ShaEk ShaEk ShaEk",
+    vatName: "ShaEk",
     vatNumber: "300056985100003", // REQUIRED HERE,
   },
   // customer: {
