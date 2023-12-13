@@ -107,7 +107,8 @@ const invoiceData = {
     process.kill(process.pid);
   }
 
-  const uuid = randomUUID();
+  // const uuid = randomUUID();
+  const uuid = "300056985100003";
 
   const { dateString, time } = getCurrentDate(true);
 
