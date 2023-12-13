@@ -4,7 +4,6 @@
  *
  */
 import { writeFile } from "fs/promises";
-import { randomUUID } from "crypto";
 
 // import express from "express";
 // import cors from "cors";
@@ -28,7 +27,7 @@ const { taxPayerPath } = CERTS_FILE_NAMES;
 
 const invoiceData = {
   invoiceSerialNo: "I12345",
-  uuid: "",
+  uuid: "6974dbe7-09b4-47c3-b373-b288c6a2370d",
   issueDate: "2023-11-29",
   issueTime: "13:28:08",
   transactionTypeCode: "0200000",
@@ -107,9 +106,6 @@ const invoiceData = {
     process.kill(process.pid);
   }
 
-  // const uuid = randomUUID();
-  const uuid = "300056985100003";
-
   const { dateString, time } = getCurrentDate(true);
 
   const { signedInvoiceString, invoiceHash, unsignedInvoiceString } =
@@ -117,12 +113,11 @@ const invoiceData = {
       ...invoiceData,
       issueDate: dateString,
       issueTime: time,
-      uuid,
     });
 
   const complianceInvoiceData = await createZatcaComplianceInvoicesRequest({
     invoiceHash,
-    uuid,
+    uuid: invoiceData.uuid,
     invoice: signedInvoiceString,
   });
 
