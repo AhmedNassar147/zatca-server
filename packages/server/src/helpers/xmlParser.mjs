@@ -166,7 +166,7 @@ class XMLDocument {
     const builderOptions = {
       ...this.parser_options,
       format: true,
-      indentBy: "  ",
+      indentBy: "    ",
     };
 
     const builder = new XMLBuilder(builderOptions);
@@ -174,10 +174,10 @@ class XMLDocument {
     let xml_str = builder.build(this.xml_object);
 
     if (no_header) {
-      xml_str = xml_str
-        .replace(`<?xml version="1.0" encoding="UTF-8"?>`, "")
-        .replace(/&apos;/g, "'");
+      xml_str = xml_str.replace(`<?xml version="1.0" encoding="UTF-8"?>`, "");
     }
+
+    xml_str.replace(/&apos;/g, "'");
 
     return xml_str;
   }

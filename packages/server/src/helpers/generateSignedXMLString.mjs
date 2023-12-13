@@ -97,12 +97,11 @@ const generateSignedXMLString = async (invoiceData) => {
 
   const signedInvoice = new XMLDocument(signedInvoiceString).toString();
 
-  // const signedInvoiceString = signedPropertiesIndentationFix(
-  //   signedInvoice.toString(false)
-  // );
+  const signedInvoiceIndentationFixedString =
+    signedPropertiesIndentationFix(signedInvoice);
 
   return {
-    signedInvoiceString: signedInvoice,
+    signedInvoiceString: signedInvoiceIndentationFixedString,
     unsignedInvoiceString,
     invoiceHash,
     qrBase64,
