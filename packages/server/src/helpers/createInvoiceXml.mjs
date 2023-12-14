@@ -30,35 +30,35 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
 
   const restValue = !crnNo
     ? ""
-    : `\n<cac:PartyIdentification>
-    <cbc:ID schemeID="CRN">${crnNo}</cbc:ID>
-  </cac:PartyIdentification>
-  <cac:PostalAddress>
-    <cbc:StreetName>${streetName}</cbc:StreetName>
-    <cbc:AdditionalStreetName>${additionalStreetName}</cbc:AdditionalStreetName>
-    <cbc:BuildingNumber>${buildingNumber}</cbc:BuildingNumber>
-    <cbc:PlotIdentification>${plotIdentification}</cbc:PlotIdentification>
-    <cbc:CitySubdivisionName>${citySubdivisionName}</cbc:CitySubdivisionName>
-    <cbc:CityName>${cityName}</cbc:CityName>
-    <cbc:PostalZone>${postalZone}</cbc:PostalZone>
-    <cbc:CountrySubentity>${countrySubentity}</cbc:CountrySubentity>
-    <cac:Country>
-      <cbc:IdentificationCode>${countryIdCode}</cbc:IdentificationCode>
-    </cac:Country>
-  </cac:PostalAddress>
-  <cac:PartyTaxScheme>
-    ${companyIdXml}
-    <cac:TaxScheme>
-      <cbc:ID>VAT</cbc:ID>
-    </cac:TaxScheme>
-  </cac:PartyTaxScheme>
-  <cac:PartyLegalEntity>
-    <cbc:RegistrationName>${vatName}</cbc:RegistrationName>
-  </cac:PartyLegalEntity>\n`;
+    : `\n<cac:Party>
+    <cac:PartyIdentification>
+      <cbc:ID schemeID="CRN">${crnNo}</cbc:ID>
+    </cac:PartyIdentification>
+    <cac:PostalAddress>
+      <cbc:StreetName>${streetName}</cbc:StreetName>
+      <cbc:AdditionalStreetName>${additionalStreetName}</cbc:AdditionalStreetName>
+      <cbc:BuildingNumber>${buildingNumber}</cbc:BuildingNumber>
+      <cbc:PlotIdentification>${plotIdentification}</cbc:PlotIdentification>
+      <cbc:CitySubdivisionName>${citySubdivisionName}</cbc:CitySubdivisionName>
+      <cbc:CityName>${cityName}</cbc:CityName>
+      <cbc:PostalZone>${postalZone}</cbc:PostalZone>
+      <cbc:CountrySubentity>${countrySubentity}</cbc:CountrySubentity>
+      <cac:Country>
+        <cbc:IdentificationCode>${countryIdCode}</cbc:IdentificationCode>
+      </cac:Country>
+    </cac:PostalAddress>
+    <cac:PartyTaxScheme>
+      ${companyIdXml}
+      <cac:TaxScheme>
+        <cbc:ID>VAT</cbc:ID>
+      </cac:TaxScheme>
+    </cac:PartyTaxScheme>
+    <cac:PartyLegalEntity>
+      <cbc:RegistrationName>${vatName}</cbc:RegistrationName>
+    </cac:PartyLegalEntity>
+    </cac:Party>\n`;
 
-  return `<cac:${mainTagName}>
-      <cac:Party>${restValue}</cac:Party>
-    </cac:${mainTagName}>`;
+  return `<cac:${mainTagName}>${restValue}</cac:${mainTagName}>`;
 };
 
 const hasNoNumberValue = (value) => !value || ["0.00", "0.0"].includes(value);
