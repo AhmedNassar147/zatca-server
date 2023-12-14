@@ -48,7 +48,6 @@ export const API_VALUES = {
   [API_IDS_NAMES.POST_ZATCA_COMPLIANCE]: "compliance",
   [API_IDS_NAMES.POST_ZATCA_COMPLIANCE_INVOICES]: "compliance/invoices",
   [API_IDS_NAMES.POST_ZATCA_CHECK_COMPLIANCE_INVOICES]: "precompliance/invoice",
-  // https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/production/csids
   [API_IDS_NAMES.POST_ZATCA_FINAL_CSID]: "production/csids",
 };
 
