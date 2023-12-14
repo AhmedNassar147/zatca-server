@@ -37,9 +37,9 @@ const fetchZatcaProductionCsid = async () => {
   });
 
   return {
-    response,
-    bodyData,
     requestHeaders,
+    bodyData,
+    response,
   };
 };
 

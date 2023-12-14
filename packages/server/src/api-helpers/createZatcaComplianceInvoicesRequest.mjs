@@ -48,9 +48,9 @@ const createZatcaComplianceInvoicesRequest = async ({
   });
 
   return {
-    response,
-    bodyData,
     requestHeaders,
+    bodyData,
+    response,
   };
 };
 
