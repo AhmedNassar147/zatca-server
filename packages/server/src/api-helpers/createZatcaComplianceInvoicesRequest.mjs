@@ -42,7 +42,7 @@ const createZatcaComplianceInvoicesRequest = async ({
   };
 
   const response = await createZatcaRequest({
-    resourceName: POST_INITIAL_INVOICES,
+    resourceName: POST_ZATCA_COMPLIANCE_INVOICES,
     bodyData,
     requestHeaders,
   });
