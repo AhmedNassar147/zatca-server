@@ -46,11 +46,11 @@ const createFinalUblExtensionsSectionXml = ({
   const mainTemplate = `<ext:UBLExtension>
 		<ext:ExtensionURI>urn:oasis:names:specification:ubl:dsig:enveloped:xades</ext:ExtensionURI>
 		<ext:ExtensionContent>
-			<sig:UBLDocumentSignatures>
+			<sig:UBLDocumentSignatures xmlns:sac="urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2" xmlns:sbc="urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2" xmlns:sig="urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2">
 				<sac:SignatureInformation>
 					<cbc:ID>urn:oasis:names:specification:ubl:signature:1</cbc:ID>
 					<sbc:ReferencedSignatureID>urn:oasis:names:specification:ubl:signature:Invoice</sbc:ReferencedSignatureID>
-					<ds:Signature Id="signature">
+					<ds:Signature Id="signature" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 						<ds:SignedInfo>
 							<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2006/12/xml-c14n11"/>
 							<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
@@ -82,8 +82,8 @@ const createFinalUblExtensionsSectionXml = ({
 							</ds:X509Data>
 						</ds:KeyInfo>
 						<ds:Object>
-							<xades:QualifyingProperties Target="signature">
-								<xades:SignedProperties Id="xadesSignedProperties">
+							<xades:QualifyingProperties Target="signature" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#">
+								<xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
 									<xades:SignedSignatureProperties>
 										<xades:SigningTime>${signTimestamp}</xades:SigningTime>
 										<xades:SigningCertificate>
