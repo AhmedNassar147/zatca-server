@@ -13,18 +13,14 @@ import {
   // RESTART_SERVER_MS,
   createCmdMessage,
   // readJsonFile,
-  readAndEncodeCertToBase64,
   findRootYarnWorkSpaces,
   getCurrentDate,
 } from "@zatca-server/helpers";
-import { SERVER_PORT, CERTS_FILE_NAMES } from "./constants.mjs";
+import { SERVER_PORT } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
-import fetchZatcaComplianceCertificate from "./api-helpers/fetchZatcaComplianceCertificate.mjs";
+import issueCertificate from "./api-helpers/issueCertificate.mjs";
 import createZatcaComplianceInvoicesRequest from "./api-helpers/createZatcaComplianceInvoicesRequest.mjs";
-import fetchZatcaProductionCsid from "./api-helpers/fetchZatcaProductionCsid.mjs";
 import generateSignedXMLString from "./helpers/generateSignedXMLString.mjs";
-
-const { taxPayerPath } = CERTS_FILE_NAMES;
 
 const invoiceData = {
   invoiceSerialNo: "I12345",
@@ -106,9 +102,7 @@ const printResults = async (signedInvoiceString, data) => {
 (async () => {
   await stopTheProcessIfCertificateNotFound(false);
 
-  // don't remove cert headers
-  const encodedPayerTaxCert = await readAndEncodeCertToBase64(taxPayerPath);
-  const errors = await fetchZatcaComplianceCertificate(encodedPayerTaxCert);
+  const { errors } = await issueCertificate(false);
 
   if (errors) {
     createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
@@ -138,7 +132,8 @@ const printResults = async (signedInvoiceString, data) => {
     return;
   }
 
-  const productionCsidData = await fetchZatcaProductionCsid();
+  const { errors: _, ...productionCsidData } = await issueCertificate(true);
+
   await printResults(signedInvoiceString, {
     complianceInvoiceData,
     productionCsidData,
