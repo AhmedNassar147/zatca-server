@@ -241,7 +241,7 @@ const createInvoiceXml = ({
   <cbc:ID>${invoiceSerialNo}</cbc:ID>
   <cbc:UUID>${uuid}</cbc:UUID>
   <cbc:IssueDate>${issueDate}</cbc:IssueDate>
-  <cbc:IssueTime>${issueTime}Z</cbc:IssueTime>
+  <cbc:IssueTime>${issueTime}</cbc:IssueTime>
   <cbc:InvoiceTypeCode name="${transactionTypeCode}">${invoiceTypeCode}</cbc:InvoiceTypeCode>
   <cbc:Note languageID="${invoiceNoteLang}">${invoiceNote || ""}</cbc:Note>
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
