@@ -6,9 +6,10 @@
 import { createHash } from "crypto";
 import { XmlCanonicalizer } from "xmldsigjs";
 import xmldom from "xmldom";
+import { writeFile } from "fs/promises";
 import XMLDocument from "./xmlParser.mjs";
 
-const getPureInvoiceString = (invoiceXml) => {
+const getPureInvoiceString = async (invoiceXml) => {
   const invoiceCopy = new XMLDocument(invoiceXml.toString());
 
   invoiceCopy.delete("Invoice/ext:UBLExtensions");
@@ -17,6 +18,8 @@ const getPureInvoiceString = (invoiceXml) => {
   invoiceCopy.delete("Invoice/cac:AdditionalDocumentReference", {
     "cbc:ID": "QR",
   });
+
+  await writeFile(`results/getPureInvoiceString.xml`, invoiceCopy.toString());
 
   const invoiceXmlDom = new xmldom.DOMParser().parseFromString(
     invoiceCopy.toString()
@@ -28,9 +31,9 @@ const getPureInvoiceString = (invoiceXml) => {
   return canonicalizedXmlStr;
 };
 
-const createInvoiceHash = (invoiceXml) => {
+const createInvoiceHash = async (invoiceXml) => {
   // A dumb workaround for whatever reason ZATCA XML devs decided to include those trailing spaces and a newlines. (without it the hash is incorrect)
-  let pureInvoiceString = getPureInvoiceString(invoiceXml);
+  let pureInvoiceString = await getPureInvoiceString(invoiceXml);
 
   pureInvoiceString = pureInvoiceString.replace(
     "<cbc:ProfileID>",

@@ -43,7 +43,7 @@ const generateSignedXMLString = async (invoiceData) => {
   const invoiceXml = createInvoiceXml(invoiceData);
   const invoiceCopy = new XMLDocument(invoiceXml);
 
-  const invoiceHash = createInvoiceHash(invoiceCopy);
+  const invoiceHash = await createInvoiceHash(invoiceCopy);
 
   const {
     certificateHash,
