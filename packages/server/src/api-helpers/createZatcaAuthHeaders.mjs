@@ -3,7 +3,6 @@
  * Helper: `createZatcaAuthHeaders`.
  *
  */
-
 import {
   removeCertificateUnwantedLines,
   encodeStringToBase64,
