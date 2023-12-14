@@ -99,6 +99,11 @@ const printResults = async (signedInvoiceString, data) => {
   await writeFile(`${root}/results/values.json`, JSON.stringify(data, null, 2));
 };
 
+// fir config csr
+// title=1000 standard
+// title=0100 simplified
+// title=1100 both
+
 (async () => {
   await stopTheProcessIfCertificateNotFound(false);
 
@@ -132,12 +137,14 @@ const printResults = async (signedInvoiceString, data) => {
     return;
   }
 
-  const { errors: _, ...productionCsidData } = await issueCertificate(true);
+  await printResults(signedInvoiceString, { complianceInvoiceData });
 
-  await printResults(signedInvoiceString, {
-    complianceInvoiceData,
-    productionCsidData,
-  });
+  // const { errors: _, ...productionCsidData } = await issueCertificate(true);
+
+  // await printResults(signedInvoiceString, {
+  //   complianceInvoiceData,
+  //   productionCsidData,
+  // });
 
   // const app = express();
   // app.use(cors());
