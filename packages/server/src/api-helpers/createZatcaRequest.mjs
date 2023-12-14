@@ -4,10 +4,18 @@
  *
  */
 import createFetchRequest from "./createFetchRequest.mjs";
-import { API_BASE_URLS, CLI_CONFIG } from "../constants.mjs";
+import {
+  API_BASE_URLS,
+  CLI_CONFIG,
+  ZATCA_SANDBOX_TYPES,
+} from "../constants.mjs";
 
-const { ZATCA_PRODUCTION, ZATCA_DEVELOPMENT } = API_BASE_URLS;
-const { production } = CLI_CONFIG;
+const { ZATCA_SIMULATION, ZATCA_DEV_PORTAL } = API_BASE_URLS;
+const { sandbox } = CLI_CONFIG;
+
+const { simulation } = ZATCA_SANDBOX_TYPES;
+
+const baseAPiUrl = sandbox === simulation ? ZATCA_SIMULATION : ZATCA_DEV_PORTAL;
 
 const createZatcaRequest = async ({
   bodyData,
@@ -17,21 +25,19 @@ const createZatcaRequest = async ({
   retryTimes,
   retryDelay,
   requestHeaders,
-  resourceName,
+  resourceNameUrl,
 }) => {
-  const baseAPiUrl = production ? ZATCA_PRODUCTION : ZATCA_DEVELOPMENT;
-
   return await createFetchRequest({
     baseAPiUrl,
     requestParams,
     requestHeaders,
-    resourceName,
+    resourceNameUrl,
     transformApiResults,
     body: bodyData,
     retryTimes,
     retryDelay,
     requestMethod,
-    // errorMessage: "Nphies server is not connected",
+    errorMessage: "zatca server is not connected",
   });
 };
 

@@ -3,7 +3,11 @@
  * Helper: `generateSignedXMLString`.
  *
  */
-import { covertDateToStandardDate, readJsonFile } from "@zatca-server/helpers";
+import {
+  covertDateToStandardDate,
+  readJsonFile,
+  encodeStringToBase64,
+} from "@zatca-server/helpers";
 import getCertificateInfo from "./getCertificateInfo.mjs";
 import createInvoiceHash from "./createInvoiceHash.mjs";
 import createInvoiceDigitalSignature from "./createInvoiceDigitalSignature.mjs";
@@ -40,7 +44,19 @@ const generateSignedXMLString = async (invoiceData) => {
     true
   );
 
-  const invoiceXml = createInvoiceXml(invoiceData);
+  const { issueDate, issueTime, totalTaxAmount, totalWithTax, supplier } =
+    invoiceData;
+
+  const { vatName, vatNumber } = supplier || {};
+  const datetime = `${issueDate} ${issueTime}`;
+  const signTimestamp = covertDateToStandardDate(datetime);
+
+  const [, fixedIssueTime] = signTimestamp.split("T");
+
+  const invoiceXml = createInvoiceXml({
+    ...invoiceData,
+    issueTime: fixedIssueTime,
+  });
   const invoiceCopy = new XMLDocument(invoiceXml);
 
   const invoiceHash = createInvoiceHash(invoiceCopy);
@@ -55,13 +71,6 @@ const generateSignedXMLString = async (invoiceData) => {
   } = getCertificateInfo(eInvoiceCertificate);
 
   const digitalSignature = await createInvoiceDigitalSignature(invoiceHash);
-
-  const { issueDate, issueTime, totalTaxAmount, totalWithTax, supplier } =
-    invoiceData;
-
-  const { vatName, vatNumber } = supplier || {};
-  const datetime = `${issueDate} ${issueTime}`;
-  const signTimestamp = covertDateToStandardDate(datetime);
 
   const qrBase64 = generateQRCode({
     digitalSignature,
@@ -96,8 +105,13 @@ const generateSignedXMLString = async (invoiceData) => {
   const signedInvoiceIndentationFixedString =
     fixSignedPropertiesIndentation(signedInvoice);
 
+  const encodedInvoiceXml = encodeStringToBase64(
+    signedInvoiceIndentationFixedString
+  );
+
   return {
     signedInvoiceString: signedInvoiceIndentationFixedString,
+    encodedInvoiceXml,
     invoiceHash,
     qrBase64,
   };

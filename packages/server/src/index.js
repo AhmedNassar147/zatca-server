@@ -9,18 +9,18 @@ import { writeFile } from "fs/promises";
 // import cors from "cors";
 // import bodyParser from "body-parser";
 import {
-  // restartProcess,
-  // RESTART_SERVER_MS,
   createCmdMessage,
-  // readJsonFile,
   findRootYarnWorkSpaces,
   getCurrentDate,
 } from "@zatca-server/helpers";
-import { SERVER_PORT } from "./constants.mjs";
+import { CLI_CONFIG, API_VALUES } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
-import issueCertificate from "./api-helpers/issueCertificate.mjs";
-import createZatcaComplianceInvoicesRequest from "./api-helpers/createZatcaComplianceInvoicesRequest.mjs";
 import generateSignedXMLString from "./helpers/generateSignedXMLString.mjs";
+import issueCertificate from "./api-helpers/issueCertificate.mjs";
+import sendZatcaInvoice from "./api-helpers/sendZatcaInvoice.mjs";
+
+const { POST_INITIAL_INVOICES } = API_VALUES;
+const { sandbox } = CLI_CONFIG;
 
 const invoiceData = {
   invoiceSerialNo: "I12345",
@@ -116,16 +116,19 @@ const printResults = async (signedInvoiceString, data) => {
 
   const { dateString, time } = getCurrentDate(true);
 
-  const { signedInvoiceString, invoiceHash } = await generateSignedXMLString({
-    ...invoiceData,
-    issueDate: dateString,
-    issueTime: time,
-  });
+  const { signedInvoiceString, invoiceHash, encodedInvoiceXml } =
+    await generateSignedXMLString({
+      ...invoiceData,
+      issueDate: dateString,
+      issueTime: time,
+    });
 
-  const complianceInvoiceData = await createZatcaComplianceInvoicesRequest({
+  const complianceInvoiceData = await sendZatcaInvoice({
+    resourceNameUrl: POST_INITIAL_INVOICES[sandbox],
+    useProductionCsid: false,
     invoiceHash,
     uuid: invoiceData.uuid,
-    invoice: signedInvoiceString,
+    invoice: encodedInvoiceXml,
   });
 
   const {
@@ -137,13 +140,16 @@ const printResults = async (signedInvoiceString, data) => {
     return;
   }
 
-  await printResults(signedInvoiceString, { complianceInvoiceData });
+  const { errors: _, ...productionCsidData } = await issueCertificate(true);
 
-  // const { errors: _, ...productionCsidData } = await issueCertificate(true);
+  await printResults(signedInvoiceString, {
+    complianceInvoiceData,
+    productionCsidData,
+  });
 
-  // await printResults(signedInvoiceString, {
-  //   complianceInvoiceData,
-  //   productionCsidData,
+  // const reportData = await reportInvoice({
+  //   isSimplified: true,
+  //   ...finalInvoiceData,
   // });
 
   // const app = express();

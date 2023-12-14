@@ -6,16 +6,12 @@
 import chalk from "chalk";
 import axios from "axios";
 import { delayProcess, createCmdMessage } from "@zatca-server/helpers";
-import {
-  BASE_API_HEADERS,
-  HTTP_STATUS_CODE,
-  API_VALUES,
-} from "../constants.mjs";
+import { BASE_API_HEADERS, HTTP_STATUS_CODE } from "../constants.mjs";
 
 const createFetchRequest = (options) => {
   const {
     baseAPiUrl,
-    resourceName,
+    resourceNameUrl,
     requestParams,
     requestMethod = "POST",
     requestHeaders = BASE_API_HEADERS,
@@ -27,8 +23,6 @@ const createFetchRequest = (options) => {
     retryDelay = 0,
     errorMessage = "something went wrong",
   } = options;
-
-  const resourceNameUrl = API_VALUES[resourceName];
 
   if (!resourceNameUrl) {
     throw new Error("resourceName is not found in `EXSYS_API_IDS`");

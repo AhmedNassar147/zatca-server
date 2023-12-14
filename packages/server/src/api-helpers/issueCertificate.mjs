@@ -14,14 +14,16 @@ import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
 import {
   BASE_API_HEADERS,
   SERVER_CONFIG,
-  API_IDS_NAMES,
   CSID_FILE_PATH,
   CERTS_FILE_NAMES,
+  CLI_CONFIG,
+  API_VALUES,
 } from "../constants.mjs";
 
 const { otp } = SERVER_CONFIG;
-const { POST_ZATCA_COMPLIANCE_CSID, POST_ZATCA_FINAL_CSID } = API_IDS_NAMES;
+const { sandbox } = CLI_CONFIG;
 const { taxPayerPath } = CERTS_FILE_NAMES;
+const { FETCH_FINAL_CSID, POST_ZATCA_COMPLIANCE_CSID } = API_VALUES;
 
 const baseRequestHeaders = {
   ...BASE_API_HEADERS,
@@ -67,12 +69,12 @@ const issueCertificate = async (isProductionCsid) => {
   let { bodyData, requestHeaders, complianceCsidData } =
     await createRequestHeadersAndBodyWithComplianceCsidData(isProductionCsid);
 
-  const resourceName = isProductionCsid
-    ? POST_ZATCA_FINAL_CSID
+  const resourceNameUrl = isProductionCsid
+    ? FETCH_FINAL_CSID[sandbox]
     : POST_ZATCA_COMPLIANCE_CSID;
 
   const response = await createZatcaRequest({
-    resourceName,
+    resourceNameUrl,
     bodyData,
     requestHeaders,
   });

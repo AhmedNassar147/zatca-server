@@ -3,51 +3,23 @@
  * Helper: `reportInvoice`.
  *
  */
-import { encodeStringToBase64, readJsonFile } from "@zatca-server/helpers";
-import createZatcaRequest from "./createZatcaRequest.mjs";
-import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import {
-  BASE_API_HEADERS,
-  API_IDS_NAMES,
-  CSID_FILE_PATH,
-} from "../constants.mjs";
+import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
+import { API_VALUES } from "../constants.mjs";
 
-const { REPORT_SIMPLIFIED_INVOICE, REPORT_STANDARD_INVOICE } = API_IDS_NAMES;
+const { REPORT_ACTUAL_SIMPLIFIED_INVOICE, REPORT_ACTUAL_STANDARD_INVOICE } =
+  API_VALUES;
 
-const reportInvoice = async ({ invoiceHash, uuid, invoice }) => {
-  const encodedInvoice = encodeStringToBase64(invoice);
-
-  const bodyData = {
+const reportInvoice = async ({ invoiceHash, uuid, invoice, isSimplified }) => {
+  const response = await sendZatcaInvoice({
+    resourceNameUrl: isSimplified
+      ? REPORT_ACTUAL_SIMPLIFIED_INVOICE
+      : REPORT_ACTUAL_STANDARD_INVOICE,
     invoiceHash,
     uuid,
-    invoice: encodedInvoice,
-  };
-
-  const {
-    productionCsidData: { binarySecurityToken, secret },
-  } = await readJsonFile(CSID_FILE_PATH, true);
-
-  const authHeaders = createZatcaAuthHeaders(binarySecurityToken, secret);
-
-  const requestHeaders = {
-    ...BASE_API_HEADERS,
-    "Accept-Version": "V2",
-    "Accept-Language": "en",
-    "Clearance-Status": "0",
-    ...authHeaders,
-  };
-
-  const response = await createZatcaRequest({
-    resourceName: POST_ZATCA_COMPLIANCE_INVOICES,
-    bodyData,
-    requestHeaders,
+    invoice,
   });
 
-  return {
-    requestHeaders,
-    bodyData,
-    response,
-  };
+  return response;
 };
 
 export default reportInvoice;

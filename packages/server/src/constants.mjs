@@ -13,8 +13,8 @@ const rootYarnWorkSpacePath = await findRootYarnWorkSpaces();
 
 const configFilePath = `${rootYarnWorkSpacePath}/config.json`;
 
-// --dev, --certificate-path="" , ---ignore-cert, ---production, --exsys-base-url
-export const CLI_CONFIG = await collectProcessOptions();
+// --dev, --certificate-path="" , ---ignore-cert, ---production, --exsys-base-url --sandbox=developer|simulation
+const CLI_CONFIG = await collectProcessOptions();
 export const SERVER_CONFIG = await readJsonFile(configFilePath, true);
 
 export const FILES_ENCODING_LIMIT = "60mb";
@@ -25,6 +25,12 @@ export const RETRY_DELAY = 10000;
 export const EXSYS_POLLS_TIMEOUT = 10000;
 const { exsysBaseUrl } = CLI_CONFIG;
 const { dataBaseServerPort } = SERVER_CONFIG;
+
+if (!CLI_CONFIG.sandbox) {
+  CLI_CONFIG.sandbox = "developer";
+}
+
+export { CLI_CONFIG };
 
 export const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
 
@@ -37,30 +43,37 @@ export const BASE_RESULT_FOLDER_BATH = BASE_API_IP_ADDRESS.replace(
   ""
 ).replace(/\//g, "");
 
+export const ZATCA_SANDBOX_TYPES = {
+  developer: "developer",
+  simulation: "simulation",
+};
+
 export const API_IDS_NAMES = {
   POST_ZATCA_COMPLIANCE_CSID: "POST_ZATCA_COMPLIANCE_CSID",
-  POST_ZATCA_COMPLIANCE_INVOICES: "POST_ZATCA_COMPLIANCE_INVOICES",
   POST_INITIAL_INVOICES: "POST_INITIAL_INVOICES",
-  POST_ZATCA_FINAL_CSID: "POST_ZATCA_FINAL_CSID",
-  REPORT_SIMPLIFIED_INVOICE: "REPORT_SIMPLIFIED_INVOICE",
-  REPORT_STANDARD_INVOICE: "REPORT_STANDARD_INVOICE",
+  FETCH_FINAL_CSID: "FETCH_FINAL_CSID",
+  REPORT_ACTUAL_SIMPLIFIED_INVOICE: "REPORT_ACTUAL_SIMPLIFIED_INVOICE",
+  REPORT_ACTUAL_STANDARD_INVOICE: "REPORT_ACTUAL_STANDARD_INVOICE",
 };
 
 export const API_VALUES = {
   [API_IDS_NAMES.POST_ZATCA_COMPLIANCE_CSID]: "compliance",
-  [API_IDS_NAMES.POST_ZATCA_COMPLIANCE_INVOICES]: "compliance/invoices",
-  [API_IDS_NAMES.POST_INITIAL_INVOICES]: "precompliance/invoice",
-  [API_IDS_NAMES.POST_ZATCA_FINAL_CSID]: "production/csids",
-  // invoices/reporting/single for simplified
-  [API_IDS_NAMES.REPORT_SIMPLIFIED_INVOICE]: "invoices/reporting/single",
-  // invoices/clearance/single for standard
-  [API_IDS_NAMES.REPORT_STANDARD_INVOICE]: "invoices/clearance/single",
+  [API_IDS_NAMES.FETCH_FINAL_CSID]: {
+    [ZATCA_SANDBOX_TYPES.developer]: "production/csids",
+    [ZATCA_SANDBOX_TYPES.simulation]: "core/csids",
+  },
+  [API_IDS_NAMES.POST_INITIAL_INVOICES]: {
+    [ZATCA_SANDBOX_TYPES.developer]: "compliance/invoices",
+    [ZATCA_SANDBOX_TYPES.simulation]: "precompliance/invoice",
+  },
+  [API_IDS_NAMES.REPORT_ACTUAL_SIMPLIFIED_INVOICE]: "invoices/reporting/single",
+  [API_IDS_NAMES.REPORT_ACTUAL_STANDARD_INVOICE]: "invoices/clearance/single",
 };
 
 export const API_BASE_URLS = {
-  ZATCA_DEVELOPMENT:
+  ZATCA_DEV_PORTAL:
     "https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal",
-  ZATCA_PRODUCTION: "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation",
+  ZATCA_SIMULATION: "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation",
 };
 
 export const HTTP_STATUS_CODE = {
