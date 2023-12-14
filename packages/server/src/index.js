@@ -95,6 +95,14 @@ const invoiceData = {
   // },
 };
 
+const printResults = async (signedInvoiceString, data) => {
+  const root = await findRootYarnWorkSpaces();
+
+  await writeFile(`${root}/results/signedInvoiceXml.xml`, signedInvoiceString);
+
+  await writeFile(`${root}/results/values.json`, JSON.stringify(data, null, 2));
+};
+
 (async () => {
   await stopTheProcessIfCertificateNotFound(false);
 
@@ -121,29 +129,20 @@ const invoiceData = {
     invoice: signedInvoiceString,
   });
 
-  const { status } = complianceInvoiceData;
+  const {
+    response: { status },
+  } = complianceInvoiceData;
 
-  let productionCsidData = {};
-
-  if (status === 200) {
-    productionCsidData = await fetchZatcaProductionCsid();
+  if (status !== 200) {
+    await printResults(signedInvoiceString, { complianceInvoiceData });
+    return;
   }
 
-  const root = await findRootYarnWorkSpaces();
-
-  await writeFile(`${root}/results/signedInvoiceXml.xml`, signedInvoiceString);
-
-  await writeFile(
-    `${root}/results/values.json`,
-    JSON.stringify(
-      {
-        complianceInvoiceData,
-        productionCsidData,
-      },
-      null,
-      2
-    )
-  );
+  const productionCsidData = await fetchZatcaProductionCsid();
+  await printResults(signedInvoiceString, {
+    complianceInvoiceData,
+    productionCsidData,
+  });
 
   // const app = express();
   // app.use(cors());
