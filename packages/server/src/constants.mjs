@@ -3,18 +3,12 @@
  * Constants: 'zatca-server'.
  *
  */
-import {
-  readJsonFile,
-  collectProcessOptions,
-  findRootYarnWorkSpaces,
-} from "@zatca-server/helpers";
+import { readJsonFile, findRootYarnWorkSpaces } from "@zatca-server/helpers";
 
 const rootYarnWorkSpacePath = await findRootYarnWorkSpaces();
 
 const configFilePath = `${rootYarnWorkSpacePath}/config.json`;
 
-// --dev, --certificate-path="" , ---ignore-cert, ---production, --exsys-base-url --sandbox=developer|simulation
-const CLI_CONFIG = await collectProcessOptions();
 export const SERVER_CONFIG = await readJsonFile(configFilePath, true);
 
 export const FILES_ENCODING_LIMIT = "60mb";
@@ -23,30 +17,13 @@ export const SERVER_PORT = 5050;
 export const RETRY_TIMES = 1;
 export const RETRY_DELAY = 10000;
 export const EXSYS_POLLS_TIMEOUT = 10000;
-const { exsysBaseUrl } = CLI_CONFIG;
-const { dataBaseServerPort } = SERVER_CONFIG;
-
-if (!CLI_CONFIG.sandbox) {
-  CLI_CONFIG.sandbox = "developer";
-}
-
-export { CLI_CONFIG };
-
-export const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
-
-const API_URL_PORT = dataBaseServerPort || 9090;
-
-export const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
-
-export const BASE_RESULT_FOLDER_BATH = BASE_API_IP_ADDRESS.replace(
-  "http://",
-  ""
-).replace(/\//g, "");
 
 export const ZATCA_SANDBOX_TYPES = {
   developer: "developer",
   simulation: "simulation",
 };
+
+export const ZATCA_SANDBOX_TYPES_KEYS = Object.keys(ZATCA_SANDBOX_TYPES);
 
 export const API_IDS_NAMES = {
   POST_ZATCA_COMPLIANCE_CSID: "POST_ZATCA_COMPLIANCE_CSID",

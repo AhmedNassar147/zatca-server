@@ -13,14 +13,19 @@ import {
   findRootYarnWorkSpaces,
   getCurrentDate,
 } from "@zatca-server/helpers";
-import { CLI_CONFIG, API_VALUES } from "./constants.mjs";
+import {
+  API_VALUES,
+  ZATCA_SANDBOX_TYPES,
+  ZATCA_SANDBOX_TYPES_KEYS,
+  SERVER_CONFIG,
+} from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import generateSignedXMLString from "./helpers/generateSignedXMLString.mjs";
 import issueCertificate from "./api-helpers/issueCertificate.mjs";
 import sendZatcaInvoice from "./api-helpers/sendZatcaInvoice.mjs";
 
 const { POST_INITIAL_INVOICES } = API_VALUES;
-const { sandbox } = CLI_CONFIG;
+const { dataBaseServerPort } = SERVER_CONFIG;
 
 const invoiceData = {
   invoiceSerialNo: "I12345",
@@ -99,7 +104,7 @@ const printResults = async (signedInvoiceString, data) => {
   await writeFile(`${root}/results/values.json`, JSON.stringify(data, null, 2));
 };
 
-// fir config csr
+// for config csr
 // title=1000 standard
 // title=0100 simplified
 // title=1100 both
@@ -107,7 +112,24 @@ const printResults = async (signedInvoiceString, data) => {
 (async () => {
   await stopTheProcessIfCertificateNotFound(false);
 
-  const { errors } = await issueCertificate(false);
+  // --exsys-base-url --sandbox=developer|simulation
+  const { exsysBaseUrl, sandbox: _sandbox } = await collectProcessOptions();
+
+  const sandbox = _sandbox || ZATCA_SANDBOX_TYPES.developer;
+
+  if (!ZATCA_SANDBOX_TYPES_KEYS.includes(sandbox)) {
+    createCmdMessage({
+      type: "error",
+      message: `sandbox should be one of ${ZATCA_SANDBOX_TYPES_KEYS.join(",")}`,
+    });
+    process.kill(process.pid);
+  }
+
+  const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
+  const API_URL_PORT = dataBaseServerPort || 9090;
+  const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
+
+  const { errors } = await issueCertificate(sandbox, false);
 
   if (errors) {
     createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
@@ -124,6 +146,7 @@ const printResults = async (signedInvoiceString, data) => {
     });
 
   const complianceInvoiceData = await sendZatcaInvoice({
+    sandbox,
     resourceNameUrl: POST_INITIAL_INVOICES[sandbox],
     useProductionCsid: false,
     invoiceHash,
@@ -140,7 +163,10 @@ const printResults = async (signedInvoiceString, data) => {
     return;
   }
 
-  const { errors: _, ...productionCsidData } = await issueCertificate(true);
+  const { errors: _, ...productionCsidData } = await issueCertificate(
+    sandbox,
+    true
+  );
 
   await printResults(signedInvoiceString, {
     complianceInvoiceData,

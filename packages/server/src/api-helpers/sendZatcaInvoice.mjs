@@ -9,6 +9,7 @@ import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
 import { BASE_API_HEADERS, CSID_FILE_PATH } from "../constants.mjs";
 
 const sendZatcaInvoice = async ({
+  sandbox,
   resourceNameUrl,
   useProductionCsid,
   invoiceHash,
@@ -57,6 +58,7 @@ const sendZatcaInvoice = async ({
     resourceNameUrl,
     bodyData,
     requestHeaders,
+    sandbox,
   });
 
   return {

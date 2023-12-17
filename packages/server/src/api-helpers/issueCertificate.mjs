@@ -16,12 +16,10 @@ import {
   SERVER_CONFIG,
   CSID_FILE_PATH,
   CERTS_FILE_NAMES,
-  CLI_CONFIG,
   API_VALUES,
 } from "../constants.mjs";
 
 const { otp } = SERVER_CONFIG;
-const { sandbox } = CLI_CONFIG;
 const { taxPayerPath } = CERTS_FILE_NAMES;
 const { FETCH_FINAL_CSID, POST_ZATCA_COMPLIANCE_CSID } = API_VALUES;
 
@@ -65,7 +63,7 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
   };
 };
 
-const issueCertificate = async (isProductionCsid) => {
+const issueCertificate = async (sandbox, isProductionCsid) => {
   let { bodyData, requestHeaders, complianceCsidData } =
     await createRequestHeadersAndBodyWithComplianceCsidData(isProductionCsid);
 
@@ -77,6 +75,7 @@ const issueCertificate = async (isProductionCsid) => {
     resourceNameUrl,
     bodyData,
     requestHeaders,
+    sandbox,
   });
 
   const { result, error } = response;
