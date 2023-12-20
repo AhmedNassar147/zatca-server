@@ -66,7 +66,7 @@
         </ext:ExtensionContent>
     </ext:UBLExtension>
 </ext:UBLExtensions>
-    
+
     <cbc:ProfileID>reporting:1.0</cbc:ProfileID>
     <cbc:ID>I12345</cbc:ID>
     <cbc:UUID>8e6000cf-1a98-4174-b3e7-b5d5954bc10d</cbc:UUID>

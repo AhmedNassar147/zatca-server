@@ -77,9 +77,9 @@ export const CERTS_FILE_NAMES = {
 export const CSID_FILE_PATH = `${rootYarnWorkSpacePath}/certs/csid.json`;
 
 export const ZATCA_INVOICE_TRANSACTION_TYPE_CODES = {
-  CREDIT_INVOICE_NOTE: "381",
-  DEBIT_INVOICE_NOTE: "383",
-  PAYMENT_INVOICE: "386",
+  CREDIT_NOTE: "381",
+  DEBIT_NOTE: "383",
+  PAYMENT_Transaction: "386",
   TAX_INVOICE: "388",
 };
 
@@ -93,5 +93,5 @@ export const ZATCA_PAYMENT_METHODS = {
   CASH: "10",
   CREDIT: "30",
   BANK_ACCOUNT: "42",
-  BANK_CARD: "48",
+  ATM: "48",
 };

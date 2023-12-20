@@ -179,6 +179,7 @@ const createInvoiceXml = ({
   paymentMeansCode,
   paymentInstructionNote,
   invoiceCounterNo,
+  deliveryDate,
   previousInvoiceHash,
   products,
   totalDiscountAmount,
@@ -219,7 +220,7 @@ const createInvoiceXml = ({
   const billingReferenceXml = !!cancelledInvoiceNo
     ? `<cac:BillingReference>
         <cac:InvoiceDocumentReference>
-          <cbc:ID>Invoice Number: ${cancelledInvoiceNo}</cbc:ID>
+          <cbc:ID>${cancelledInvoiceNo}</cbc:ID>
         </cac:InvoiceDocumentReference>
       </cac:BillingReference>`
     : "";
@@ -230,6 +231,12 @@ const createInvoiceXml = ({
     discountReasonCode,
     discountReason,
   });
+
+  const deliveryXml = !!deliveryDate
+    ? `<cac:Delivery>
+  <cbc:ActualDeliveryDate>${deliveryDate}</cbc:ActualDeliveryDate>
+</cac:Delivery>`
+    : "";
 
   // <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
 
@@ -270,6 +277,7 @@ const createInvoiceXml = ({
   </cac:Signature>
   ${accountingSupplierXml}
   ${accountingCustomerXml}
+  ${deliveryXml}
   ${paymentMeansSection}
   ${allowanceChargeXml}
   ${totalTaxXml}

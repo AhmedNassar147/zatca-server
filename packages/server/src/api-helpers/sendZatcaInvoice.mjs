@@ -7,19 +7,21 @@ import { readJsonFile, createCmdMessage } from "@zatca-server/helpers";
 import createZatcaRequest from "./createZatcaRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
 import { BASE_API_HEADERS, CSID_FILE_PATH } from "../constants.mjs";
+import generateSignedXMLString from "../helpers/generateSignedXMLString.mjs";
 
 const sendZatcaInvoice = async ({
   sandbox,
   resourceNameUrl,
   useProductionCsid,
-  invoiceHash,
-  uuid,
-  invoice,
+  invoiceData,
 }) => {
+  const { invoiceHash, encodedInvoiceXml, signedInvoiceString } =
+    await generateSignedXMLString(invoiceData);
+
   const bodyData = {
     invoiceHash,
     uuid,
-    invoice,
+    invoice: encodedInvoiceXml,
   };
 
   const {
@@ -65,6 +67,7 @@ const sendZatcaInvoice = async ({
     requestHeaders,
     bodyData,
     response,
+    signedInvoiceString,
   };
 };
 
