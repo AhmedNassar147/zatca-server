@@ -82,7 +82,7 @@ const { dataBaseServerPort } = SERVER_CONFIG;
   for (let index = 0; index < xmlFiles.length; index++) {
     const fileData = xmlFiles[index];
     await writeFile(
-      `${root}/results/sandbox_invoice_${index + 1}.json`,
+      `${root}/results/sandbox_invoice_${index + 1}.xml`,
       fileData
     );
   }
