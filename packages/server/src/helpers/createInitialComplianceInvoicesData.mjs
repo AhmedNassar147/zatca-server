@@ -78,6 +78,7 @@ const createInitialComplianceInvoiceData = ({
   totalTaxAmount,
   totalWithoutTax,
   totalWithTax,
+  deliveryDate,
 }) => {
   const uuid = randomUUID();
   const [invoiceSerialNo] = uuid.split("-");
@@ -109,6 +110,7 @@ const createInitialComplianceInvoiceData = ({
     totalWithTax,
     supplier,
     customer,
+    deliveryDate,
   };
 };
 
@@ -147,7 +149,7 @@ const createStandardInvoices = () => [
     transactionTypeCode: "0100000",
     invoiceTypeCode: "388",
     invoiceCounterNo: 4,
-    // deliveryDate: "25-12-2023",
+    deliveryDate: "25-12-2023",
   }),
 
   // standard debit invoice
