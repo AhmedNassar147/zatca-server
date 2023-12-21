@@ -12,6 +12,11 @@ import { API_VALUES } from "../../constants.mjs";
 const { FETCH_INITIAL_CONFIG_SUPPLIERS } = API_VALUES;
 
 const initInitialCnfFiles = async (baseAPiUrl) => {
+  createCmdMessage({
+    type: "info",
+    message: `fetch organizations and creating it's certs...`,
+  });
+
   const { result } = await createFetchRequest({
     baseAPiUrl,
     resourceNameUrl: FETCH_INITIAL_CONFIG_SUPPLIERS,
