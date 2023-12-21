@@ -11,19 +11,16 @@ import { writeFile } from "fs/promises";
 import {
   createCmdMessage,
   findRootYarnWorkSpaces,
-  getCurrentDate,
 } from "@zatca-server/helpers";
 import {
-  API_VALUES,
   ZATCA_SANDBOX_TYPES,
   ZATCA_SANDBOX_TYPES_KEYS,
   SERVER_CONFIG,
 } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import issueCertificate from "./api-helpers/issueCertificate.mjs";
+import certifyZatcaUser from "./api-helpers/certifyZatcaUser.mjs";
 import sendZatcaInvoice from "./api-helpers/sendZatcaInvoice.mjs";
-
-const { POST_INITIAL_INVOICES } = API_VALUES;
 const { dataBaseServerPort } = SERVER_CONFIG;
 // 100 - 15%
 // dep + cred => no discount
@@ -49,9 +46,9 @@ const { dataBaseServerPort } = SERVER_CONFIG;
     process.kill(process.pid);
   }
 
-  const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
-  const API_URL_PORT = dataBaseServerPort || 9090;
-  const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
+  // const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
+  // const API_URL_PORT = dataBaseServerPort || 9090;
+  // const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
   const { errors } = await issueCertificate(sandbox, false);
 
@@ -59,6 +56,11 @@ const { dataBaseServerPort } = SERVER_CONFIG;
     createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
     process.kill(process.pid);
   }
+
+  const results = await certifyZatcaUser(sandbox);
+
+  const root = await findRootYarnWorkSpaces();
+  await writeFile(`${root}/results/res.json`, JSON.stringify(results, null, 2));
 
   // const {
   //   response: { status },

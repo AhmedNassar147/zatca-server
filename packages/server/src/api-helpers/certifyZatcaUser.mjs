@@ -24,16 +24,10 @@ const certifyZatcaUser = async (sandbox) => {
       invoiceData,
     });
 
-    results = results.concat(result);
-
-    const {
-      response: { status },
-    } = result;
-
-    if (status !== 200) {
-      break;
-    }
+    results.push(result);
   }
 
-  return certifyZatcaUser;
+  return results;
 };
+
+export default certifyZatcaUser;
