@@ -9,7 +9,7 @@ import { getCurrentDate } from "@zatca-server/helpers";
 const baseInvoiceData = {
   paymentMeansCode: "10",
   supplier: {
-    crnNo: "Iccsiporex",
+    crnNo: "00000000",
     streetName: "King Fahahd st",
     additionalStreetName: "street name",
     buildingNumber: "0000",
@@ -19,11 +19,11 @@ const baseInvoiceData = {
     postalZone: "31952",
     countrySubentity: "moderia",
     countryIdCode: "SA",
-    vatName: "ShaEk",
+    vatName: "Iccsiporex",
     vatNumber: "300056985100003",
   },
   customer: {
-    crnNo: "00000000",
+    crnNo: "00000001",
     streetName: "King Fahahd st",
     additionalStreetName: "King Fahahd st",
     buildingNumber: "4444",
