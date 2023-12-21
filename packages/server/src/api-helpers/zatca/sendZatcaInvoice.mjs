@@ -18,9 +18,12 @@ const sendZatcaInvoice = async ({
   organizationNo,
 }) => {
   const {
-    decodedToken: eInvoiceCertificate,
     privateCertPath,
-    csidData: { binarySecurityToken, secret },
+    csidData: {
+      binarySecurityToken,
+      secret,
+      decodedToken: eInvoiceCertificate,
+    },
     productionCsidData,
   } = await readCertsOrganizationsData(organizationNo);
 
