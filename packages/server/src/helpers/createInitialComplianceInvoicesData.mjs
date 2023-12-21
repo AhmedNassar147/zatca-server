@@ -149,7 +149,7 @@ const createStandardInvoices = () => [
     transactionTypeCode: "0100000",
     invoiceTypeCode: "388",
     invoiceCounterNo: 4,
-    deliveryDate: "25-12-2023",
+    deliveryDate: "2023-12-25",
   }),
 
   // standard debit invoice
