@@ -11,10 +11,10 @@ import {
 } from "@zatca-server/helpers";
 import createZatcaRequest from "./createZatcaRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
+import getCsidJsonFilePath from "../helpers/getCsidJsonFilePath.mjs";
 import {
   BASE_API_HEADERS,
   SERVER_CONFIG,
-  CSID_FILE_PATH,
   CERTS_FILE_NAMES,
   API_VALUES,
 } from "../constants.mjs";
@@ -29,6 +29,7 @@ const baseRequestHeaders = {
 };
 
 const createRequestHeadersAndBodyWithComplianceCsidData = async (
+  csidFilePath,
   isProductionCsid
 ) => {
   if (!isProductionCsid) {
@@ -48,7 +49,7 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
     };
   }
 
-  const complianceCsidData = await readJsonFile(CSID_FILE_PATH, true);
+  const complianceCsidData = await readJsonFile(csidFilePath, true);
   const { binarySecurityToken, secret, requestID } = complianceCsidData;
 
   const requestHeaders = {
@@ -64,8 +65,13 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
 };
 
 const issueCertificate = async (sandbox, isProductionCsid) => {
+  const csidFilePath = await getCsidJsonFilePath();
+
   let { bodyData, requestHeaders, complianceCsidData } =
-    await createRequestHeadersAndBodyWithComplianceCsidData(isProductionCsid);
+    await createRequestHeadersAndBodyWithComplianceCsidData(
+      csidFilePath,
+      isProductionCsid
+    );
 
   const resourceNameUrl = isProductionCsid
     ? FETCH_FINAL_CSID[sandbox]
@@ -116,7 +122,7 @@ const issueCertificate = async (sandbox, isProductionCsid) => {
       ? { ...complianceCsidData, productionCsidData: data }
       : data;
 
-    await writeFile(CSID_FILE_PATH, JSON.stringify(finalValues, null, 2));
+    await writeFile(csidFilePath, JSON.stringify(finalValues, null, 2));
   }
 
   return {

@@ -74,8 +74,6 @@ export const CERTS_FILE_NAMES = {
   taxPayerPath: "certs/taxpayer.csr",
 };
 
-export const CSID_FILE_PATH = `${rootYarnWorkSpacePath}/certs/csid.json`;
-
 export const ZATCA_INVOICE_TRANSACTION_TYPE_CODES = {
   CREDIT_NOTE: "381",
   DEBIT_NOTE: "383",

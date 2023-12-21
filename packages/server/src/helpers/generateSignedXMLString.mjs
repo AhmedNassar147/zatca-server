@@ -15,7 +15,7 @@ import generateQRCode from "./generateQRCode.mjs";
 import XMLDocument from "./xmlParser.mjs";
 import createInvoiceXml from "./createInvoiceXml.mjs";
 import createFinalUblExtensionsSectionXml from "./createFinalUblExtensionsSectionXml.mjs";
-import { CSID_FILE_PATH } from "../constants.mjs";
+import getCsidJsonFilePath from "./getCsidJsonFilePath.mjs";
 
 /**
  * This hurts to do :'(. I hope that it's only temporary and ZATCA decides to just minify the XML before doing any hashing on it.
@@ -39,8 +39,10 @@ const fixSignedPropertiesIndentation = (signedInvoiceString) => {
 };
 
 const generateSignedXMLString = async (invoiceData) => {
+  const csidFilePath = await getCsidJsonFilePath();
+
   const { decodedToken: eInvoiceCertificate } = await readJsonFile(
-    CSID_FILE_PATH,
+    csidFilePath,
     true
   );
 

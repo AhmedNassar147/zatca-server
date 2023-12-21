@@ -6,7 +6,8 @@
 import { readJsonFile, createCmdMessage } from "@zatca-server/helpers";
 import createZatcaRequest from "./createZatcaRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import { BASE_API_HEADERS, CSID_FILE_PATH } from "../constants.mjs";
+import getCsidJsonFilePath from "../helpers/getCsidJsonFilePath.mjs";
+import { BASE_API_HEADERS } from "../constants.mjs";
 import generateSignedXMLString from "../helpers/generateSignedXMLString.mjs";
 
 const sendZatcaInvoice = async ({
@@ -26,6 +27,8 @@ const sendZatcaInvoice = async ({
     invoice: encodedInvoiceXml,
   };
 
+  const csidFilePath = await getCsidJsonFilePath();
+
   const {
     binarySecurityToken,
     secret,
@@ -33,7 +36,7 @@ const sendZatcaInvoice = async ({
       binarySecurityToken: productionBinarySecurityToken,
       secret: productionSecret,
     },
-  } = await readJsonFile(CSID_FILE_PATH, true);
+  } = await readJsonFile(csidFilePath, true);
 
   const options = useProductionCsid
     ? [productionBinarySecurityToken, productionSecret]
@@ -44,7 +47,7 @@ const sendZatcaInvoice = async ({
       type: "error",
       message: `${
         useProductionCsid ? "production " : ""
-      }binarySecurityToken or secret wasn't found in ${CSID_FILE_PATH}`,
+      }binarySecurityToken or secret wasn't found in ${csidFilePath}`,
     });
 
     process.kill(process.pid);
