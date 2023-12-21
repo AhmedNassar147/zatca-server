@@ -3,10 +3,10 @@
  * Helper: `sendZatcaInvoice`.
  *
  */
-import { readJsonFile, createCmdMessage } from "@zatca-server/helpers";
+import { createCmdMessage } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import getCsidJsonFilePath from "../../helpers/getCsidJsonFilePath.mjs";
+import readCertsOrganizationsData from "../../helpers/readCertsOrganizationsData.mjs";
 import generateSignedXMLString from "../../helpers/generateSignedXMLString.mjs";
 import { BASE_API_HEADERS } from "../../constants.mjs";
 
@@ -15,9 +15,21 @@ const sendZatcaInvoice = async ({
   resourceNameUrl,
   useProductionCsid,
   invoiceData,
+  organizationNo,
 }) => {
+  const {
+    decodedToken: eInvoiceCertificate,
+    privateCertPath,
+    csidData: { binarySecurityToken, secret },
+    productionCsidData,
+  } = await readCertsOrganizationsData(organizationNo);
+
   const { invoiceHash, encodedInvoiceXml, signedInvoiceString } =
-    await generateSignedXMLString(invoiceData);
+    await generateSignedXMLString({
+      invoiceData,
+      eInvoiceCertificate,
+      privateCertPath,
+    });
 
   const { uuid } = invoiceData;
 
@@ -26,11 +38,6 @@ const sendZatcaInvoice = async ({
     uuid,
     invoice: encodedInvoiceXml,
   };
-
-  const csidFilePath = await getCsidJsonFilePath();
-
-  const { binarySecurityToken, secret, productionCsidData } =
-    await readJsonFile(csidFilePath, true);
 
   const {
     binarySecurityToken: productionBinarySecurityToken,
@@ -46,7 +53,7 @@ const sendZatcaInvoice = async ({
       type: "error",
       message: `${
         useProductionCsid ? "production " : ""
-      }binarySecurityToken or secret wasn't found in ${csidFilePath}`,
+      }binarySecurityToken or secret wasn't found`,
     });
 
     process.kill(process.pid);

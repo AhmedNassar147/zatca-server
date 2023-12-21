@@ -3,11 +3,10 @@
  * Helper: `initInitialCnfFiles`.
  *
  */
-import { writeFile } from "fs/promises";
 import { createCmdMessage, isArrayHasData } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createOrganizationConfigFile from "./createOrganizationConfigFile.mjs";
-import getOrganizationsDataJsonFilePath from "../../helpers/getOrganizationsDataJsonFilePath.mjs";
+import writeCertsOrganizationsData from "../../helpers/writeCertsOrganizationsData.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
 const { FETCH_INITIAL_CONFIG_SUPPLIERS } = API_VALUES;
@@ -41,6 +40,11 @@ const initInitialCnfFiles = async (baseAPiUrl) => {
         invoiceKind,
         vatName,
         vatNumber,
+        privateCertPath: `certs/${organizationNo}/privateKey.pem`,
+        publicCertPath: `certs/${organizationNo}/publicKey.pem`,
+        taxPayerPath: `certs/${organizationNo}/taxpayer.csr`,
+        csidData: {},
+        productionCsidData: {},
       };
 
       return acc;
@@ -48,12 +52,7 @@ const initInitialCnfFiles = async (baseAPiUrl) => {
     {}
   );
 
-  const organizationsDataFilePath = await getOrganizationsDataJsonFilePath();
-
-  await writeFile(
-    organizationsDataFilePath,
-    JSON.stringify(organizationCertsData, null, 2)
-  );
+  await writeCertsOrganizationsData(organizationCertsData);
 };
 
 export default initInitialCnfFiles;

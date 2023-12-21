@@ -3,24 +3,21 @@
  * Helper: `issueCertificate`.
  *
  */
-import { writeFile } from "fs/promises";
 import {
   decodeBase64ToString,
-  readJsonFile,
   readAndEncodeCertToBase64,
 } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import getCsidJsonFilePath from "../../helpers/getCsidJsonFilePath.mjs";
+import readCertsOrganizationsData from "../../helpers/readCertsOrganizationsData.mjs";
+import writeCertsOrganizationsData from "../../helpers/writeCertsOrganizationsData.mjs";
 import {
   BASE_API_HEADERS,
   SERVER_CONFIG,
-  CERTS_FILE_NAMES,
   API_VALUES,
 } from "../../constants.mjs";
 
 const { otp } = SERVER_CONFIG;
-const { taxPayerPath } = CERTS_FILE_NAMES;
 const { FETCH_FINAL_CSID, POST_ZATCA_COMPLIANCE_CSID } = API_VALUES;
 
 const baseRequestHeaders = {
@@ -29,9 +26,12 @@ const baseRequestHeaders = {
 };
 
 const createRequestHeadersAndBodyWithComplianceCsidData = async (
-  csidFilePath,
+  taxPayerPath,
+  csidData,
   isProductionCsid
 ) => {
+  const { binarySecurityToken, secret, requestID } = csidData;
+
   if (!isProductionCsid) {
     // don't remove cert headers
     const encodedPayerTaxCert = await readAndEncodeCertToBase64(taxPayerPath);
@@ -49,9 +49,6 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
     };
   }
 
-  const complianceCsidData = await readJsonFile(csidFilePath, true);
-  const { binarySecurityToken, secret, requestID } = complianceCsidData;
-
   const requestHeaders = {
     ...baseRequestHeaders,
     ...createZatcaAuthHeaders(binarySecurityToken, secret),
@@ -60,16 +57,17 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
   return {
     requestHeaders,
     bodyData: { compliance_request_id: requestID },
-    complianceCsidData,
   };
 };
 
-const issueCertificate = async (sandbox, isProductionCsid) => {
-  const csidFilePath = await getCsidJsonFilePath();
+const issueCertificate = async (organizationNo, sandbox, isProductionCsid) => {
+  const organizationsData = await readCertsOrganizationsData();
+  const { taxPayerPath, csidData } = organizationsData[organizationNo];
 
-  let { bodyData, requestHeaders, complianceCsidData } =
+  let { bodyData, requestHeaders } =
     await createRequestHeadersAndBodyWithComplianceCsidData(
-      csidFilePath,
+      taxPayerPath,
+      csidData,
       isProductionCsid
     );
 
@@ -118,11 +116,11 @@ const issueCertificate = async (sandbox, isProductionCsid) => {
       decodedToken: `-----BEGIN CERTIFICATE-----\n${decodedToken}\n-----END CERTIFICATE-----`,
     };
 
-    const finalValues = isProductionCsid
-      ? { ...complianceCsidData, productionCsidData: data }
-      : data;
+    const path = `${organizationNo}.${
+      isProductionCsid ? "productionCsidData" : "csidData"
+    }`;
 
-    await writeFile(csidFilePath, JSON.stringify(finalValues, null, 2));
+    await writeCertsOrganizationsData(data, path, organizationsData);
   }
 
   return {

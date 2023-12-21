@@ -5,11 +5,8 @@
  */
 import { createSign } from "crypto";
 import { readCertFile } from "@zatca-server/helpers";
-import { CERTS_FILE_NAMES } from "../constants.mjs";
 
-const { privateCertPath } = CERTS_FILE_NAMES;
-
-const createInvoiceDigitalSignature = async (invoiceHash) => {
+const createInvoiceDigitalSignature = async (invoiceHash, privateCertPath) => {
   const invoiceHashBytes = Buffer.from(invoiceHash, "base64");
 
   const privateKeyContent = await readCertFile(privateCertPath);

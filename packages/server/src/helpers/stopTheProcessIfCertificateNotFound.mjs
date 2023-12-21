@@ -9,23 +9,33 @@ import {
   checkPathExists,
   createCmdMessage,
 } from "@zatca-server/helpers";
-import { CERTS_FILE_NAMES } from "../constants.mjs";
+import readCertsOrganizationsData from "./readCertsOrganizationsData.mjs";
 
 const stopTheProcessIfCertificateNotFound = async () => {
-  const rootPath = await findRootYarnWorkSpaces();
+  const organizationsData = await readCertsOrganizationsData();
+  const rootYarnWorkSpaces = await findRootYarnWorkSpaces();
 
   createCmdMessage({
     type: "info",
     message: "checking certificates ...",
   });
 
-  const configPromises = Object.keys(CERTS_FILE_NAMES).map(async (key) => {
-    const basePath = CERTS_FILE_NAMES[key];
-    const fullPath = `${rootPath}/${basePath}`;
+  const values = Object.values(organizationsData);
 
-    const doesFileExsist = await checkPathExists(fullPath);
+  const paths = values
+    .map(({ privateCertPath, publicCertPath, taxPayerPath }) => [
+      privateCertPath,
+      publicCertPath,
+      taxPayerPath,
+    ])
+    .flat();
+
+  const configPromises = paths.map(async (fullPath) => {
+    const doesFileExsist = await checkPathExists(
+      `${rootYarnWorkSpaces}/${fullPath}`
+    );
     return !doesFileExsist
-      ? `${chalk.bold.white(basePath)} doesn't exist`
+      ? `${chalk.bold.white(fullPath)} doesn't exist`
       : false;
   });
 

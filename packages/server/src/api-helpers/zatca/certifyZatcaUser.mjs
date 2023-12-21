@@ -4,13 +4,16 @@
  *
  */
 import createInitialComplianceInvoicesData from "./createInitialComplianceInvoicesData.mjs";
+import readCertsOrganizationsData from "../../helpers/readCertsOrganizationsData.mjs";
 import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
 const { POST_INITIAL_INVOICES } = API_VALUES;
 
-const certifyZatcaUser = async (sandbox) => {
-  const invoicesData = createInitialComplianceInvoicesData("1100");
+const certifyZatcaUser = async (organizationNo, sandbox) => {
+  const { invoiceKind } = await readCertsOrganizationsData(organizationNo);
+
+  const invoicesData = createInitialComplianceInvoicesData(invoiceKind);
 
   const resourceNameUrl = POST_INITIAL_INVOICES[sandbox];
   let results = [];
@@ -22,6 +25,7 @@ const certifyZatcaUser = async (sandbox) => {
       resourceNameUrl,
       useProductionCsid: false,
       invoiceData,
+      organizationNo,
     });
 
     results.push(result);

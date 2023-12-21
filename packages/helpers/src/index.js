@@ -36,6 +36,7 @@ import removeCertificateUnwantedLines from "./removeCertificateUnwantedLines.mjs
 import covertDateToStandardDate from "./covertDateToStandardDate.mjs";
 import toFixedNoRounding from "./toFixedNoRounding.mjs";
 import createRootFolder from "./createRootFolder.mjs";
+import setIn from "./setIn.mjs";
 
 export {
   capitalizeFirstLetter,
@@ -71,6 +72,7 @@ export {
   covertDateToStandardDate,
   toFixedNoRounding,
   createRootFolder,
+  setIn,
 };
 
 export * from "./constants.mjs";

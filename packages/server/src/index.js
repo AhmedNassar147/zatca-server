@@ -27,6 +27,8 @@ import {
 } from "./api-helpers/index.mjs";
 const { dataBaseServerPort } = SERVER_CONFIG;
 
+const organizationNo = "001";
+
 (async () => {
   // --exsys-base-url --sandbox=developer|simulation
   const { exsysBaseUrl, sandbox: _sandbox } = await collectProcessOptions();
@@ -46,17 +48,16 @@ const { dataBaseServerPort } = SERVER_CONFIG;
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
   await initInitialCnfFiles(EXSYS_BASE_URL);
-  return;
   await stopTheProcessIfCertificateNotFound(false);
 
-  const { errors } = await issueCertificate(sandbox, false);
+  const { errors } = await issueCertificate(organizationNo, sandbox);
 
   if (errors) {
     createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
     process.kill(process.pid);
   }
 
-  const results = await certifyZatcaUser(sandbox);
+  const results = await certifyZatcaUser(organizationNo, sandbox);
 
   const { xmlFiles, data } = results.reduce(
     (acc, { signedInvoiceString, ...other }) => {

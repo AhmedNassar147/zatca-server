@@ -69,14 +69,6 @@ export const BASE_API_HEADERS = {
   "content-type": "application/json",
 };
 
-export const CERTS_FILE_NAMES = {
-  certsFolderName: "certs",
-  privateCertPath: "certs/privateKey.pem",
-  publicCertPath: "certs/publicKey.pem",
-  taxPayerPath: "certs/taxpayer.csr",
-  cnfFilePath: "certs/config.cnf",
-};
-
 export const ZATCA_INVOICE_TRANSACTION_TYPE_CODES = {
   CREDIT_NOTE: "381",
   DEBIT_NOTE: "383",
