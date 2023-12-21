@@ -19,21 +19,15 @@ import {
   SERVER_CONFIG,
 } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
-import issueCertificate from "./api-helpers/issueCertificate.mjs";
-import certifyZatcaUser from "./api-helpers/certifyZatcaUser.mjs";
-import sendZatcaInvoice from "./api-helpers/sendZatcaInvoice.mjs";
+import {
+  initInitialCnfFiles,
+  issueCertificate,
+  certifyZatcaUser,
+  sendZatcaInvoice,
+} from "./api-helpers/index.mjs";
 const { dataBaseServerPort } = SERVER_CONFIG;
-// 100 - 15%
-// dep + cred => no discount
-
-// for config csr
-// title=1000 standard
-// title=0100 simplified
-// title=1100 both
 
 (async () => {
-  await stopTheProcessIfCertificateNotFound(false);
-
   // --exsys-base-url --sandbox=developer|simulation
   const { exsysBaseUrl, sandbox: _sandbox } = await collectProcessOptions();
 
@@ -47,9 +41,13 @@ const { dataBaseServerPort } = SERVER_CONFIG;
     process.kill(process.pid);
   }
 
-  // const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
-  // const API_URL_PORT = dataBaseServerPort || 9090;
-  // const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
+  const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
+  const API_URL_PORT = dataBaseServerPort || 9090;
+  const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
+
+  await initInitialCnfFiles(EXSYS_BASE_URL);
+  return;
+  await stopTheProcessIfCertificateNotFound(false);
 
   const { errors } = await issueCertificate(sandbox, false);
 

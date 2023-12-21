@@ -9,15 +9,15 @@ import {
   readJsonFile,
   readAndEncodeCertToBase64,
 } from "@zatca-server/helpers";
-import createZatcaRequest from "./createZatcaRequest.mjs";
+import createFetchRequest from "../createFetchRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import getCsidJsonFilePath from "../helpers/getCsidJsonFilePath.mjs";
+import getCsidJsonFilePath from "../../helpers/getCsidJsonFilePath.mjs";
 import {
   BASE_API_HEADERS,
   SERVER_CONFIG,
   CERTS_FILE_NAMES,
   API_VALUES,
-} from "../constants.mjs";
+} from "../../constants.mjs";
 
 const { otp } = SERVER_CONFIG;
 const { taxPayerPath } = CERTS_FILE_NAMES;
@@ -77,11 +77,11 @@ const issueCertificate = async (sandbox, isProductionCsid) => {
     ? FETCH_FINAL_CSID[sandbox]
     : POST_ZATCA_COMPLIANCE_CSID;
 
-  const response = await createZatcaRequest({
+  const response = await createFetchRequest({
     resourceNameUrl,
     bodyData,
     requestHeaders,
-    sandbox,
+    zatcaSandbox: sandbox,
   });
 
   const { result, error } = response;

@@ -6,23 +6,37 @@
 import chalk from "chalk";
 import axios from "axios";
 import { delayProcess, createCmdMessage } from "@zatca-server/helpers";
-import { BASE_API_HEADERS, HTTP_STATUS_CODE } from "../constants.mjs";
+import {
+  BASE_API_HEADERS,
+  HTTP_STATUS_CODE,
+  API_BASE_URLS,
+  ZATCA_SANDBOX_TYPES,
+} from "../constants.mjs";
+
+const { ZATCA_SIMULATION, ZATCA_DEV_PORTAL } = API_BASE_URLS;
+const { simulation } = ZATCA_SANDBOX_TYPES;
 
 const createFetchRequest = (options) => {
   const {
-    baseAPiUrl,
+    baseAPiUrl: _baseAPiUrl,
     resourceNameUrl,
     requestParams,
     requestMethod = "POST",
     requestHeaders = BASE_API_HEADERS,
-    httpsAgent,
-    body,
+    bodyData,
     transformApiResults,
     httpStatusCodes = HTTP_STATUS_CODE,
     retryTimes = 0,
     retryDelay = 0,
-    errorMessage = "something went wrong",
+    zatcaSandbox,
   } = options;
+
+  let baseAPiUrl = _baseAPiUrl;
+
+  if (zatcaSandbox) {
+    baseAPiUrl =
+      zatcaSandbox === simulation ? ZATCA_SIMULATION : ZATCA_DEV_PORTAL;
+  }
 
   if (!resourceNameUrl) {
     throw new Error("resourceName is not found in `EXSYS_API_IDS`");
@@ -46,8 +60,7 @@ const createFetchRequest = (options) => {
   const fetchOptions = {
     method: requestMethod,
     headers: requestHeaders,
-    httpsAgent,
-    data: body,
+    data: bodyData,
     url: API_URL,
   };
 
@@ -79,6 +92,10 @@ const createFetchRequest = (options) => {
           });
         })
         .catch(async (error) => {
+          const errorMessage = zatcaSandbox
+            ? "zatca server has an error"
+            : "something went wrong";
+
           const { response } = error || {};
           const { data: responseData, status } = response || {};
           if (n > 0) {

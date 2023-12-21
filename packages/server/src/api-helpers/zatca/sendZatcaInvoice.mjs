@@ -4,11 +4,11 @@
  *
  */
 import { readJsonFile, createCmdMessage } from "@zatca-server/helpers";
-import createZatcaRequest from "./createZatcaRequest.mjs";
+import createFetchRequest from "../createFetchRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import getCsidJsonFilePath from "../helpers/getCsidJsonFilePath.mjs";
-import { BASE_API_HEADERS } from "../constants.mjs";
-import generateSignedXMLString from "../helpers/generateSignedXMLString.mjs";
+import getCsidJsonFilePath from "../../helpers/getCsidJsonFilePath.mjs";
+import generateSignedXMLString from "../../helpers/generateSignedXMLString.mjs";
+import { BASE_API_HEADERS } from "../../constants.mjs";
 
 const sendZatcaInvoice = async ({
   sandbox,
@@ -60,11 +60,11 @@ const sendZatcaInvoice = async ({
     ...createZatcaAuthHeaders(...options),
   };
 
-  const response = await createZatcaRequest({
+  const response = await createFetchRequest({
     resourceNameUrl,
     bodyData,
     requestHeaders,
-    sandbox,
+    zatcaSandbox: sandbox,
   });
 
   return {

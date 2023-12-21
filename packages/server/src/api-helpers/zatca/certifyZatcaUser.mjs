@@ -3,9 +3,9 @@
  * Helper: `certifyZatcaUser`.
  *
  */
-import { API_VALUES } from "../constants.mjs";
-import createInitialComplianceInvoicesData from "../helpers/createInitialComplianceInvoicesData.mjs";
+import createInitialComplianceInvoicesData from "./createInitialComplianceInvoicesData.mjs";
 import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
+import { API_VALUES } from "../../constants.mjs";
 
 const { POST_INITIAL_INVOICES } = API_VALUES;
 

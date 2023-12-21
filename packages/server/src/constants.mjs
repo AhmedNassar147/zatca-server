@@ -31,6 +31,7 @@ export const API_IDS_NAMES = {
   FETCH_FINAL_CSID: "FETCH_FINAL_CSID",
   REPORT_ACTUAL_SIMPLIFIED_INVOICE: "REPORT_ACTUAL_SIMPLIFIED_INVOICE",
   REPORT_ACTUAL_STANDARD_INVOICE: "REPORT_ACTUAL_STANDARD_INVOICE",
+  FETCH_INITIAL_CONFIG_SUPPLIERS: "FETCH_INITIAL_CONFIG_SUPPLIERS",
 };
 
 export const API_VALUES = {
@@ -45,6 +46,7 @@ export const API_VALUES = {
   },
   [API_IDS_NAMES.REPORT_ACTUAL_SIMPLIFIED_INVOICE]: "invoices/reporting/single",
   [API_IDS_NAMES.REPORT_ACTUAL_STANDARD_INVOICE]: "invoices/clearance/single",
+  [API_IDS_NAMES.FETCH_INITIAL_CONFIG_SUPPLIERS]: "ex_zatca/zatca_config_file",
 };
 
 export const API_BASE_URLS = {
@@ -72,6 +74,7 @@ export const CERTS_FILE_NAMES = {
   privateCertPath: "certs/privateKey.pem",
   publicCertPath: "certs/publicKey.pem",
   taxPayerPath: "certs/taxpayer.csr",
+  cnfFilePath: "certs/config.cnf",
 };
 
 export const ZATCA_INVOICE_TRANSACTION_TYPE_CODES = {

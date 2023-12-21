@@ -4,7 +4,7 @@
  *
  */
 import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
-import { API_VALUES } from "../constants.mjs";
+import { API_VALUES } from "../../constants.mjs";
 
 const { REPORT_ACTUAL_SIMPLIFIED_INVOICE, REPORT_ACTUAL_STANDARD_INVOICE } =
   API_VALUES;
