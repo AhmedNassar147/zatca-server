@@ -74,11 +74,17 @@ const { dataBaseServerPort } = SERVER_CONFIG;
   );
 
   const root = await findRootYarnWorkSpaces();
-  await writeFile(`${root}/results/res.json`, JSON.stringify(data, null, 2));
+  await writeFile(
+    `${root}/results/sandbox_res.json`,
+    JSON.stringify(data, null, 2)
+  );
 
   for (let index = 0; index < xmlFiles.length; index++) {
     const fileData = xmlFiles[index];
-    await writeFile(`${root}/results/invoice${index + 1}.json`, fileData);
+    await writeFile(
+      `${root}/results/sandbox_invoice_${index + 1}.json`,
+      fileData
+    );
   }
 
   // const {
