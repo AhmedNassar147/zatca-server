@@ -18,6 +18,8 @@ const sendZatcaInvoice = async ({
   const { invoiceHash, encodedInvoiceXml, signedInvoiceString } =
     await generateSignedXMLString(invoiceData);
 
+  const { uuid } = invoiceData;
+
   const bodyData = {
     invoiceHash,
     uuid,
