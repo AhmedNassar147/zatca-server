@@ -29,14 +29,13 @@ const sendZatcaInvoice = async ({
 
   const csidFilePath = await getCsidJsonFilePath();
 
+  const { binarySecurityToken, secret, productionCsidData } =
+    await readJsonFile(csidFilePath, true);
+
   const {
-    binarySecurityToken,
-    secret,
-    productionCsidData: {
-      binarySecurityToken: productionBinarySecurityToken,
-      secret: productionSecret,
-    },
-  } = await readJsonFile(csidFilePath, true);
+    binarySecurityToken: productionBinarySecurityToken,
+    secret: productionSecret,
+  } = productionCsidData || {};
 
   const options = useProductionCsid
     ? [productionBinarySecurityToken, productionSecret]
