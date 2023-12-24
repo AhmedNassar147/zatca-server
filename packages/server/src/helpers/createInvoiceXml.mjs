@@ -28,6 +28,26 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
     ? `<cbc:CompanyID>${vatNumber}</cbc:CompanyID>`
     : "";
 
+  const additionalStreetNameXml = !!additionalStreetName
+    ? `<cbc:AdditionalStreetName>${additionalStreetName}</cbc:AdditionalStreetName>`
+    : "";
+
+  const postalZoneXml = !!postalZone
+    ? `<cbc:PostalZone>${postalZone}</cbc:PostalZone>`
+    : "";
+
+  const buildingNumberXml = !!buildingNumber
+    ? `<cbc:BuildingNumber>${buildingNumber}</cbc:BuildingNumber>`
+    : "";
+
+  const plotIdentificationXml = !!plotIdentification
+    ? `<cbc:PlotIdentification>${plotIdentification}</cbc:PlotIdentification>`
+    : "";
+
+  const citySubdivisionNameXml = !!citySubdivisionName
+    ? `<cbc:CitySubdivisionName>${citySubdivisionName}</cbc:CitySubdivisionName>`
+    : "";
+
   const restValue = !crnNo
     ? ""
     : `\n<cac:Party>
@@ -36,12 +56,12 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
     </cac:PartyIdentification>
     <cac:PostalAddress>
       <cbc:StreetName>${streetName}</cbc:StreetName>
-      <cbc:AdditionalStreetName>${additionalStreetName}</cbc:AdditionalStreetName>
-      <cbc:BuildingNumber>${buildingNumber}</cbc:BuildingNumber>
-      <cbc:PlotIdentification>${plotIdentification}</cbc:PlotIdentification>
-      <cbc:CitySubdivisionName>${citySubdivisionName}</cbc:CitySubdivisionName>
+      ${additionalStreetNameXml}
+      ${buildingNumberXml}
+      ${plotIdentificationXml}
+      ${citySubdivisionNameXml}
       <cbc:CityName>${cityName}</cbc:CityName>
-      <cbc:PostalZone>${postalZone}</cbc:PostalZone>
+      ${postalZoneXml}
       <cbc:CountrySubentity>${countrySubentity}</cbc:CountrySubentity>
       <cac:Country>
         <cbc:IdentificationCode>${countryIdCode}</cbc:IdentificationCode>
