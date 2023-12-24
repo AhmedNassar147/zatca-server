@@ -3,6 +3,10 @@
  * Helper: `createInvoiceXml`.
  *
  */
+
+const hasNoNumberValue = (value) =>
+  !value || ["0.00", "0.0", "00.00"].includes(value);
+
 const createTagIfValueFound = (value, tag, condition) => {
   const valueFound = condition || !!value;
   return !!valueFound ? `<${tag}>${value}</${tag}>` : "";
@@ -61,8 +65,6 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
 
   return `<cac:${mainTagName}>${restValue}</cac:${mainTagName}>`;
 };
-
-const hasNoNumberValue = (value) => !value || ["0.00", "0.0"].includes(value);
 
 const createAllowanceChargeXml = ({
   totalDiscountAmount,
@@ -246,6 +248,8 @@ const createInvoiceXml = ({
     taxCategory,
   });
 
+  const _totalDiscountAmount = totalDiscountAmount || "0.00";
+
   const deliveryXml = !!deliveryDate
     ? `<cac:Delivery>
         <cbc:ActualDeliveryDate>${deliveryDate}</cbc:ActualDeliveryDate>
@@ -297,16 +301,13 @@ const createInvoiceXml = ({
     <cbc:LineExtensionAmount currencyID="SAR">${totalWithoutTax}</cbc:LineExtensionAmount>
     <cbc:TaxExclusiveAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="SAR">${totalWithTax}</cbc:TaxInclusiveAmount>
-    <cbc:AllowanceTotalAmount currencyID="SAR">${
-      totalDiscountAmount || "0.00"
-    }</cbc:AllowanceTotalAmount>
+    <cbc:AllowanceTotalAmount currencyID="SAR">${_totalDiscountAmount}</cbc:AllowanceTotalAmount>
     <cbc:PrepaidAmount currencyID="SAR">0.00</cbc:PrepaidAmount>
     <cbc:PayableAmount currencyID="SAR">${totalWithTax}</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   ${invoiceLinesXml}
 </Invoice>`;
 
-  // return xml.replace(/\n|\s{2,}/g, "");
   return xml;
 };
 
