@@ -94,6 +94,7 @@ const baseInvoiceData = {
   totalTaxAmount: "2.25",
   totalWithoutTax: "915.00",
   totalWithTax: "917.25",
+  taxCategory: "S",
 };
 
 const createInitialComplianceInvoiceData = ({

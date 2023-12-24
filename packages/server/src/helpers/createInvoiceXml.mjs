@@ -88,10 +88,11 @@ const createAllowanceChargeXml = ({
   totalTaxPercent,
   discountReasonCode = "95",
   discountReason = "Discount",
+  taxCategory,
 }) => {
   const taxSection = !hasNoNumberValue(totalTaxPercent)
     ? `<cac:TaxCategory>
-        <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
+        <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">${taxCategory}</cbc:ID>
         <cbc:Percent>${totalTaxPercent}</cbc:Percent>
         <cac:TaxScheme>
           <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
@@ -159,6 +160,7 @@ const createProductLineXml = ({
     totalDiscountAmount: discount,
     discountReasonCode,
     discountReason,
+    taxCategory,
   });
 
   return `<cac:InvoiceLine>
@@ -209,6 +211,7 @@ const createInvoiceXml = ({
   totalTaxAmount,
   totalWithoutTax,
   totalWithTax,
+  taxCategory,
   supplier,
   customer,
 }) => {
@@ -250,12 +253,13 @@ const createInvoiceXml = ({
     totalTaxPercent,
     discountReasonCode,
     discountReason,
+    taxCategory,
   });
 
   const deliveryXml = !!deliveryDate
     ? `<cac:Delivery>
-  <cbc:ActualDeliveryDate>${deliveryDate}</cbc:ActualDeliveryDate>
-</cac:Delivery>`
+        <cbc:ActualDeliveryDate>${deliveryDate}</cbc:ActualDeliveryDate>
+      </cac:Delivery>`
     : "";
 
   // <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
