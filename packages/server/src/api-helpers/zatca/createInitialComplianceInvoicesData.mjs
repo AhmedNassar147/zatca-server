@@ -54,7 +54,7 @@ const baseInvoiceData = {
     {
       id: "1",
       productName: "O-BURBERRY 1344 55 1166 نظارة طبية",
-      taxCategory: "E",
+      taxCategory: "Z",
       quantity: 1,
       price: "910.00",
       unitCode: "EACH",
@@ -64,6 +64,8 @@ const baseInvoiceData = {
       taxAmount: "0.00",
       totalWithoutTax: "900.00",
       totalWithTax: "900.00",
+      taxExemptionReasonCode: "90",
+      taxExemptionReason: "reason",
     },
     {
       id: "2",

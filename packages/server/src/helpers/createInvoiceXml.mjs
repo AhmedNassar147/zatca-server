@@ -83,6 +83,11 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
 
 const hasNoNumberValue = (value) => !value || ["0.00", "0.0"].includes(value);
 
+const createTagIfValueFound = (value, tag, condition) => {
+  const valueFound = condition || !!value;
+  return !!valueFound ? `<${tag}>${value}</${tag}>` : "";
+};
+
 const createAllowanceChargeXml = ({
   totalDiscountAmount,
   totalTaxPercent,
@@ -117,17 +122,26 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
         taxAmount,
         taxCategory,
         taxPercent,
-      }) => `<cac:TaxSubtotal>
-          <cbc:TaxableAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxableAmount>
-          <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
-          <cac:TaxCategory>
-            <cbc:ID>${taxCategory}</cbc:ID>
-            <cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
-            <cac:TaxScheme>
-              <cbc:ID>VAT</cbc:ID>
-            </cac:TaxScheme>
-          </cac:TaxCategory>
-        </cac:TaxSubtotal>`
+        taxExemptionReasonCode,
+        taxExemptionReason,
+      }) => {
+        return `<cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxableAmount>
+        <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
+        <cac:TaxCategory>
+        <cbc:ID>${taxCategory}</cbc:ID>
+        <cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
+        ${createTagIfValueFound(
+          taxExemptionReasonCode,
+          "cbc:TaxExemptionReasonCode"
+        )}
+        ${createTagIfValueFound(taxExemptionReason, "cbc:TaxExemptionReason")}
+          <cac:TaxScheme>
+            <cbc:ID>VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>`;
+      }
     )
     .join("\n");
 
