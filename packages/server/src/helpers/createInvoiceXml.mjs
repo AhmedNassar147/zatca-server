@@ -82,10 +82,10 @@ const createAllowanceChargeXml = ({
 
   const taxSection = !hasNoNumberValue(totalTaxPercent)
     ? `<cac:TaxCategory>
-        <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">${taxCategory}</cbc:ID>
+        <cbc:ID>${taxCategory}</cbc:ID>
         <cbc:Percent>${totalTaxPercent}</cbc:Percent>
         <cac:TaxScheme>
-          <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+          <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:TaxCategory>`
     : "";
