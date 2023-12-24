@@ -64,8 +64,8 @@ const baseInvoiceData = {
       taxAmount: "0.00",
       totalWithoutTax: "900.00",
       totalWithTax: "900.00",
-      taxExemptionReasonCode: "90",
-      taxExemptionReason: "reason",
+      taxExemptionReasonCode: "VATEX-SA-35",
+      taxExemptionReason: "Medicines and medical equipment",
     },
     {
       id: "2",

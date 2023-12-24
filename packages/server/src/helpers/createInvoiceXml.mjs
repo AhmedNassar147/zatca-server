@@ -3,6 +3,11 @@
  * Helper: `createInvoiceXml`.
  *
  */
+const createTagIfValueFound = (value, tag, condition) => {
+  const valueFound = condition || !!value;
+  return !!valueFound ? `<${tag}>${value}</${tag}>` : "";
+};
+
 const createAccountingSupplierOrCustomerXml = (type, data) => {
   const {
     streetName,
@@ -24,30 +29,6 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
     ? "AccountingSupplierParty"
     : "AccountingCustomerParty";
 
-  const companyIdXml = !!vatNumber
-    ? `<cbc:CompanyID>${vatNumber}</cbc:CompanyID>`
-    : "";
-
-  const additionalStreetNameXml = !!additionalStreetName
-    ? `<cbc:AdditionalStreetName>${additionalStreetName}</cbc:AdditionalStreetName>`
-    : "";
-
-  const postalZoneXml = !!postalZone
-    ? `<cbc:PostalZone>${postalZone}</cbc:PostalZone>`
-    : "";
-
-  const buildingNumberXml = !!buildingNumber
-    ? `<cbc:BuildingNumber>${buildingNumber}</cbc:BuildingNumber>`
-    : "";
-
-  const plotIdentificationXml = !!plotIdentification
-    ? `<cbc:PlotIdentification>${plotIdentification}</cbc:PlotIdentification>`
-    : "";
-
-  const citySubdivisionNameXml = !!citySubdivisionName
-    ? `<cbc:CitySubdivisionName>${citySubdivisionName}</cbc:CitySubdivisionName>`
-    : "";
-
   const restValue = !crnNo
     ? ""
     : `\n<cac:Party>
@@ -56,19 +37,19 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
     </cac:PartyIdentification>
     <cac:PostalAddress>
       <cbc:StreetName>${streetName}</cbc:StreetName>
-      ${additionalStreetNameXml}
-      ${buildingNumberXml}
-      ${plotIdentificationXml}
-      ${citySubdivisionNameXml}
+      ${createTagIfValueFound(additionalStreetName, "cbc:AdditionalStreetName")}
+      ${createTagIfValueFound(buildingNumber, "cbc:BuildingNumber")}
+      ${createTagIfValueFound(plotIdentification, "cbc:PlotIdentification")}
+      ${createTagIfValueFound(citySubdivisionName, "cbc:CitySubdivisionName")}
       <cbc:CityName>${cityName}</cbc:CityName>
-      ${postalZoneXml}
+      ${createTagIfValueFound(postalZone, "cbc:PostalZone")}
       <cbc:CountrySubentity>${countrySubentity}</cbc:CountrySubentity>
       <cac:Country>
         <cbc:IdentificationCode>${countryIdCode}</cbc:IdentificationCode>
       </cac:Country>
     </cac:PostalAddress>
     <cac:PartyTaxScheme>
-      ${companyIdXml}
+      ${createTagIfValueFound(vatNumber, "cbc:CompanyID")}
       <cac:TaxScheme>
         <cbc:ID>VAT</cbc:ID>
       </cac:TaxScheme>
@@ -82,11 +63,6 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
 };
 
 const hasNoNumberValue = (value) => !value || ["0.00", "0.0"].includes(value);
-
-const createTagIfValueFound = (value, tag, condition) => {
-  const valueFound = condition || !!value;
-  return !!valueFound ? `<${tag}>${value}</${tag}>` : "";
-};
 
 const createAllowanceChargeXml = ({
   totalDiscountAmount,
@@ -124,8 +100,7 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
         taxPercent,
         taxExemptionReasonCode,
         taxExemptionReason,
-      }) => {
-        return `<cac:TaxSubtotal>
+      }) => `<cac:TaxSubtotal>
         <cbc:TaxableAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxableAmount>
         <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
         <cac:TaxCategory>
@@ -140,8 +115,7 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
             <cbc:ID>VAT</cbc:ID>
           </cac:TaxScheme>
         </cac:TaxCategory>
-      </cac:TaxSubtotal>`;
-      }
+      </cac:TaxSubtotal>`
     )
     .join("\n");
 
@@ -243,14 +217,10 @@ const createInvoiceXml = ({
 
   const invoiceLinesXml = products.map(createProductLineXml).join("\n");
 
-  const paymentInstructionXml = paymentInstructionNote
-    ? `<cbc:InstructionNote>${paymentInstructionNote}</cbc:InstructionNote>`
-    : "";
-
   const paymentMeansSection = !!paymentMeansCode
     ? `<cac:PaymentMeans>
         <cbc:PaymentMeansCode>${paymentMeansCode}</cbc:PaymentMeansCode>
-        ${paymentInstructionXml}
+      ${createTagIfValueFound(paymentInstructionNote, "cbc:InstructionNote")}
       </cac:PaymentMeans>`
     : "";
 
@@ -275,8 +245,6 @@ const createInvoiceXml = ({
         <cbc:ActualDeliveryDate>${deliveryDate}</cbc:ActualDeliveryDate>
       </cac:Delivery>`
     : "";
-
-  // <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
