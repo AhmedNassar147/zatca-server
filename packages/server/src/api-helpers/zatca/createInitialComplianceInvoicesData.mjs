@@ -115,6 +115,7 @@ const createInitialComplianceInvoiceData = ({
   totalWithoutTax,
   totalWithTax,
   deliveryDate,
+  taxCategory,
 }) => {
   const uuid = randomUUID();
   const [invoiceSerialNo] = uuid.split("-");
@@ -147,6 +148,7 @@ const createInitialComplianceInvoiceData = ({
     supplier,
     customer,
     deliveryDate,
+    taxCategory,
   };
 };
 
