@@ -121,7 +121,7 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
           <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
           <cac:TaxCategory>
             <cbc:ID>${taxCategory}</cbc:ID>
-            <cbc:Percent>${taxPercent}</cbc:Percent>
+            <cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
             <cac:TaxScheme>
               <cbc:ID>VAT</cbc:ID>
             </cac:TaxScheme>
@@ -173,7 +173,7 @@ const createProductLineXml = ({
     <cbc:Name>${productName}</cbc:Name>
     <cac:ClassifiedTaxCategory>
       <cbc:ID>${taxCategory}</cbc:ID>
-      <cbc:Percent>${taxPercent}</cbc:Percent>
+      <cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
       <cac:TaxScheme>
         <cbc:ID>VAT</cbc:ID>
       </cac:TaxScheme>
