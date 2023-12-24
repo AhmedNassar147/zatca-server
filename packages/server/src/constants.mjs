@@ -53,6 +53,9 @@ export const API_BASE_URLS = {
   ZATCA_DEV_PORTAL:
     "https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal",
   ZATCA_SIMULATION: "https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation",
+
+  // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_invoice_not_send
+  // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_invoice_response_dml {"trx_pk": 1,"status":"S" }
 };
 
 export const HTTP_STATUS_CODE = {
