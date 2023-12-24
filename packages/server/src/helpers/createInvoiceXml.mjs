@@ -70,7 +70,12 @@ const createAllowanceChargeXml = ({
   discountReasonCode = "95",
   discountReason = "Discount",
   taxCategory,
+  baseAmount,
 }) => {
+  const baseAmountXml = !!baseAmount
+    ? `<cbc:BaseAmount currencyID="SAR">${baseAmount}</cbc:BaseAmount>`
+    : "";
+
   const taxSection = !hasNoNumberValue(totalTaxPercent)
     ? `<cac:TaxCategory>
         <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">${taxCategory}</cbc:ID>
@@ -86,6 +91,7 @@ const createAllowanceChargeXml = ({
     <cbc:AllowanceChargeReasonCode>${discountReasonCode}</cbc:AllowanceChargeReasonCode>
     <cbc:AllowanceChargeReason>${discountReason}</cbc:AllowanceChargeReason>
     <cbc:Amount currencyID="SAR">${totalDiscountAmount || "0.0"}</cbc:Amount>
+    ${baseAmountXml}
     ${taxSection}
     </cac:AllowanceCharge>`;
 };
