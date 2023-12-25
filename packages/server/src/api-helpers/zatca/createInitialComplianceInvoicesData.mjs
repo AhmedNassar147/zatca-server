@@ -82,7 +82,7 @@ const baseInvoiceData = {
       totalWithoutTax: "15.00",
       totalWithTax: "17.25",
       // 900.00 + 15.00
-      lineExtensionAmount: "915.00",
+      lineExtensionAmount: "17.25",
     },
   ],
   // totalDiscountAmount: "0.0",

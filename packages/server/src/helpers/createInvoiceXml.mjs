@@ -73,7 +73,7 @@ const createTaxCategoryXml = ({
   taxExemptionReason,
 }) => `<cac:TaxCategory>
 <cbc:ID>${taxCategory}</cbc:ID>
-<cbc:Percent>${taxPercent}</cbc:Percent>
+<cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
 ${createTagIfValueFound(taxExemptionReasonCode, "cbc:TaxExemptionReasonCode")}
 ${createTagIfValueFound(taxExemptionReason, "cbc:TaxExemptionReason")}
 <cac:TaxScheme>
