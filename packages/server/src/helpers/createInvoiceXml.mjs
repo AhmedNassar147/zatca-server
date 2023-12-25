@@ -111,7 +111,7 @@ const createAllowanceChargeXml = ({
 
 const createTaxTotalXml = (totalTaxAmount, products) => {
   const subtotalsXml = products
-    .filter(({ taxAmount }) => !hasNoNumberValue(taxAmount))
+    // .filter(({ taxAmount }) => !hasNoNumberValue(taxAmount))
     .map(
       ({
         totalWithoutTax,
