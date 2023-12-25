@@ -111,6 +111,7 @@ const createAllowanceChargeXml = ({
 
 const createTaxTotalXml = (totalTaxAmount, products) => {
   const subtotalsXml = products
+    .filter(({ taxAmount }) => !hasNoNumberValue(taxAmount))
     .map(
       ({
         totalWithoutTax,
@@ -167,14 +168,18 @@ const createProductLineXml = ({
     taxCategory,
   });
 
+  const taxXml = hasNoNumberValue(taxAmount)
+    ? ""
+    : `<cac:TaxTotal>
+  <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
+  <cbc:RoundingAmount currencyID="SAR">${totalWithTax}</cbc:RoundingAmount>
+</cac:TaxTotal>`;
+
   return `<cac:InvoiceLine>
   <cbc:ID>${id}</cbc:ID>
   <cbc:InvoicedQuantity unitCode="${unitCode}">${quantity}</cbc:InvoicedQuantity>
   <cbc:LineExtensionAmount currencyID="SAR">${totalWithoutTax}</cbc:LineExtensionAmount>
-  <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
-    <cbc:RoundingAmount currencyID="SAR">${totalWithTax}</cbc:RoundingAmount>
-  </cac:TaxTotal>
+  ${taxXml}
   <cac:Item>
     <cbc:Name>${productName}</cbc:Name>
     <cac:ClassifiedTaxCategory>

@@ -61,7 +61,7 @@ const baseInvoiceData = {
       baseAmount: "910.00",
       price: "900.00",
       unitCode: "EACH",
-      discount: "10.00",
+      discount: "0.00",
       discountReasonCode: "95",
       discountReason: "Discount",
       taxAmount: "0.00",
