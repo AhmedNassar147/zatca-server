@@ -68,6 +68,7 @@ const baseInvoiceData = {
       totalWithoutTax: "900.00",
       totalWithTax: "900.00",
     },
+
     {
       id: "2",
       productName: "احبال ومطاطات نظارات 15",
@@ -80,6 +81,8 @@ const baseInvoiceData = {
       taxAmount: "2.25",
       totalWithoutTax: "15.00",
       totalWithTax: "17.25",
+      // 900.00 + 15.00
+      lineExtensionAmount: "915.00",
     },
   ],
   // totalDiscountAmount: "0.0",

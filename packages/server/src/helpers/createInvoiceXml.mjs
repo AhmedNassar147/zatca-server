@@ -66,6 +66,21 @@ const createAccountingSupplierOrCustomerXml = (type, data) => {
   return `<cac:${mainTagName}>${restValue}</cac:${mainTagName}>`;
 };
 
+const createTaxCategoryXml = ({
+  taxCategory,
+  taxPercent,
+  taxExemptionReasonCode,
+  taxExemptionReason,
+}) => `<cac:TaxCategory>
+<cbc:ID>${taxCategory}</cbc:ID>
+<cbc:Percent>${taxPercent}</cbc:Percent>
+${createTagIfValueFound(taxExemptionReasonCode, "cbc:TaxExemptionReasonCode")}
+${createTagIfValueFound(taxExemptionReason, "cbc:TaxExemptionReason")}
+<cac:TaxScheme>
+  <cbc:ID>VAT</cbc:ID>
+</cac:TaxScheme>
+</cac:TaxCategory>`;
+
 const createAllowanceChargeXml = ({
   totalDiscountAmount,
   totalTaxPercent,
@@ -81,13 +96,7 @@ const createAllowanceChargeXml = ({
   const chargeIndicator = discountReasonCode === "95" ? "false" : "true";
 
   const taxSection = !hasNoNumberValue(totalTaxPercent)
-    ? `<cac:TaxCategory>
-        <cbc:ID>${taxCategory}</cbc:ID>
-        <cbc:Percent>${totalTaxPercent}</cbc:Percent>
-        <cac:TaxScheme>
-          <cbc:ID>VAT</cbc:ID>
-        </cac:TaxScheme>
-      </cac:TaxCategory>`
+    ? createTaxCategoryXml({ taxCategory, taxPercent: totalTaxPercent })
     : "";
 
   return `<cac:AllowanceCharge>
@@ -110,21 +119,18 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
         taxPercent,
         taxExemptionReasonCode,
         taxExemptionReason,
+        lineExtensionAmount,
       }) => `<cac:TaxSubtotal>
-        <cbc:TaxableAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxableAmount>
+        <cbc:TaxableAmount currencyID="SAR">${
+          lineExtensionAmount || totalWithoutTax
+        }</cbc:TaxableAmount>
         <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
-        <cac:TaxCategory>
-        <cbc:ID>${taxCategory}</cbc:ID>
-        <cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
-        ${createTagIfValueFound(
+        ${createTaxCategoryXml({
+          taxCategory,
+          taxPercent,
           taxExemptionReasonCode,
-          "cbc:TaxExemptionReasonCode"
-        )}
-        ${createTagIfValueFound(taxExemptionReason, "cbc:TaxExemptionReason")}
-          <cac:TaxScheme>
-            <cbc:ID>VAT</cbc:ID>
-          </cac:TaxScheme>
-        </cac:TaxCategory>
+          taxExemptionReason,
+        })}
       </cac:TaxSubtotal>`
     )
     .join("\n");
