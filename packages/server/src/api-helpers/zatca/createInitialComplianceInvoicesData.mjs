@@ -61,12 +61,12 @@ const baseInvoiceData = {
       baseAmount: "910.00",
       price: "900.00",
       unitCode: "EACH",
-      discount: "0.00",
+      discount: "10.00",
       discountReasonCode: "95",
       discountReason: "Discount",
       taxAmount: "0.00",
-      totalWithoutTax: "900.00",
-      totalWithTax: "900.00",
+      totalWithoutTax: "910.00",
+      totalWithTax: "910.00",
     },
     {
       id: "2",
@@ -96,8 +96,8 @@ const baseInvoiceData = {
   totalDiscountAmount: "0.00",
   totalTaxPercent: "15.00",
   totalTaxAmount: "2.25",
-  totalWithoutTax: "915.00",
-  totalWithTax: "917.25",
+  totalWithoutTax: "925.00",
+  totalWithTax: "927.25",
 };
 
 const createInitialComplianceInvoiceData = ({
