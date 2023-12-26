@@ -35,25 +35,6 @@ const baseInvoiceData = {
   products: [
     {
       id: "1",
-      productName: "O-BURBERRY 1344 55 1166 نظارة طبية",
-      taxCategory: "Z",
-      taxExemptionReasonCode: "VATEX-SA-35",
-      taxExemptionReason: "Medicines and medical equipment",
-      quantity: 1,
-      taxPercent: "0",
-      netPrice: "910.00",
-      unitCode: "EACH",
-      discountAmount: "10.00",
-      discountReasonCode: "95",
-      discountReason: "Discount",
-      taxAmount: "0.00",
-      lineNetAmount: "900.00",
-      taxableAmount: "900.00",
-      taxRoundingAmount: "900.00",
-      chargeAmount: "0.00",
-    },
-    {
-      id: "2",
       productName: "احبال ومطاطات نظارات 15",
       taxCategory: "S",
       quantity: 1,
@@ -68,14 +49,20 @@ const baseInvoiceData = {
       chargeAmount: "0.00",
     },
   ],
-  totalDiscountAmount: "10.00",
+
+  totalDiscountAmount: "0.00",
   totalChargeAmount: "0.00",
   totalVatAmount: "2.25",
-  totalExtensionAmount: "915.00",
-  totalTaxExclusiveAmount: "0.00",
-  totalTaxInclusiveAmount: "917.25",
+  totalExtensionAmount: "15.00",
+  totalTaxExclusiveAmount: "17.25",
+  totalTaxInclusiveAmount: "15.00",
   totalPrepaidAmount: "0.00",
-  totalPayableAmount: "917.25",
+  totalPayableAmount: "17.25",
+
+  // discountReasonCode: "",
+  // discountReason: "",
+  taxCategory: "S",
+  taxPercent: "15",
 };
 
 // consider chargeAmount is 0.00 for now
@@ -119,6 +106,10 @@ const createInitialComplianceInvoiceData = ({
   totalTaxInclusiveAmount,
   totalPrepaidAmount,
   totalPayableAmount,
+  discountReasonCode,
+  discountReason,
+  taxCategory,
+  taxPercent,
 }) => {
   const uuid = randomUUID();
   const [invoiceSerialNo] = uuid.split("-");
@@ -152,6 +143,10 @@ const createInitialComplianceInvoiceData = ({
     supplier,
     customer,
     deliveryDate,
+    discountReasonCode,
+    discountReason,
+    taxCategory,
+    taxPercent,
   };
 };
 

@@ -112,11 +112,14 @@ const createTaxTotalXml = (totalVatAmount, products) => {
         taxCategory,
         taxPercent,
         taxableAmount,
+        subTotalTaxAmount,
         taxExemptionReasonCode,
         taxExemptionReason,
       }) => `<cac:TaxSubtotal>
         <cbc:TaxableAmount currencyID="SAR">${taxableAmount}</cbc:TaxableAmount>
-        <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
+        <cbc:TaxAmount currencyID="SAR">${
+          subTotalTaxAmount || taxAmount
+        }</cbc:TaxAmount>
         ${createTaxCategoryXml({
           taxCategory,
           taxPercent,
@@ -210,6 +213,10 @@ const createInvoiceXml = ({
   totalPrepaidAmount,
   totalPayableAmount,
   totalChargeAmount,
+  discountReasonCode,
+  discountReason,
+  taxCategory,
+  taxPercent,
 }) => {
   const accountingSupplierXml = createAccountingSupplierOrCustomerXml(
     "supplier",
@@ -240,11 +247,13 @@ const createInvoiceXml = ({
       </cac:BillingReference>`
     : "";
 
-  // const allowanceChargeXml = createAllowanceChargeXml({
-  //   discountAmount: totalDiscountAmount,
-  //   taxPercent: "15",
-  //   taxCategory: "S",
-  // });
+  const allowanceChargeXml = createAllowanceChargeXml({
+    discountAmount: totalDiscountAmount,
+    taxPercent,
+    taxCategory,
+    discountReasonCode,
+    discountReason,
+  });
 
   const deliveryXml = !!deliveryDate
     ? `<cac:Delivery>
@@ -291,12 +300,13 @@ const createInvoiceXml = ({
   ${accountingCustomerXml}
   ${deliveryXml}
   ${paymentMeansSection}
+  ${allowanceChargeXml}
   ${totalTaxXml}
   <cac:LegalMonetaryTotal>
     <cbc:LineExtensionAmount currencyID="SAR">${totalExtensionAmount}</cbc:LineExtensionAmount>
     <cbc:TaxExclusiveAmount currencyID="SAR">${totalTaxExclusiveAmount}</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="SAR">${totalTaxInclusiveAmount}</cbc:TaxInclusiveAmount>
-    <cbc:AllowanceTotalAmount currencyID="SAR">${totalDiscountAmount}</cbc:AllowanceTotalAmount>
+    <cbc:AllowanceTotalAmount currencyID="SAR">0.00</cbc:AllowanceTotalAmount>
     <cbc:ChargeTotalAmount currencyID="SAR">${totalChargeAmount}</cbc:ChargeTotalAmount>
     <cbc:PrepaidAmount currencyID="SAR">${totalPrepaidAmount}</cbc:PrepaidAmount>
     <cbc:PayableAmount currencyID="SAR">${totalPayableAmount}</cbc:PayableAmount>

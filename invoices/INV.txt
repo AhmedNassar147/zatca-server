@@ -1,0 +1,424 @@
+
+zat_invoice_hash :=  '<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+<ext:UBLExtensions>
+    <ext:UBLExtension>
+        <ext:ExtensionURI>urn:oasis:names:specification:ubl:dsig:enveloped:xades</ext:ExtensionURI>
+        <ext:ExtensionContent>
+            <sig:UBLDocumentSignatures xmlns:sig="urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2" xmlns:sac="urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2" xmlns:sbc="urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2">
+                <sac:SignatureInformation>
+                    <cbc:ID>urn:oasis:names:specification:ubl:signature:1</cbc:ID>
+                    <sbc:ReferencedSignatureID>urn:oasis:names:specification:ubl:signature:Invoice</sbc:ReferencedSignatureID>
+                    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="signature">
+                        <ds:SignedInfo>
+                            <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2006/12/xml-c14n11"/>
+                            <ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"/>
+                            <ds:Reference Id="invoiceSignedData" URI="">
+                                <ds:Transforms>
+                                    <ds:Transform Algorithm="http://www.w3.org/TR/1999/REC-xpath-19991116">
+                                        <ds:XPath>not(//ancestor-or-self::ext:UBLExtensions)</ds:XPath>
+                                    </ds:Transform>
+                                    <ds:Transform Algorithm="http://www.w3.org/TR/1999/REC-xpath-19991116">
+                                        <ds:XPath>not(//ancestor-or-self::cac:Signature)</ds:XPath>
+                                    </ds:Transform>
+                                    <ds:Transform Algorithm="http://www.w3.org/TR/1999/REC-xpath-19991116">
+                                        <ds:XPath>not(//ancestor-or-self::cac:AdditionalDocumentReference[cbc:ID=''QR''])</ds:XPath>
+                                    </ds:Transform>
+                                    <ds:Transform Algorithm="http://www.w3.org/2006/12/xml-c14n11"/>
+                                </ds:Transforms>
+                                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                                <ds:DigestValue></ds:DigestValue>
+                            </ds:Reference>
+                            <ds:Reference Type="http://www.w3.org/2000/09/xmldsig#SignatureProperties" URI="#xadesSignedProperties">
+                                <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                                <ds:DigestValue></ds:DigestValue>
+                            </ds:Reference>
+                        </ds:SignedInfo>
+                        <ds:SignatureValue></ds:SignatureValue>
+                        <ds:KeyInfo>
+                            <ds:X509Data>
+                                <ds:X509Certificate>'||v_CERTIFICATE||'</ds:X509Certificate>
+                            </ds:X509Data>
+                        </ds:KeyInfo>
+                        <ds:Object>
+                            <xades:QualifyingProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Target="signature">
+                                <xades:SignedProperties Id="xadesSignedProperties">
+                                    <xades:SignedSignatureProperties>
+                                        <xades:SigningTime></xades:SigningTime>
+                                        <xades:SigningCertificate>
+                                            <xades:Cert>
+                                                <xades:CertDigest>
+                                                    <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+                                                    <ds:DigestValue></ds:DigestValue>
+                                                </xades:CertDigest>
+                                                <xades:IssuerSerial>
+                                                    <ds:X509IssuerName></ds:X509IssuerName>
+                                                    <ds:X509SerialNumber></ds:X509SerialNumber>
+                                                </xades:IssuerSerial>
+                                            </xades:Cert>
+                                        </xades:SigningCertificate>
+                                    </xades:SignedSignatureProperties>
+                                </xades:SignedProperties>
+                            </xades:QualifyingProperties>
+                        </ds:Object>
+                    </ds:Signature>
+                </sac:SignatureInformation>
+            </sig:UBLDocumentSignatures>
+        </ext:ExtensionContent>
+    </ext:UBLExtension>
+</ext:UBLExtensions>' ;
+
+/**************************************************************************************************/
+/**************************************************************************************************/
+
+if p_inv_type_name  = 388  then  -- is standard 
+  for inv_header in GET_INV (p_sinv_no) loop 
+    v_uuid := inv_header.uuid;
+    V_VAT_INVOICE_DATE :=INV_HEADER.INV_DATE   ;
+ zat_invoice_header  := '<cbc:ProfileID>reporting:1.0</cbc:ProfileID>
+    <cbc:ID>'||inv_header.sinv_no||'</cbc:ID>
+    <cbc:UUID>'||inv_header.uuid||'</cbc:UUID>
+    <cbc:IssueDate>'||inv_header.IssueDate||'</cbc:IssueDate>
+    <cbc:IssueTime>'||inv_header.IssueTime||'</cbc:IssueTime>
+    <cbc:InvoiceTypeCode name="0100000">388</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
+    <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>ICV</cbc:ID>
+        <cbc:UUID>23</cbc:UUID>
+    </cac:AdditionalDocumentReference>
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>PIH</cbc:ID>
+        <cac:Attachment>
+            <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==</cbc:EmbeddedDocumentBinaryObject>
+        </cac:Attachment>
+    </cac:AdditionalDocumentReference>
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>QR</cbc:ID>
+        <cac:Attachment>
+            <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain"></cbc:EmbeddedDocumentBinaryObject>
+        </cac:Attachment>';
+ --'||V_QR_64||'
+end loop ;
+else 
+  for ref_inv_header in GET_reF_INV(p_sinv_no) loop 
+    V_VAT_INVOICE_DATE := REF_INV_HEADER.ISSUEDATE ;
+      v_uuid := REF_inv_header.uuid;
+ zat_invoice_header  := 
+    '<cbc:ID>'||P_sinv_no||'</cbc:ID>
+    <cbc:UUID>'|| REF_inv_header.uuid||'</cbc:UUID>
+    <cbc:IssueDate>'||REF_inv_header.IssueDate||'</cbc:IssueDate>
+    <cbc:IssueTime>'||REF_inv_header.IssueTime||'</cbc:IssueTime>
+    <cbc:InvoiceTypeCode name="0100000">381</cbc:InvoiceTypeCode>
+    <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
+    <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>ICV</cbc:ID>
+        <cbc:UUID>23</cbc:UUID>
+    </cac:AdditionalDocumentReference>
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>PIH</cbc:ID>
+        <cac:Attachment>
+            <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==</cbc:EmbeddedDocumentBinaryObject>
+        </cac:Attachment>
+    </cac:AdditionalDocumentReference>
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>QR</cbc:ID>
+        <cac:Attachment>
+            <cbc:EmbeddedDocumentBinaryObject mimeCode="text/plain">'||V_QR_64||'</cbc:EmbeddedDocumentBinaryObject>
+        </cac:Attachment>';
+ 
+end loop ;
+
+end if ; 
+
+
+
+
+/**************************************************************************************************/
+/**************************************************************************************************/
+
+  
+for supp in  GET_SUPP(p_organization_no) loop 
+
+zat_invoice_supp  :='</cac:AdditionalDocumentReference><cac:Signature>
+      <cbc:ID>urn:oasis:names:specification:ubl:signature:Invoice</cbc:ID>
+      <cbc:SignatureMethod>urn:oasis:names:specification:ubl:dsig:enveloped:xades</cbc:SignatureMethod>
+      </cac:Signature><cac:AccountingSupplierParty>
+      <cac:Party>
+<cac:PartyIdentification>
+<cbc:ID schemeID="CRN">'||supp.crn||'</cbc:ID>
+</cac:PartyIdentification>
+<cac:PostalAddress>
+<cbc:StreetName>'||supp.StreetName||'</cbc:StreetName>
+<cbc:AdditionalStreetName>'||supp.StreetName||'</cbc:AdditionalStreetName>
+<cbc:BuildingNumber>'||supp.BuildingNumber||'</cbc:BuildingNumber>
+<cbc:PlotIdentification>'||supp.PlotIdentification||'</cbc:PlotIdentification>
+<cbc:CitySubdivisionName>'||supp.CitySubdivisionName||'</cbc:CitySubdivisionName>
+<cbc:CityName>'||supp.CitySubdivisionName||'</cbc:CityName>
+<cbc:PostalZone>'||supp.PostalZone||'</cbc:PostalZone>
+<cbc:CountrySubentity>'||supp.Country||'</cbc:CountrySubentity>
+<cac:Country>
+<cbc:IdentificationCode>SA</cbc:IdentificationCode>
+</cac:Country>
+</cac:PostalAddress>
+<cac:PartyTaxScheme>
+<cbc:CompanyID>'||supp.CompanyID||'</cbc:CompanyID>
+<cac:TaxScheme>
+<cbc:ID>VAT</cbc:ID>
+</cac:TaxScheme>
+</cac:PartyTaxScheme>
+<cac:PartyLegalEntity>
+<cbc:RegistrationName>'||SUPP.RegistrationName||'</cbc:RegistrationName>
+</cac:PartyLegalEntity>
+</cac:Party>
+</cac:AccountingSupplierParty>';
+
+end loop ;
+
+/**************************************************************************************************/
+/**************************************************************************************************/
+
+ if p_inv_type_name in (381,388,383) then  -- is standard 
+   for cust  in get_cust(v_customer_no) loop 
+IF cust.CRN IS NULL THEN 
+  zat_invoice_cust := '';
+  ELSE
+zat_invoice_cust := '<cac:AccountingCustomerParty>
+        <cac:Party>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="CRN">'||cust.CRN||'</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PostalAddress>
+                <cbc:StreetName>'||cust.StreetName||'</cbc:StreetName>
+                <cbc:AdditionalStreetName>'||cust.StreetName||'</cbc:AdditionalStreetName>
+                <cbc:BuildingNumber>'||cust.BuildingNumber||'</cbc:BuildingNumber>
+                <cbc:PlotIdentification>'||cust.PlotIdentification||'</cbc:PlotIdentification>
+                <cbc:CitySubdivisionName>'||cust.CitySubdivisionName||'</cbc:CitySubdivisionName>
+                <cbc:CityName>'||cust.COUNTRY||'</cbc:CityName>
+                <cbc:PostalZone>'||cust.PostalZone||'</cbc:PostalZone>
+                <cbc:CountrySubentity>'||cust.Country||'</cbc:CountrySubentity>
+                <cac:Country>
+                    <cbc:IdentificationCode>SA</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PartyTaxScheme>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:PartyTaxScheme>
+            <cac:PartyLegalEntity>
+                <cbc:RegistrationName>'||cust.RegistrationName||'</cbc:RegistrationName>
+            </cac:PartyLegalEntity>
+        </cac:Party>
+    </cac:AccountingCustomerParty> ';
+    END IF ; 
+    end loop ;
+    
+    
+else   
+zat_invoice_cust := '   ';
+end if ; 
+
+/**************************************************************************************************/
+/**************************************************************************************************/
+
+if p_inv_type_name  = '388'  then  -- is standard 
+for inv_tot in GET_INV (p_sinv_no) loop 
+V_branch_ORG_TAX  := INV_TOT.INVOICETAXESTOTAL ;
+V_GROSS_INVOICE := INV_TOT.INVOICENETTOTAL ;
+v_INVOICE_DISCOUNT  := INV_TOT.INVOICEDISCOUNTTOTAL ;
+V_invoice_vat_amt:= INV_TOT.INVOICETAXESTOTAL ;
+
+zat_invoice_totals :=
+ '<cac:Delivery>
+     <cbc:ActualDeliveryDate>'||V_VAT_INVOICE_DATE||'</cbc:ActualDeliveryDate>
+     </cac:Delivery>
+    <cac:PaymentMeans>
+        <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
+    </cac:PaymentMeans>
+    <cac:AllowanceCharge>
+        <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+        <cbc:AllowanceChargeReason>discount</cbc:AllowanceChargeReason>
+        <cbc:Amount currencyID="SAR">'||inv_tot.invoiceDiscountTotal||'</cbc:Amount>
+        <cac:TaxCategory>
+            <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
+            <cbc:Percent>15</cbc:Percent>
+            <cac:TaxScheme>
+                <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+            </cac:TaxScheme>
+        </cac:TaxCategory>
+    </cac:AllowanceCharge>
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="SAR">'||inv_tot.invoiceTaxesTotal||'</cbc:TaxAmount>
+    </cac:TaxTotal>
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="SAR">'||inv_tot.invoiceTaxesTotal||'</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="SAR">'||inv_tot.invoiceNetTotal||'</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="SAR">'||inv_tot.invoiceTaxesTotal||'</cbc:TaxAmount>
+             <cac:TaxCategory>
+                 <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
+                 <cbc:Percent>15.00</cbc:Percent>
+                <cac:TaxScheme>
+                   <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+                </cac:TaxScheme>
+             </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="SAR">'||inv_tot.invoiceNetTotal||'</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="SAR">'||inv_tot.invoiceNetTotal||'</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="SAR">'||inv_tot.total_amount_inclusive||'</cbc:TaxInclusiveAmount>
+        <cbc:AllowanceTotalAmount currencyID="SAR">0.00</cbc:AllowanceTotalAmount>
+        <cbc:PrepaidAmount currencyID="SAR">0.00</cbc:PrepaidAmount>
+        <cbc:PayableAmount currencyID="SAR">'||inv_tot.total_amount_inclusive||'</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>';
+end loop ;
+else
+for ref_inv_tot in GET_ref_INV (p_sinv_no) loop 
+V_branch_ORG_TAX  := REF_INV_TOT.INVOICETAXESTOTAL ;
+V_GROSS_INVOICE := REF_INV_TOT.INVOICENETTOTAL ;
+v_INVOICE_DISCOUNT  := REF_INV_TOT.INVOICEDISCOUNTTOTAL ;
+V_invoice_vat_amt:= REF_INV_TOT.INVOICETAXESTOTAL ;
+
+
+zat_invoice_totals :=  '<cac:Delivery>
+     <cbc:ActualDeliveryDate>'||V_VAT_INVOICE_DATE||'</cbc:ActualDeliveryDate>
+     </cac:Delivery>
+    <cac:PaymentMeans>
+        <cbc:PaymentMeansCode>10</cbc:PaymentMeansCode>
+    </cac:PaymentMeans>
+    <cac:AllowanceCharge>
+        <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+        <cbc:AllowanceChargeReason>discount</cbc:AllowanceChargeReason>
+        <cbc:Amount currencyID="SAR">'||ref_inv_tot.invoiceDiscountTotal||'</cbc:Amount>
+        <cac:TaxCategory>
+            <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
+            <cbc:Percent>15</cbc:Percent>
+            <cac:TaxScheme>
+                <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+            </cac:TaxScheme>
+        </cac:TaxCategory>
+    </cac:AllowanceCharge>
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="SAR">'||ref_inv_tot.invoiceTaxesTotal||'</cbc:TaxAmount>
+    </cac:TaxTotal>
+    <cac:TaxTotal>
+        <cbc:TaxAmount currencyID="SAR">'||ref_inv_tot.invoiceTaxesTotal||'</cbc:TaxAmount>
+        <cac:TaxSubtotal>
+            <cbc:TaxableAmount currencyID="SAR">'||ref_inv_tot.invoiceNetTotal||'</cbc:TaxableAmount>
+            <cbc:TaxAmount currencyID="SAR">'||ref_inv_tot.invoiceTaxesTotal||'</cbc:TaxAmount>
+             <cac:TaxCategory>
+                 <cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">S</cbc:ID>
+                 <cbc:Percent>15.00</cbc:Percent>
+                <cac:TaxScheme>
+                   <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
+                </cac:TaxScheme>
+             </cac:TaxCategory>
+        </cac:TaxSubtotal>
+    </cac:TaxTotal>
+    <cac:LegalMonetaryTotal>
+        <cbc:LineExtensionAmount currencyID="SAR">'||ref_inv_tot.invoiceNetTotal||'</cbc:LineExtensionAmount>
+        <cbc:TaxExclusiveAmount currencyID="SAR">'||ref_inv_tot.invoiceNetTotal||'</cbc:TaxExclusiveAmount>
+        <cbc:TaxInclusiveAmount currencyID="SAR">'||ref_inv_tot.total_amount_inclusive||'</cbc:TaxInclusiveAmount>
+        <cbc:AllowanceTotalAmount currencyID="SAR">0.00</cbc:AllowanceTotalAmount>
+        <cbc:PrepaidAmount currencyID="SAR">0.00</cbc:PrepaidAmount>
+        <cbc:PayableAmount currencyID="SAR">'||ref_inv_tot.total_amount_inclusive||'</cbc:PayableAmount>
+    </cac:LegalMonetaryTotal>';
+end loop ;
+end if ; 
+
+/**************************************************************************************************/
+/**************************************************************************************************/
+if p_inv_type_name  = 388  then  -- is standard 
+ zat_invoice_body := '<cac:InvoiceLine>';
+for inv_items in GET_inv_items (P_SINV_NO) loop 
+zat_invoice_body :=zat_invoice_body ||'<cbc:ID>'||inv_items.line_ID||'</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="PCE">'||inv_items.InvoicedQuantity||'</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="SAR">'||inv_items.LineExtensionAmount||'</cbc:LineExtensionAmount>
+        <cac:TaxTotal>
+             <cbc:TaxAmount currencyID="SAR">'||inv_items.TaxAmount||'</cbc:TaxAmount>
+             <cbc:RoundingAmount currencyID="SAR">'||inv_items.TOTAL_RoundingAmount||'</cbc:RoundingAmount>
+        </cac:TaxTotal>
+        <cac:Item>
+            <cbc:Name>'||inv_items.item_Name||'</cbc:Name>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>15.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="SAR">'||inv_items.PriceAmount||'</cbc:PriceAmount>
+            <cac:AllowanceCharge>
+               <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+               <cbc:AllowanceChargeReason>discount</cbc:AllowanceChargeReason>
+               <cbc:Amount currencyID="SAR">'||inv_items.discoount_Amount||'</cbc:Amount>
+            </cac:AllowanceCharge>
+        </cac:Price> '; 
+end loop ;
+zat_invoice_body :=    zat_invoice_body ||'</cac:InvoiceLine>';
+else
+zat_invoice_body :=   '<cac:InvoiceLine>';
+ 
+for ret_inv_items in GET_ret_inv_items(P_SINV_NO)  loop 
+
+ zat_invoice_body :=  zat_invoice_body ||
+ '<cbc:ID>'||ret_inv_items.line_ID||'</cbc:ID>' ||
+        '<cbc:InvoicedQuantity unitCode="PCE">'||ret_inv_items.InvoicedQuantity||'</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="SAR">'||ret_inv_items.LineExtensionAmount||'</cbc:LineExtensionAmount>
+        <cac:TaxTotal>
+             <cbc:TaxAmount currencyID="SAR">'||ret_inv_items.TaxAmount||'</cbc:TaxAmount>
+             <cbc:RoundingAmount currencyID="SAR">'||RET_inv_items.TOTAL_RoundingAmount||'</cbc:RoundingAmount>
+        </cac:TaxTotal>
+        <cac:Item>
+            <cbc:Name>'||ret_inv_items.item_Name||'</cbc:Name>
+            <cac:ClassifiedTaxCategory>
+                <cbc:ID>S</cbc:ID>
+                <cbc:Percent>15.00</cbc:Percent>
+                <cac:TaxScheme>
+                    <cbc:ID>VAT</cbc:ID>
+                </cac:TaxScheme>
+            </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+            <cbc:PriceAmount currencyID="SAR">'||ret_inv_items.PriceAmount||'</cbc:PriceAmount>
+            <cac:AllowanceCharge>
+               <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+               <cbc:AllowanceChargeReason>discount</cbc:AllowanceChargeReason>
+               <cbc:Amount currencyID="SAR">'||ret_inv_items.discoount_Amount||'</cbc:Amount>
+            </cac:AllowanceCharge>
+        </cac:Price>' ; 
+
+end loop ;
+zat_invoice_body :=  zat_invoice_body  ||'</cac:InvoiceLine>';
+
+end if ;
+
+/**************************************************************************************************/
+/**************************************************************************************************/
+   
+   zat_invoice_body :=zat_invoice_body ||CHR(13)||'</Invoice>';
+
+   zat_invoice_xml  := zat_invoice_hash||CHR(13)||zat_invoice_header ||CHR(13)||zat_invoice_supp  ||CHR(13)||zat_invoice_cust||CHR(13)||zat_invoice_totals||CHR(13)||zat_invoice_body ;
+   zat_invoice_xml_clob := TO_CLOB (zat_invoice_xml) ;
+   zat_invoice_xmlDoc  :=   XMLTYPE.createXML(zat_invoice_xml_clob);
+
+   zat_invoice_xml :=  REPLACE (REPLACE (REPLACE (zat_invoice_xml, CHR (10), ''), CHR (13), ''), CHR (9), '');
+   zat_invoice_b64_clob  :=utl_i18n.raw_to_char (utl_encode.base64_encode ( zat_invoice_xmlDoc.getblobval (NLS_CHARSET_ID ('utf8'))),'utf8');
+   zat_invoice_b64_clob := TRANSLATE(zat_invoice_b64_clob ,'X'||CHR(13)||CHR(10),'X');
+   
+
+/**************************************************************************************************/
+/**************************************************************************************************/
+
+    
+  v_invoice_hash_SHA:= dbms_crypto.HASH(zat_invoice_xml_clob,dbms_crypto.HASH_SH256);
+  v_zat_invoice_hash_sha_64  :=ENCODE64_CLOB(v_invoice_hash_SHA);
+  v_zat_invoice_hash_sha_64 := TRANSLATE(v_zat_invoice_hash_sha_64 ,'X'||CHR(13)||CHR(10),'X');
+ 
+
+
