@@ -210,6 +210,7 @@ const createInvoiceXml = ({
   totalTaxInclusiveAmount,
   totalPrepaidAmount,
   totalPayableAmount,
+  totalChargeAmount,
 }) => {
   const accountingSupplierXml = createAccountingSupplierOrCustomerXml(
     "supplier",
@@ -298,6 +299,7 @@ const createInvoiceXml = ({
     <cbc:TaxExclusiveAmount currencyID="SAR">${totalTaxExclusiveAmount}</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="SAR">${totalTaxInclusiveAmount}</cbc:TaxInclusiveAmount>
     <cbc:AllowanceTotalAmount currencyID="SAR">${totalDiscountAmount}</cbc:AllowanceTotalAmount>
+    <cbc:ChargeTotalAmount currencyID="SAR">${totalChargeAmount}</cbc:ChargeTotalAmount>
     <cbc:PrepaidAmount currencyID="SAR">${totalPrepaidAmount}</cbc:PrepaidAmount>
     <cbc:PayableAmount currencyID="SAR">${totalPayableAmount}</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>

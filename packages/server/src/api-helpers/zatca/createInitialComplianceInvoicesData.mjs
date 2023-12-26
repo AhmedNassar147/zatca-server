@@ -68,7 +68,6 @@ const baseInvoiceData = {
       chargeAmount: "0.00",
     },
   ],
-
   totalVatAmount: "2.25",
   totalExtensionAmount: "105.00",
   totalDiscountAmount: "10.00",
