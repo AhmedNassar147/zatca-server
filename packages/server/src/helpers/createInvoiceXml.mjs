@@ -72,13 +72,12 @@ const createTaxCategoryXml = ({
   taxExemptionReasonCode,
   taxExemptionReason,
 }) => `<cac:TaxCategory>
-<cbc:ID>${taxCategory}</cbc:ID>
+<cbc:ID schemeID="UN/ECE 5305" schemeAgencyID="6">${taxCategory}</cbc:ID>
 <cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
 ${createTagIfValueFound(taxExemptionReasonCode, "cbc:TaxExemptionReasonCode")}
 ${createTagIfValueFound(taxExemptionReason, "cbc:TaxExemptionReason")}
 <cac:TaxScheme>
-  <cbc:ID>VAT</cbc:ID>
-  <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
+  <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">VAT</cbc:ID>
 </cac:TaxScheme>
 </cac:TaxCategory>`;
 
@@ -164,7 +163,6 @@ const createProductLineXml = ({
   <cbc:ID>${id}</cbc:ID>
   <cbc:InvoicedQuantity unitCode="${unitCode}">${quantity}</cbc:InvoicedQuantity>
   <cbc:LineExtensionAmount currencyID="SAR">${lineNetAmount}</cbc:LineExtensionAmount>
-  ${allowanceChargeXml}
   <cac:TaxTotal>
     <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
     <cbc:RoundingAmount currencyID="SAR">${taxRoundingAmount}</cbc:RoundingAmount>
@@ -181,6 +179,7 @@ const createProductLineXml = ({
   </cac:Item>
   <cac:Price>
     <cbc:PriceAmount currencyID="SAR">${netPrice}</cbc:PriceAmount>
+    ${allowanceChargeXml}
   </cac:Price>
 </cac:InvoiceLine>`;
 };
