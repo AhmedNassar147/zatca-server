@@ -133,7 +133,6 @@ const createInitialComplianceInvoiceData = ({
   deliveryDate,
   totalVatAmount,
   totalExtensionAmount,
-  totalDiscountAmount,
   totalChargeAmount,
   totalTaxExclusiveAmount,
   totalTaxInclusiveAmount,
