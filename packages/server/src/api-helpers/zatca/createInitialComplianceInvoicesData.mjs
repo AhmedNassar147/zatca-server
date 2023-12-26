@@ -44,7 +44,7 @@ const baseInvoiceData = {
       discountReason: "Discount",
       lineNetAmount: "90.00",
       taxCategory: "Z",
-      taxPercent: "0.00",
+      taxPercent: "0",
       taxAmount: "0.00",
       taxableAmount: "90.00",
       taxRoundingAmount: "90.00",
@@ -61,7 +61,7 @@ const baseInvoiceData = {
       discountAmount: "0.00",
       lineNetAmount: "15.00",
       taxCategory: "S",
-      taxPercent: "15.00",
+      taxPercent: "15",
       taxAmount: "2.25",
       taxableAmount: "15.00",
       taxRoundingAmount: "17.25",
@@ -76,7 +76,7 @@ const baseInvoiceData = {
   totalTaxExclusiveAmount: "105.00",
   totalTaxInclusiveAmount: "107.25",
   totalPrepaidAmount: "0.00",
-  totalPayableAmount: "0.00",
+  totalPayableAmount: "107.25",
 };
 
 // consider chargeAmount is 0.00 for now
