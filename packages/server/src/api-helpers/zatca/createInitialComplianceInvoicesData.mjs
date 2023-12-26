@@ -39,17 +39,15 @@ const baseInvoiceData = {
       quantity: 1,
       unitCode: "EACH",
       netPrice: "100.00",
-      // discountAmount: "10.00",
-      discountAmount: "0.00",
+      discountAmount: "10.00",
       discountReasonCode: "95",
       discountReason: "Discount",
-      // lineNetAmount: "90.00",
-      lineNetAmount: "100.00",
+      lineNetAmount: "90.00",
       taxCategory: "Z",
-      taxPercent: "0",
+      taxPercent: "0.00",
       taxAmount: "0.00",
+      taxRoundingAmount: "90.00",
       taxableAmount: "100.00",
-      taxRoundingAmount: "100.00",
       chargeAmount: "0.00",
       taxExemptionReasonCode: "VATEX-SA-35",
       taxExemptionReason: "Medicines and medical equipment",
@@ -72,12 +70,12 @@ const baseInvoiceData = {
   ],
   totalVatAmount: "2.25",
   totalExtensionAmount: "115.00",
-  totalDiscountAmount: "0.00",
+  totalDiscountAmount: "10.00",
   totalChargeAmount: "0.00",
-  totalTaxExclusiveAmount: "115.00",
-  totalTaxInclusiveAmount: "117.25",
+  totalTaxExclusiveAmount: "105.00", // 115.00 - 10.00
+  totalTaxInclusiveAmount: "107.25", // 105.00 + 2.25
   totalPrepaidAmount: "0.00",
-  totalPayableAmount: "117.25",
+  totalPayableAmount: "107.25",
 };
 
 // consider chargeAmount is 0.00 for now
