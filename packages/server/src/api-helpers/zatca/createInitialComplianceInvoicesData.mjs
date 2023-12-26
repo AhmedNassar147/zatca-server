@@ -8,7 +8,7 @@ import { getCurrentDate } from "@zatca-server/helpers";
 
 const baseInvoiceData = {
   // paymentMeansCode: "10",
-  paymentMeansCode: "30",
+  paymentMeansCode: "10",
   supplier: {
     vatName: "شركة المباني الخفيفة سيبوركس",
     vatNumber: "300056985100003",
