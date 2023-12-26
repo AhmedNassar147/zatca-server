@@ -131,7 +131,6 @@ const createInitialComplianceInvoiceData = ({
   products,
   totalDiscountAmount,
   deliveryDate,
-  taxCategory,
   totalVatAmount,
   totalExtensionAmount,
   totalDiscountAmount,
@@ -173,7 +172,6 @@ const createInitialComplianceInvoiceData = ({
     supplier,
     customer,
     deliveryDate,
-    taxCategory,
   };
 };
 

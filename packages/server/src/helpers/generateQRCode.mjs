@@ -24,8 +24,8 @@ const generateQRCode = ({
   invoiceHash,
   supplierVatName,
   supplierVatNumber,
-  totalWithTax,
-  totalTaxAmount,
+  totalVatAmount,
+  totalTaxInclusiveAmount,
   formattedDatetime,
 }) => {
   // Detect if simplified invoice or not (not used currently assuming all simplified tax invoice)
@@ -37,8 +37,8 @@ const generateQRCode = ({
     supplierVatName,
     supplierVatNumber,
     formattedDatetime,
-    totalWithTax,
-    totalTaxAmount,
+    totalVatAmount,
+    totalTaxInclusiveAmount,
     invoiceHash,
     Buffer.from(digitalSignature),
     certificatePublicKeyBuffer,

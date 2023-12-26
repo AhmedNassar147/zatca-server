@@ -41,8 +41,13 @@ const generateSignedXMLString = async ({
   eInvoiceCertificate,
   privateCertPath,
 }) => {
-  const { issueDate, issueTime, totalTaxAmount, totalWithTax, supplier } =
-    invoiceData;
+  const {
+    issueDate,
+    issueTime,
+    supplier,
+    totalVatAmount,
+    totalTaxInclusiveAmount,
+  } = invoiceData;
 
   const { vatName, vatNumber } = supplier || {};
   const datetime = `${issueDate} ${issueTime}`;
@@ -79,8 +84,8 @@ const generateSignedXMLString = async ({
     invoiceHash,
     supplierVatName: vatName,
     supplierVatNumber: vatNumber,
-    totalWithTax,
-    totalTaxAmount,
+    totalVatAmount,
+    totalTaxInclusiveAmount,
     formattedDatetime: signTimestamp,
   });
 
