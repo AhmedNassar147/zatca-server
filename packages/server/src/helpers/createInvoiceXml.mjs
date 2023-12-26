@@ -240,13 +240,11 @@ const createInvoiceXml = ({
       </cac:BillingReference>`
     : "";
 
-  // const allowanceChargeXml = createAllowanceChargeXml({
-  //   discountAmount: totalDiscountAmount,
-  //   taxPercent: totalTaxPercent,
-  //   discountReasonCode,
-  //   discountReason,
-  //   taxCategory,
-  // });
+  const allowanceChargeXml = createAllowanceChargeXml({
+    discountAmount: totalDiscountAmount,
+    taxPercent: "15",
+    taxCategory: "S",
+  });
 
   const deliveryXml = !!deliveryDate
     ? `<cac:Delivery>
@@ -292,6 +290,7 @@ const createInvoiceXml = ({
   ${accountingSupplierXml}
   ${accountingCustomerXml}
   ${deliveryXml}
+  ${allowanceChargeXml}
   ${paymentMeansSection}
   ${totalTaxXml}
   <cac:LegalMonetaryTotal>
