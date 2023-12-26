@@ -78,53 +78,45 @@ ${createTagIfValueFound(taxExemptionReasonCode, "cbc:TaxExemptionReasonCode")}
 ${createTagIfValueFound(taxExemptionReason, "cbc:TaxExemptionReason")}
 <cac:TaxScheme>
   <cbc:ID>VAT</cbc:ID>
+  <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
 </cac:TaxScheme>
 </cac:TaxCategory>`;
 
 const createAllowanceChargeXml = ({
-  totalDiscountAmount,
-  totalTaxPercent,
+  discountAmount,
+  taxPercent,
+  taxCategory,
   discountReasonCode = "95",
   discountReason = "Discount",
-  taxCategory,
-  baseAmount,
 }) => {
-  const baseAmountXml = !!baseAmount
-    ? `<cbc:BaseAmount currencyID="SAR">${baseAmount}</cbc:BaseAmount>`
-    : "";
-
   const chargeIndicator = discountReasonCode === "95" ? "false" : "true";
 
-  const taxSection = !hasNoNumberValue(totalTaxPercent)
-    ? createTaxCategoryXml({ taxCategory, taxPercent: totalTaxPercent })
+  const taxSection = !hasNoNumberValue(taxPercent)
+    ? createTaxCategoryXml({ taxCategory, taxPercent })
     : "";
 
   return `<cac:AllowanceCharge>
     <cbc:ChargeIndicator>${chargeIndicator}</cbc:ChargeIndicator>
     <cbc:AllowanceChargeReasonCode>${discountReasonCode}</cbc:AllowanceChargeReasonCode>
     <cbc:AllowanceChargeReason>${discountReason}</cbc:AllowanceChargeReason>
-    <cbc:Amount currencyID="SAR">${totalDiscountAmount || "0.0"}</cbc:Amount>
-    ${baseAmountXml}
+    <cbc:Amount currencyID="SAR">${discountAmount || "0.00"}</cbc:Amount>
     ${taxSection}
     </cac:AllowanceCharge>`;
 };
 
-const createTaxTotalXml = (totalTaxAmount, products) => {
+const createTaxTotalXml = (totalVatAmount, products) => {
   const subtotalsXml = products
     // .filter(({ taxAmount }) => !hasNoNumberValue(taxAmount))
     .map(
       ({
-        totalWithoutTax,
         taxAmount,
         taxCategory,
         taxPercent,
+        taxableAmount,
         taxExemptionReasonCode,
         taxExemptionReason,
-        lineExtensionAmount,
       }) => `<cac:TaxSubtotal>
-        <cbc:TaxableAmount currencyID="SAR">${
-          lineExtensionAmount || totalWithoutTax
-        }</cbc:TaxableAmount>
+        <cbc:TaxableAmount currencyID="SAR">${taxableAmount}</cbc:TaxableAmount>
         <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
         ${createTaxCategoryXml({
           taxCategory,
@@ -137,32 +129,32 @@ const createTaxTotalXml = (totalTaxAmount, products) => {
     .join("\n");
 
   return `<cac:TaxTotal>
-    <cbc:TaxAmount currencyID="SAR">${totalTaxAmount}</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="SAR">${totalVatAmount}</cbc:TaxAmount>
     ${subtotalsXml}
   </cac:TaxTotal>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="SAR">${totalTaxAmount}</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="SAR">${totalVatAmount}</cbc:TaxAmount>
   </cac:TaxTotal>
   `;
 };
 
 const createProductLineXml = ({
   id,
-  unitCode,
-  quantity,
-  totalWithoutTax,
-  taxAmount,
-  totalWithTax,
   productName,
-  taxCategory,
-  taxPercent,
-  price,
-  discount,
+  quantity,
+  unitCode,
+  netPrice,
+  discountAmount,
   discountReasonCode,
   discountReason,
+  lineNetAmount,
+  taxCategory,
+  taxPercent,
+  taxAmount,
+  taxRoundingAmount,
 }) => {
   const allowanceChargeXml = createAllowanceChargeXml({
-    totalDiscountAmount: discount,
+    discountAmount,
     discountReasonCode,
     discountReason,
     taxCategory,
@@ -171,10 +163,11 @@ const createProductLineXml = ({
   return `<cac:InvoiceLine>
   <cbc:ID>${id}</cbc:ID>
   <cbc:InvoicedQuantity unitCode="${unitCode}">${quantity}</cbc:InvoicedQuantity>
-  <cbc:LineExtensionAmount currencyID="SAR">${totalWithoutTax}</cbc:LineExtensionAmount>
+  <cbc:LineExtensionAmount currencyID="SAR">${lineNetAmount}</cbc:LineExtensionAmount>
+  ${allowanceChargeXml}
   <cac:TaxTotal>
     <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
-    <cbc:RoundingAmount currencyID="SAR">${totalWithTax}</cbc:RoundingAmount>
+    <cbc:RoundingAmount currencyID="SAR">${taxRoundingAmount}</cbc:RoundingAmount>
   </cac:TaxTotal>
   <cac:Item>
     <cbc:Name>${productName}</cbc:Name>
@@ -187,8 +180,7 @@ const createProductLineXml = ({
     </cac:ClassifiedTaxCategory>
   </cac:Item>
   <cac:Price>
-    <cbc:PriceAmount currencyID="SAR">${price}</cbc:PriceAmount>
-    ${allowanceChargeXml}
+    <cbc:PriceAmount currencyID="SAR">${netPrice}</cbc:PriceAmount>
   </cac:Price>
 </cac:InvoiceLine>`;
 };
@@ -209,16 +201,15 @@ const createInvoiceXml = ({
   deliveryDate,
   previousInvoiceHash,
   products,
-  totalDiscountAmount,
-  discountReasonCode,
-  discountReason,
-  totalTaxPercent,
-  totalTaxAmount,
-  totalWithoutTax,
-  totalWithTax,
-  taxCategory,
   supplier,
   customer,
+  totalDiscountAmount,
+  totalVatAmount,
+  totalExtensionAmount,
+  totalTaxExclusiveAmount,
+  totalTaxInclusiveAmount,
+  totalPrepaidAmount,
+  totalPayableAmount,
 }) => {
   const accountingSupplierXml = createAccountingSupplierOrCustomerXml(
     "supplier",
@@ -230,7 +221,7 @@ const createInvoiceXml = ({
     customer
   );
 
-  const totalTaxXml = createTaxTotalXml(totalTaxAmount, products);
+  const totalTaxXml = createTaxTotalXml(totalVatAmount, products);
 
   const invoiceLinesXml = products.map(createProductLineXml).join("\n");
 
@@ -249,15 +240,13 @@ const createInvoiceXml = ({
       </cac:BillingReference>`
     : "";
 
-  const allowanceChargeXml = createAllowanceChargeXml({
-    totalDiscountAmount,
-    totalTaxPercent,
-    discountReasonCode,
-    discountReason,
-    taxCategory,
-  });
-
-  const _totalDiscountAmount = totalDiscountAmount || "0.00";
+  // const allowanceChargeXml = createAllowanceChargeXml({
+  //   discountAmount: totalDiscountAmount,
+  //   taxPercent: totalTaxPercent,
+  //   discountReasonCode,
+  //   discountReason,
+  //   taxCategory,
+  // });
 
   const deliveryXml = !!deliveryDate
     ? `<cac:Delivery>
@@ -304,15 +293,14 @@ const createInvoiceXml = ({
   ${accountingCustomerXml}
   ${deliveryXml}
   ${paymentMeansSection}
-  ${allowanceChargeXml}
   ${totalTaxXml}
   <cac:LegalMonetaryTotal>
-    <cbc:LineExtensionAmount currencyID="SAR">${totalWithoutTax}</cbc:LineExtensionAmount>
-    <cbc:TaxExclusiveAmount currencyID="SAR">${totalWithoutTax}</cbc:TaxExclusiveAmount>
-    <cbc:TaxInclusiveAmount currencyID="SAR">${totalWithTax}</cbc:TaxInclusiveAmount>
-    <cbc:AllowanceTotalAmount currencyID="SAR">${_totalDiscountAmount}</cbc:AllowanceTotalAmount>
-    <cbc:PrepaidAmount currencyID="SAR">0.00</cbc:PrepaidAmount>
-    <cbc:PayableAmount currencyID="SAR">${totalWithTax}</cbc:PayableAmount>
+    <cbc:LineExtensionAmount currencyID="SAR">${totalExtensionAmount}</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="SAR">${totalTaxExclusiveAmount}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="SAR">${totalTaxInclusiveAmount}</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="SAR">${totalDiscountAmount}</cbc:AllowanceTotalAmount>
+    <cbc:PrepaidAmount currencyID="SAR">${totalPrepaidAmount}</cbc:PrepaidAmount>
+    <cbc:PayableAmount currencyID="SAR">${totalPayableAmount}</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   ${invoiceLinesXml}
 </Invoice>`;

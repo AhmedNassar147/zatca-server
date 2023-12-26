@@ -99,6 +99,7 @@
 		<cbc:TaxInclusiveAmount currencyID="SAR">209.19</cbc:TaxInclusiveAmount>
 		<cbc:PayableAmount currencyID="SAR">0</cbc:PayableAmount>
 	</cac:LegalMonetaryTotal>
+
 	<cac:InvoiceLine>
 		<cbc:ID>1</cbc:ID>
 		<cbc:InvoicedQuantity unitCode="PCE">20</cbc:InvoicedQuantity>
@@ -127,6 +128,7 @@
 			<cbc:PriceAmount currencyID="SAR">6.95</cbc:PriceAmount>
 		</cac:Price>
 	</cac:InvoiceLine>
+
 	<cac:InvoiceLine>
 		<cbc:ID>2</cbc:ID>
 		<cbc:InvoicedQuantity unitCode="PCE">4</cbc:InvoicedQuantity>
