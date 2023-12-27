@@ -179,14 +179,10 @@ const baseInvoiceData = {
 
 // totalChargeAmount =  ∑(chargeAmount)
 
-// invoiceDiscountAmount: the discount for document level
-
 // totalExtensionAmount = ∑(lineNetAmount)
-
+// invoiceDiscountAmount: the discount for document level
 // totalTaxExclusiveAmount = totalExtensionAmount - invoiceDiscountAmount
-
-// totalVatAmount = ∑(taxAmount) - invoiceDiscountAmount,
-
+// totalVatAmount = invoiceDiscountAmount ? totalTaxExclusiveAmount * taxPercent / 100 : ∑(taxAmount),
 // totalTaxInclusiveAmount = totalTaxExclusiveAmount + totalVatAmount
 
 // totalPrepaidAmount = 0.00
