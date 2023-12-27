@@ -205,7 +205,7 @@ const createInvoiceXml = ({
   products,
   supplier,
   customer,
-  totalDiscountAmount,
+  invoiceDiscountAmount,
   totalVatAmount,
   totalExtensionAmount,
   totalTaxExclusiveAmount,
@@ -248,7 +248,7 @@ const createInvoiceXml = ({
     : "";
 
   const allowanceChargeXml = createAllowanceChargeXml({
-    discountAmount: totalDiscountAmount,
+    discountAmount: invoiceDiscountAmount,
     taxPercent,
     taxCategory,
     discountReasonCode,

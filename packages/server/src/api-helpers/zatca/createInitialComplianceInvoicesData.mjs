@@ -7,7 +7,7 @@ import { randomUUID } from "crypto";
 import { getCurrentDate } from "@zatca-server/helpers";
 
 // item with tax only
-// totalDiscountAmount: "0.00",
+// invoiceDiscountAmount: "0.00",
 // totalChargeAmount: "0.00",
 // totalVatAmount: "2.25",
 // totalExtensionAmount: "15.00",
@@ -42,7 +42,7 @@ import { getCurrentDate } from "@zatca-server/helpers";
 // taxPercent: "15",
 // discountReasonCode: "95",
 // discountReason: "discount",
-// totalDiscountAmount: "0.00",
+// invoiceDiscountAmount: "0.00",
 //   totalChargeAmount: "0.00",
 //   totalVatAmount: "71.25",
 //   totalExtensionAmount: "475.00",
@@ -205,7 +205,7 @@ const createInitialComplianceInvoiceData = ({
   paymentInstructionNote,
   products,
   deliveryDate,
-  totalDiscountAmount,
+  invoiceDiscountAmount,
   totalVatAmount,
   totalExtensionAmount,
   totalChargeAmount,
@@ -239,7 +239,7 @@ const createInitialComplianceInvoiceData = ({
     previousInvoiceHash:
       "NWZlY2ViNjZmZmM4NmYzOGQ5NTI3ODZjNmQ2OTZjNzljMmRiYzIzOWRkNGU5MWI0NjcyOWQ3M2EyN2ZiNTdlOQ==",
     products,
-    totalDiscountAmount,
+    invoiceDiscountAmount,
     totalVatAmount,
     totalExtensionAmount,
     totalChargeAmount,
