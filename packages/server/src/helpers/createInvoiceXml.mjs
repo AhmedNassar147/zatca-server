@@ -181,7 +181,7 @@ const createProductLineXml = ({
     discountReasonCode,
     discountReason,
     taxCategory,
-    useVatCategory: true,
+    useVatCategory: false,
   });
 
   return `<cac:InvoiceLine>
