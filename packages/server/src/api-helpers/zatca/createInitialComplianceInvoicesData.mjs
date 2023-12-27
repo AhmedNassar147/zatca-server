@@ -113,6 +113,7 @@ const baseInvoiceData = {
     countrySubentity: "SA",
     countryIdCode: "SA",
   },
+  invoiceDiscountAmount: "140.00",
   totalChargeAmount: "0.00",
   totalVatAmount: "0.00",
   totalExtensionAmount: "800.00",
