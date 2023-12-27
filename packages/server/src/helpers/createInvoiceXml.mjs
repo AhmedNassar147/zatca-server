@@ -88,10 +88,11 @@ const createAllowanceChargeXml = ({
   taxCategory,
   discountReasonCode = "95",
   discountReason = "Discount",
+  useVatCategory,
 }) => {
   const chargeIndicator = discountReasonCode === "95" ? "false" : "true";
 
-  const taxSection = !hasNoNumberValue(taxPercent)
+  const taxSection = useVatCategory
     ? createTaxCategoryXml({ taxCategory, taxPercent })
     : "";
 
@@ -106,12 +107,20 @@ const createAllowanceChargeXml = ({
 
 const createProductsAllowanceChargeXml = (products) =>
   products.map(
-    ({ discountAmount, discountReasonCode, discountReason, taxCategory }) =>
+    ({
+      discountAmount,
+      discountReasonCode,
+      discountReason,
+      taxCategory,
+      taxPercent,
+    }) =>
       createAllowanceChargeXml({
         discountAmount,
         discountReasonCode,
         discountReason,
         taxCategory,
+        taxPercent,
+        useVatCategory: true,
       })
   );
 
@@ -172,6 +181,7 @@ const createProductLineXml = ({
     discountReasonCode,
     discountReason,
     taxCategory,
+    useVatCategory: true,
   });
 
   return `<cac:InvoiceLine>

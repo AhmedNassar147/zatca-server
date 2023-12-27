@@ -117,10 +117,10 @@ const baseInvoiceData = {
   totalChargeAmount: "0.00",
   totalVatAmount: "0.00",
   totalExtensionAmount: "800.00",
-  totalTaxExclusiveAmount: "800.00",
-  totalTaxInclusiveAmount: "800.00",
+  totalTaxExclusiveAmount: "660.00",
+  totalTaxInclusiveAmount: "660.00",
   totalPrepaidAmount: "0.00",
-  totalPayableAmount: "800.00",
+  totalPayableAmount: "660.00",
   products: [
     {
       id: "1",
