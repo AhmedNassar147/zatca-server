@@ -63,6 +63,14 @@ const baseInvoiceData = {
     countrySubentity: "SA",
     countryIdCode: "SA",
   },
+  totalDiscountAmount: "0.00",
+  totalChargeAmount: "0.00",
+  totalVatAmount: "71.25",
+  totalExtensionAmount: "475.00",
+  totalTaxExclusiveAmount: "475.00",
+  totalTaxInclusiveAmount: "546.25",
+  totalPrepaidAmount: "0.00",
+  totalPayableAmount: "546.25",
   products: [
     {
       id: "1",
@@ -99,15 +107,6 @@ const baseInvoiceData = {
       chargeAmount: "0.00",
     },
   ],
-
-  totalDiscountAmount: "0.00",
-  totalChargeAmount: "0.00",
-  totalVatAmount: "71.25",
-  totalExtensionAmount: "475.00",
-  totalTaxExclusiveAmount: "475.00",
-  totalTaxInclusiveAmount: "546.25",
-  totalPrepaidAmount: "0.00",
-  totalPayableAmount: "546.25",
 
   taxCategory: "S",
   taxPercent: "15",

@@ -47,15 +47,15 @@ const organizationNo = "001";
   const API_URL_PORT = dataBaseServerPort || 9090;
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
-  await initInitialCnfFiles(EXSYS_BASE_URL);
-  await stopTheProcessIfCertificateNotFound(false);
+  // await initInitialCnfFiles(EXSYS_BASE_URL);
+  // await stopTheProcessIfCertificateNotFound(false);
 
-  const { errors } = await issueCertificate(organizationNo, sandbox);
+  // const { errors } = await issueCertificate(organizationNo, sandbox);
 
-  if (errors) {
-    createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
-    process.kill(process.pid);
-  }
+  // if (errors) {
+  //   createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
+  //   process.kill(process.pid);
+  // }
 
   const results = await certifyZatcaUser(organizationNo, sandbox);
 
