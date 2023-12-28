@@ -185,7 +185,6 @@ const createProductLineXml = ({
   <cbc:ID>${id}</cbc:ID>
   <cbc:InvoicedQuantity unitCode="${unitCode}">${quantity}</cbc:InvoicedQuantity>
   <cbc:LineExtensionAmount currencyID="SAR">${lineNetAmount}</cbc:LineExtensionAmount>
-  ${allowanceChargeXml}
   <cac:TaxTotal>
     <cbc:TaxAmount currencyID="SAR">${taxAmount}</cbc:TaxAmount>
     <cbc:RoundingAmount currencyID="SAR">${taxRoundingAmount}</cbc:RoundingAmount>
@@ -200,6 +199,7 @@ const createProductLineXml = ({
   </cac:Item>
   <cac:Price>
     <cbc:PriceAmount currencyID="SAR">${netPrice}</cbc:PriceAmount>
+    ${allowanceChargeXml}
   </cac:Price>
 </cac:InvoiceLine>`;
 };
