@@ -4,6 +4,8 @@
  *
  */
 
+const defaultTaxCatTag = "cac:TaxCategory";
+
 const hasNoNumberValue = (value) =>
   !value || ["0.00", "0.0", "00.00"].includes(value);
 
@@ -71,16 +73,28 @@ const createTaxCategoryXml = ({
   taxPercent,
   taxExemptionReasonCode,
   taxExemptionReason,
-  tag = "cac:TaxCategory",
-}) => `<${tag}>
-<cbc:ID>${taxCategory}</cbc:ID>
-<cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
-${createTagIfValueFound(taxExemptionReasonCode, "cbc:TaxExemptionReasonCode")}
-${createTagIfValueFound(taxExemptionReason, "cbc:TaxExemptionReason")}
-<cac:TaxScheme>
-  <cbc:ID>VAT</cbc:ID>
-</cac:TaxScheme>
-</${tag}>`;
+  tag = defaultTaxCatTag,
+}) => {
+  const useAttributes = tag === defaultTaxCatTag;
+
+  const firstIdAttributes = useAttributes
+    ? 'schemeID="UN/ECE 5305" schemeAgencyID="6"'
+    : "";
+
+  const secondIdAttributes = useAttributes
+    ? 'schemeID="UN/ECE 5153" schemeAgencyID="6"'
+    : "";
+
+  return `<${tag}>
+  <cbc:ID ${firstIdAttributes}>${taxCategory}</cbc:ID>
+  <cbc:Percent>${taxPercent || "0.00"}</cbc:Percent>
+  ${createTagIfValueFound(taxExemptionReasonCode, "cbc:TaxExemptionReasonCode")}
+  ${createTagIfValueFound(taxExemptionReason, "cbc:TaxExemptionReason")}
+  <cac:TaxScheme>
+    <cbc:ID ${secondIdAttributes}>VAT</cbc:ID>
+  </cac:TaxScheme>
+  </${tag}>`;
+};
 
 const createAllowanceChargeXml = ({
   discountAmount,
@@ -273,7 +287,7 @@ const createInvoiceXml = ({
     discountReason,
     taxCategory,
     taxPercent,
-    useVatCategory: false,
+    useVatCategory: true,
   });
 
   const deliveryXml = !!deliveryDate
@@ -327,7 +341,7 @@ const createInvoiceXml = ({
     <cbc:LineExtensionAmount currencyID="SAR">${totalExtensionAmount}</cbc:LineExtensionAmount>
     <cbc:TaxExclusiveAmount currencyID="SAR">${totalTaxExclusiveAmount}</cbc:TaxExclusiveAmount>
     <cbc:TaxInclusiveAmount currencyID="SAR">${totalTaxInclusiveAmount}</cbc:TaxInclusiveAmount>
-    <cbc:AllowanceTotalAmount currencyID="SAR">0.00</cbc:AllowanceTotalAmount>
+    <cbc:AllowanceTotalAmount currencyID="SAR">${invoiceDiscountAmount}</cbc:AllowanceTotalAmount>
     <cbc:ChargeTotalAmount currencyID="SAR">${totalChargeAmount}</cbc:ChargeTotalAmount>
     <cbc:PrepaidAmount currencyID="SAR">${totalPrepaidAmount}</cbc:PrepaidAmount>
     <cbc:PayableAmount currencyID="SAR">${totalPayableAmount}</cbc:PayableAmount>
