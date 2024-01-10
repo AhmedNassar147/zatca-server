@@ -142,6 +142,56 @@ const TEST_DATA = {
       },
     ],
   },
+  TWO_ZERO_RATED_WITHOUT_DISCOUNT: {
+    invoiceDiscountAmount: "0.00",
+    totalChargeAmount: "0.00",
+    totalVatAmount: "0.00",
+    totalExtensionAmount: "800.00",
+    totalTaxExclusiveAmount: "800.00",
+    totalTaxInclusiveAmount: "800.00",
+    totalPrepaidAmount: "0.00",
+    totalPayableAmount: "800.00",
+    taxCategory: "Z",
+    taxPercent: "0",
+    // discountReasonCode: "95",
+    // discountReason: "discount",
+    products: [
+      {
+        id: "1",
+        productName: "O-ZITRONE ZN 18 001 17P نظارة طبية",
+        taxCategory: "Z",
+        taxExemptionReasonCode: "VATEX-SA-35",
+        taxExemptionReason: "Medicines and medical equipment",
+        quantity: 1,
+        taxPercent: "0",
+        netPrice: "400.00",
+        unitCode: "EACH",
+        discountAmount: "0.00",
+        taxAmount: "0.00",
+        lineNetAmount: "400.00",
+        taxableAmount: "400.00",
+        taxRoundingAmount: "400.00",
+        chargeAmount: "0.00",
+      },
+      {
+        id: "2",
+        productName: "CRIZAL 1.5 SPH -0.50 عدسات طبية",
+        taxCategory: "Z",
+        taxExemptionReasonCode: "VATEX-SA-35",
+        taxExemptionReason: "Medicines and medical equipment",
+        quantity: 2,
+        taxPercent: "0",
+        netPrice: "200.00",
+        unitCode: "EACH",
+        discountAmount: "0.00",
+        taxAmount: "0.00",
+        lineNetAmount: "400.00",
+        taxableAmount: "400.00",
+        taxRoundingAmount: "400.00",
+        chargeAmount: "0.00",
+      },
+    ],
+  },
 };
 
 const baseInvoiceData = {
@@ -171,7 +221,7 @@ const baseInvoiceData = {
     countryIdCode: "SA",
   },
 
-  ...TEST_DATA.TWO_ZERO_RATED_VAT_AND_DISCOUNT,
+  ...TEST_DATA.TWO_ZERO_RATED_WITHOUT_DISCOUNT,
 };
 
 // consider chargeAmount is 0.00 for now
