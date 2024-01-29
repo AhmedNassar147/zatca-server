@@ -27,7 +27,7 @@ const sendZatcaInvoice = async ({
     productionCsidData,
   } = await readCertsOrganizationsData(organizationNo);
 
-  const { invoiceHash, encodedInvoiceXml, signedInvoiceString } =
+  const { invoiceHash, encodedInvoiceXml, signedInvoiceString, qrBase64 } =
     await generateSignedXMLString({
       invoiceData,
       eInvoiceCertificate,
@@ -82,6 +82,7 @@ const sendZatcaInvoice = async ({
     bodyData,
     response,
     signedInvoiceString,
+    qrBase64,
   };
 };
 
