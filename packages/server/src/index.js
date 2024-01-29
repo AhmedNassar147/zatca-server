@@ -15,7 +15,6 @@ import {
 } from "@zatca-server/helpers";
 import { ZATCA_SANDBOX_TYPES, ZATCA_SANDBOX_TYPES_KEYS } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
-import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import {
   initInitialCnfFiles,
   createClientInvoiceQR,
