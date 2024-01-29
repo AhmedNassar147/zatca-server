@@ -134,6 +134,8 @@ const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
     privateCertPath,
   });
 
+  const { trx_pk } = invoiceData;
+
   const bodyData = {
     trx_pk,
     qrBase64,
