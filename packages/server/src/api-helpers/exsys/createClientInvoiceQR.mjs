@@ -18,7 +18,10 @@ import { API_VALUES } from "../../constants.mjs";
 const { FETCH_EXSYS_QR_INVOICE_DATA, POST_INVOICE_DATA_QR_RESULT_TO_EXSYS } =
   API_VALUES;
 
-const loopTimeoutMS = 4 * 1000;
+const TIMEOUT_MS = {
+  NO_DATA: 8 * 1000,
+  WITH_DATA: 3 * 1000,
+};
 
 // {
 //   "trx_pk": 2,
@@ -118,7 +121,7 @@ const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
       message: "skipping generating invoice QR because of empty invoice",
       data: invoiceData,
     });
-    await delayProcess(loopTimeoutMS);
+    await delayProcess(TIMEOUT_MS.NO_DATA);
     await createClientInvoiceQR(baseAPiUrl, organizationNo);
     return;
   }
@@ -168,7 +171,7 @@ const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
     });
   }
 
-  await delayProcess(loopTimeoutMS);
+  await delayProcess(TIMEOUT_MS.WITH_DATA);
   await createClientInvoiceQR(baseAPiUrl, organizationNo);
 };
 
