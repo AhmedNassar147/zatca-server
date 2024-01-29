@@ -30,7 +30,8 @@ const organizationNo = "001";
     exsysBaseUrl,
     sandbox: _sandbox,
     port,
-    qrOnly,
+    useInvoiceQrApi,
+    skipInitiatingCnf,
   } = await collectProcessOptions();
 
   const sandbox = _sandbox || ZATCA_SANDBOX_TYPES.developer;
@@ -47,21 +48,23 @@ const organizationNo = "001";
   const API_URL_PORT = port || 9090;
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
-  if (!qrOnly) {
+  if (!skipInitiatingCnf) {
     await initInitialCnfFiles(EXSYS_BASE_URL);
   }
+
   await stopTheProcessIfCertificateNotFound();
 
-  if (qrOnly) {
-    (async () => await createClientInvoiceQR(EXSYS_BASE_URL, organizationNo))();
+  if (!skipInitiatingCnf) {
+    const { errors } = await issueCertificate(organizationNo, sandbox);
+    if (errors) {
+      createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
+      process.exit(process.exitCode);
+    }
   }
 
-  // const { errors } = await issueCertificate(organizationNo, sandbox);
-
-  // if (errors) {
-  //   createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
-  //   process.exit(process.exitCode);
-  // }
+  if (useInvoiceQrApi) {
+    (async () => await createClientInvoiceQR(EXSYS_BASE_URL, organizationNo))();
+  }
 
   // const results = await certifyZatcaUser(organizationNo, sandbox);
 

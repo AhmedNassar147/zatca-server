@@ -16,7 +16,7 @@
     "// prepare": "node createClientCerts.mjs && yarn workspace @zatca-server/start-zatca-server start",
     "start": "yarn workspace @zatca-server/server start",
     "dev": "yarn start --exsys-base-url=http://149.102.140.8",
-    "dev-qr": "yarn start --exsys-base-url=http://149.102.140.8 --qr-only",
+    "dev-qr": "yarn start --exsys-base-url=http://149.102.140.8 --use-invoice-qr-api --skip-initiating-cnf",
     "prod": "yarn start --production"
   },
   "dependencies": {
