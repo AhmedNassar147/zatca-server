@@ -51,9 +51,10 @@ export const API_VALUES = {
   [API_IDS_NAMES.REPORT_ACTUAL_SIMPLIFIED_INVOICE]: "invoices/reporting/single",
   [API_IDS_NAMES.REPORT_ACTUAL_STANDARD_INVOICE]: "invoices/clearance/single",
 
-  // exsys
-  [API_IDS_NAMES.FETCH_INITIAL_CONFIG_SUPPLIERS]: "ex_zatca/zatca_config_file",
+  // ----------------------------- exsys --------------------------------------------------------
 
+  // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_config_file
+  [API_IDS_NAMES.FETCH_INITIAL_CONFIG_SUPPLIERS]: "ex_zatca/zatca_config_file",
   // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_invoice_not_send
   [API_IDS_NAMES.FETCH_INVOICE_DATA]: "ex_zatca/zatca_invoice_not_send",
   // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_invoice_response_dml {"trx_pk": 1,"status":"S" }

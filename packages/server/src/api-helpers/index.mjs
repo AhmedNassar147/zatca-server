@@ -1,4 +1,5 @@
 import initInitialCnfFiles from "./exsys/initInitialCnfFiles.mjs";
+import createClientInvoiceQR from "./exsys/createClientInvoiceQR.mjs";
 import issueCertificate from "./zatca/issueCertificate.mjs";
 import certifyZatcaUser from "./zatca/certifyZatcaUser.mjs";
 import sendZatcaInvoice from "./zatca/sendZatcaInvoice.mjs";
@@ -8,4 +9,5 @@ export {
   issueCertificate,
   certifyZatcaUser,
   sendZatcaInvoice,
+  createClientInvoiceQR,
 };

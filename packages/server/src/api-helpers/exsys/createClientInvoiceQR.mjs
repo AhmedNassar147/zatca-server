@@ -168,3 +168,5 @@ const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
   await delayProcess(loopTimeoutMS);
   await createClientInvoiceQR(organizationNo);
 };
+
+export default createClientInvoiceQR;

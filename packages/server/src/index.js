@@ -15,8 +15,10 @@ import {
 } from "@zatca-server/helpers";
 import { ZATCA_SANDBOX_TYPES, ZATCA_SANDBOX_TYPES_KEYS } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
+import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import {
   initInitialCnfFiles,
+  createClientInvoiceQR,
   issueCertificate,
   certifyZatcaUser,
   sendZatcaInvoice,
@@ -24,11 +26,12 @@ import {
 const organizationNo = "001";
 
 (async () => {
-  // --exsys-base-url --sandbox=developer|simulation --port=9090
+  // --exsys-base-url --sandbox=developer|simulation --port=9090 --qrOnly
   const {
     exsysBaseUrl,
     sandbox: _sandbox,
     port,
+    qrOnly,
   } = await collectProcessOptions();
 
   const sandbox = _sandbox || ZATCA_SANDBOX_TYPES.developer;
@@ -45,8 +48,14 @@ const organizationNo = "001";
   const API_URL_PORT = port || 9090;
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
-  await initInitialCnfFiles(EXSYS_BASE_URL);
+  if (!qrOnly) {
+    await initInitialCnfFiles(EXSYS_BASE_URL);
+  }
   await stopTheProcessIfCertificateNotFound();
+
+  if (qrOnly) {
+    (async () => await createClientInvoiceQR(EXSYS_BASE_URL, organizationNo))();
+  }
 
   // const { errors } = await issueCertificate(organizationNo, sandbox);
 
