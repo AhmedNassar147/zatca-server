@@ -10,8 +10,9 @@ import {
   writeResultFile,
   createCmdMessage,
 } from "@zatca-server/helpers";
-import readCertsOrganizationsData from "../../helpers/readCertsOrganizationsData.mjs";
 import createFetchRequest from "../createFetchRequest.mjs";
+import readCertsOrganizationsData from "../../helpers/readCertsOrganizationsData.mjs";
+import createInvoiceQRAndCertificateInfo from "../../helpers/createInvoiceQRAndCertificateInfo.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
 const { FETCH_EXSYS_QR_INVOICE_DATA, POST_INVOICE_DATA_QR_RESULT_TO_EXSYS } =
@@ -118,7 +119,7 @@ const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
       data: invoiceData,
     });
     await delayProcess(loopTimeoutMS);
-    await createClientInvoiceQR(organizationNo);
+    await createClientInvoiceQR(baseAPiUrl, organizationNo);
     return;
   }
 
@@ -166,7 +167,7 @@ const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
   }
 
   await delayProcess(loopTimeoutMS);
-  await createClientInvoiceQR(organizationNo);
+  await createClientInvoiceQR(baseAPiUrl, organizationNo);
 };
 
 export default createClientInvoiceQR;
