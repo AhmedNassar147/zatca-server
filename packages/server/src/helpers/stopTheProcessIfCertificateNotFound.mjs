@@ -50,6 +50,7 @@ const stopTheProcessIfCertificateNotFound = async () => {
     );
 
     process.kill(process.pid);
+    process.exit(process.exitCode);
   }
 };
 

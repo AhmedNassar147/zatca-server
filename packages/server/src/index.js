@@ -13,11 +13,7 @@ import {
   createCmdMessage,
   findRootYarnWorkSpaces,
 } from "@zatca-server/helpers";
-import {
-  ZATCA_SANDBOX_TYPES,
-  ZATCA_SANDBOX_TYPES_KEYS,
-  SERVER_CONFIG,
-} from "./constants.mjs";
+import { ZATCA_SANDBOX_TYPES, ZATCA_SANDBOX_TYPES_KEYS } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import {
   initInitialCnfFiles,
@@ -25,13 +21,15 @@ import {
   certifyZatcaUser,
   sendZatcaInvoice,
 } from "./api-helpers/index.mjs";
-const { dataBaseServerPort } = SERVER_CONFIG;
-
 const organizationNo = "001";
 
 (async () => {
-  // --exsys-base-url --sandbox=developer|simulation
-  const { exsysBaseUrl, sandbox: _sandbox } = await collectProcessOptions();
+  // --exsys-base-url --sandbox=developer|simulation --port=9090
+  const {
+    exsysBaseUrl,
+    sandbox: _sandbox,
+    port,
+  } = await collectProcessOptions();
 
   const sandbox = _sandbox || ZATCA_SANDBOX_TYPES.developer;
 
@@ -44,47 +42,47 @@ const organizationNo = "001";
   }
 
   const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
-  const API_URL_PORT = dataBaseServerPort || 9090;
+  const API_URL_PORT = port || 9090;
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
-  // await initInitialCnfFiles(EXSYS_BASE_URL);
-  // await stopTheProcessIfCertificateNotFound(false);
+  await initInitialCnfFiles(EXSYS_BASE_URL);
+  await stopTheProcessIfCertificateNotFound();
 
   // const { errors } = await issueCertificate(organizationNo, sandbox);
 
   // if (errors) {
   //   createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
-  //   process.kill(process.pid);
+  //   process.exit(process.exitCode);
   // }
 
-  const results = await certifyZatcaUser(organizationNo, sandbox);
+  // const results = await certifyZatcaUser(organizationNo, sandbox);
 
-  const { xmlFiles, data } = results.reduce(
-    (acc, { signedInvoiceString, ...other }) => {
-      acc.data.push(other);
-      acc.xmlFiles.push(signedInvoiceString);
+  // const { xmlFiles, data } = results.reduce(
+  //   (acc, { signedInvoiceString, ...other }) => {
+  //     acc.data.push(other);
+  //     acc.xmlFiles.push(signedInvoiceString);
 
-      return acc;
-    },
-    {
-      xmlFiles: [],
-      data: [],
-    }
-  );
+  //     return acc;
+  //   },
+  //   {
+  //     xmlFiles: [],
+  //     data: [],
+  //   }
+  // );
 
-  const root = await findRootYarnWorkSpaces();
-  await writeFile(
-    `${root}/results/sandbox_res.json`,
-    JSON.stringify(data, null, 2)
-  );
+  // const root = await findRootYarnWorkSpaces();
+  // await writeFile(
+  //   `${root}/results/sandbox_res.json`,
+  //   JSON.stringify(data, null, 2)
+  // );
 
-  for (let index = 0; index < xmlFiles.length; index++) {
-    const fileData = xmlFiles[index];
-    await writeFile(
-      `${root}/results/sandbox_invoice_${index + 1}.xml`,
-      fileData
-    );
-  }
+  // for (let index = 0; index < xmlFiles.length; index++) {
+  //   const fileData = xmlFiles[index];
+  //   await writeFile(
+  //     `${root}/results/sandbox_invoice_${index + 1}.xml`,
+  //     fileData
+  //   );
+  // }
 
   // const {
   //   response: { status },

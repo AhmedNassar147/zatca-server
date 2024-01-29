@@ -16,7 +16,11 @@ const createCmdMessage = ({ type, message, data }) => {
     `${chalk.bold.magenta("[zatca-server]:")} ${chalk[CHALK_COLOR[type]](
       message
     )}`,
-    !!data ? JSON.stringify(data, null, 2) : "",
+    !!data
+      ? typeof data === "string"
+        ? data
+        : JSON.stringify(data, null, 2)
+      : "",
   ].filter(Boolean);
 
   console.log(...log);
