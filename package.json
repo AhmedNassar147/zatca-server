@@ -13,7 +13,7 @@
     "clean-locks": "rm -rf ./yarn.lock",
     "bootstrap": "lerna bootstrap",
     "reset": "yarn clean && yarn clean-locks && yarn bootstrap",
-    "prepare": "node createClientCerts.mjs && yarn workspace @zatca-server/start-zatca-server start",
+    "// prepare": "node createClientCerts.mjs && yarn workspace @zatca-server/start-zatca-server start",
     "start": "yarn workspace @zatca-server/server start",
     "dev": "yarn start --exsys-base-url=http://149.102.140.8",
     "prod": "yarn start --production"
