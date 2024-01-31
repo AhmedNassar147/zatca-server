@@ -30,7 +30,7 @@ import { getCurrentDate } from "@zatca-server/helpers";
 // -------------------------------------------------------------------------------------
 
 const TEST_DATA = {
-  ONE_STANDARD_ITEM_TAX: {
+  ONE_STANDARD_ITEM_TAX_WITHOUT_DISCOUNT_OR_INVOICE_ALLOWANCE: {
     invoiceDiscountAmount: "0.00",
     totalChargeAmount: "0.00",
     totalVatAmount: "2.25",
@@ -178,22 +178,22 @@ const TEST_DATA = {
       },
     ],
   },
-  TWO_ZERO_RATED_WITHOUT_DISCOUNT: {
+  TWO_ZERO_RATED_WITHOUT_VAT_OR_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE: {
     // discountReasonCode: "95",
     // discountReason: "discount",
     invoiceDiscountAmount: "0.00",
     totalChargeAmount: "0.00",
     totalExtensionAmount: "800.00",
     totalTaxExclusiveAmount: "800.00",
+    totalVatAmount: "0.00",
     totalTaxInclusiveAmount: "800.00",
     totalPrepaidAmount: "0.00",
     totalPayableAmount: "800.00",
     taxCategory: "Z",
     taxPercent: "0",
-    totalVatAmount: "0.00",
     taxSubtotals: [
       {
-        taxableAmount: "400.00",
+        taxableAmount: "800.00",
         taxAmount: "0.00",
         taxCategory: "Z",
         taxPercent: "0",
@@ -210,10 +210,10 @@ const TEST_DATA = {
         unitCode: "EACH",
         discountAmount: "0.00",
         lineNetAmount: "400.00",
-        taxRoundingAmount: "400.00",
         taxCategory: "Z",
-        taxAmount: "0.00",
         taxPercent: "0",
+        taxAmount: "0.00",
+        taxRoundingAmount: "400.00",
         chargeAmount: "0.00",
       },
       {
@@ -261,7 +261,7 @@ const baseInvoiceData = {
     countryIdCode: "SA",
   },
 
-  ...TEST_DATA.TWO_STANDARD_RATED_VAT_AND_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE,
+  ...TEST_DATA.TWO_ZERO_RATED_WITHOUT_VAT_OR_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE,
 };
 
 const createInitialComplianceInvoiceData = ({
