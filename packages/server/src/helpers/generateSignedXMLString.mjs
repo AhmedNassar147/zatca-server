@@ -43,6 +43,7 @@ const generateSignedXMLString = async ({
     certificateIssuer,
     certificateSerialNumber,
     cleanedCertificate,
+    signTimestamp,
   } = await createInvoiceQRAndCertificateInfo({
     invoiceData,
     eInvoiceCertificate,

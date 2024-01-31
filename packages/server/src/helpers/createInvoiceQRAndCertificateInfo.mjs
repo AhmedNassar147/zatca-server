@@ -75,6 +75,7 @@ const createInvoiceQRAndCertificateInfo = async ({
     certificateIssuer,
     certificateSerialNumber,
     cleanedCertificate,
+    signTimestamp,
   };
 };
 
