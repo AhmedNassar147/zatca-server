@@ -32,6 +32,7 @@ const organizationNo = "001";
     port,
     useInvoiceQrApi,
     skipInitiatingCnf,
+    sendInitialInvoices,
   } = await collectProcessOptions();
 
   const sandbox = _sandbox || ZATCA_SANDBOX_TYPES.developer;
@@ -66,34 +67,36 @@ const organizationNo = "001";
     (async () => await createClientInvoiceQR(EXSYS_BASE_URL, organizationNo))();
   }
 
-  // const results = await certifyZatcaUser(organizationNo, sandbox);
+  if (sendInitialInvoices) {
+    const results = await certifyZatcaUser(organizationNo, sandbox);
 
-  // const { xmlFiles, data } = results.reduce(
-  //   (acc, { signedInvoiceString, ...other }) => {
-  //     acc.data.push(other);
-  //     acc.xmlFiles.push(signedInvoiceString);
+    const { xmlFiles, data } = results.reduce(
+      (acc, { signedInvoiceString, ...other }) => {
+        acc.data.push(other);
+        acc.xmlFiles.push(signedInvoiceString);
 
-  //     return acc;
-  //   },
-  //   {
-  //     xmlFiles: [],
-  //     data: [],
-  //   }
-  // );
+        return acc;
+      },
+      {
+        xmlFiles: [],
+        data: [],
+      }
+    );
 
-  // const root = await findRootYarnWorkSpaces();
-  // await writeFile(
-  //   `${root}/results/sandbox_res.json`,
-  //   JSON.stringify(data, null, 2)
-  // );
+    const root = await findRootYarnWorkSpaces();
+    await writeFile(
+      `${root}/results/sandbox_res.json`,
+      JSON.stringify(data, null, 2)
+    );
 
-  // for (let index = 0; index < xmlFiles.length; index++) {
-  //   const fileData = xmlFiles[index];
-  //   await writeFile(
-  //     `${root}/results/sandbox_invoice_${index + 1}.xml`,
-  //     fileData
-  //   );
-  // }
+    for (let index = 0; index < xmlFiles.length; index++) {
+      const fileData = xmlFiles[index];
+      await writeFile(
+        `${root}/results/sandbox_invoice_${index + 1}.xml`,
+        fileData
+      );
+    }
+  }
 
   // const {
   //   response: { status },
