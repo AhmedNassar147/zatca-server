@@ -68,23 +68,23 @@ const TEST_DATA = {
       },
     ],
   },
-  TWO_STANDARD_RATED_VAT_AND_DISCOUNT: {
+  TWO_STANDARD_RATED_VAT_AND_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE: {
     taxCategory: "S",
     taxPercent: "15",
     discountReasonCode: "95",
     discountReason: "discount",
     invoiceDiscountAmount: "0.00",
     totalChargeAmount: "0.00",
-    totalExtensionAmount: "350.00",
-    totalTaxExclusiveAmount: "350.00",
-    totalVatAmount: "52.50",
-    totalTaxInclusiveAmount: "402.50",
+    totalExtensionAmount: "300.00",
+    totalTaxExclusiveAmount: "300.00",
+    totalVatAmount: "45.00",
+    totalTaxInclusiveAmount: "345.00",
     totalPrepaidAmount: "0.00",
-    totalPayableAmount: "402.50",
+    totalPayableAmount: "345.00",
     taxSubtotals: [
       {
-        taxableAmount: "350.00",
-        taxAmount: "52.50",
+        taxableAmount: "300.00",
+        taxAmount: "45.00",
         taxCategory: "S",
         taxPercent: "15",
       },
@@ -93,15 +93,15 @@ const TEST_DATA = {
       {
         id: "1",
         productName: "احبال ومطاطات نظارات 15",
-        taxCategory: "S",
         quantity: 10,
-        taxPercent: "15",
         netPrice: "10.00",
         unitCode: "EACH",
         discountAmount: "50.00",
-        taxAmount: "15.00",
-        lineNetAmount: "100.00",
-        taxRoundingAmount: "115.00",
+        taxCategory: "S",
+        taxPercent: "15",
+        taxAmount: "7.50",
+        lineNetAmount: "50.00",
+        taxRoundingAmount: "57.50",
         chargeAmount: "0.00",
       },
       {
@@ -120,7 +120,6 @@ const TEST_DATA = {
       },
     ],
   },
-
   TWO_ZERO_RATED_ITEMS_AND_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE: {
     invoiceDiscountAmount: "0.00",
     totalChargeAmount: "0.00",
@@ -262,7 +261,7 @@ const baseInvoiceData = {
     countryIdCode: "SA",
   },
 
-  ...TEST_DATA.TWO_ZERO_RATED_ITEMS_AND_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE,
+  ...TEST_DATA.TWO_STANDARD_RATED_VAT_AND_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE,
 };
 
 const createInitialComplianceInvoiceData = ({
