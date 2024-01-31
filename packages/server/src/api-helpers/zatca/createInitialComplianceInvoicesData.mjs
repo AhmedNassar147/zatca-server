@@ -6,8 +6,31 @@
 import { randomUUID } from "crypto";
 import { getCurrentDate } from "@zatca-server/helpers";
 
+// consider chargeAmount is 0.00 for now
+// if taxPercent doesn't exist set taxExemptionReasonCode and taxExemptionReason values
+
+// netPrice = the unit price before discount
+// discountAmount = the total discount for item all qty
+// lineNetAmount = (netPrice * quantity) -  discountAmount
+// taxAmount = the total tax amount for item all qty => (taxableAmount * taxPercent / 100)
+// taxableAmount = lineNetAmount
+// taxRoundingAmount =  lineNetAmount + taxAmount
+
+// totalChargeAmount =  ∑(chargeAmount)
+
+// totalExtensionAmount = ∑(lineNetAmount)
+// invoiceDiscountAmount: the discount for document level
+// totalTaxExclusiveAmount = totalExtensionAmount - invoiceDiscountAmount
+// totalVatAmount = invoiceDiscountAmount ? totalTaxExclusiveAmount * taxPercent / 100 : ∑(taxAmount),
+// totalTaxInclusiveAmount = totalTaxExclusiveAmount + totalVatAmount
+
+// totalPrepaidAmount = 0.00
+// totalPayableAmount = totalTaxInclusiveAmount - totalPrepaidAmount
+
+// -------------------------------------------------------------------------------------
+
 const TEST_DATA = {
-  ONE_ITEM_TAX: {
+  ONE_STANDARD_ITEM_TAX: {
     invoiceDiscountAmount: "0.00",
     totalChargeAmount: "0.00",
     totalVatAmount: "2.25",
@@ -20,6 +43,14 @@ const TEST_DATA = {
     discountReason: "",
     taxCategory: "S",
     taxPercent: "0",
+    taxSubtotals: [
+      {
+        taxableAmount: "15.00",
+        taxAmount: "2.25",
+        taxCategory: "S",
+        taxPercent: "15",
+      },
+    ],
     products: [
       {
         id: "1",
@@ -32,7 +63,6 @@ const TEST_DATA = {
         discountAmount: "0.00",
         taxAmount: "2.25",
         lineNetAmount: "15.00",
-        taxableAmount: "15.00",
         taxRoundingAmount: "17.25",
         chargeAmount: "0.00",
       },
@@ -45,12 +75,20 @@ const TEST_DATA = {
     discountReason: "discount",
     invoiceDiscountAmount: "0.00",
     totalChargeAmount: "0.00",
-    totalVatAmount: "71.25",
-    totalExtensionAmount: "475.00",
-    totalTaxExclusiveAmount: "475.00",
-    totalTaxInclusiveAmount: "546.25",
+    totalExtensionAmount: "350.00",
+    totalTaxExclusiveAmount: "350.00",
+    totalVatAmount: "52.50",
+    totalTaxInclusiveAmount: "402.50",
     totalPrepaidAmount: "0.00",
-    totalPayableAmount: "546.25",
+    totalPayableAmount: "402.50",
+    taxSubtotals: [
+      {
+        taxableAmount: "350.00",
+        taxAmount: "52.50",
+        taxCategory: "S",
+        taxPercent: "15",
+      },
+    ],
     products: [
       {
         id: "1",
@@ -61,72 +99,71 @@ const TEST_DATA = {
         netPrice: "10.00",
         unitCode: "EACH",
         discountAmount: "50.00",
-        discountReasonCode: "95",
-        discountReason: "Discount",
         taxAmount: "15.00",
         lineNetAmount: "100.00",
-        taxableAmount: "100.00",
         taxRoundingAmount: "115.00",
         chargeAmount: "0.00",
       },
       {
         id: "2",
         productName: "سلاسل نظارات 100",
-        taxCategory: "S",
         quantity: 5,
-        taxPercent: "15",
         netPrice: "75.00",
         unitCode: "EACH",
         discountAmount: "125.00",
-        discountReasonCode: "95",
-        discountReason: "Discount",
-        taxAmount: "56.25",
-        lineNetAmount: "375.00",
-        taxableAmount: "375.00",
-        taxRoundingAmount: "431.25",
+        taxCategory: "S",
+        taxPercent: "15",
+        taxAmount: "37.50",
+        lineNetAmount: "250.00",
+        taxRoundingAmount: "287.5",
         chargeAmount: "0.00",
       },
     ],
   },
-  TWO_ZERO_RATED_VAT_AND_DISCOUNT: {
-    invoiceDiscountAmount: "140.00",
+
+  TWO_ZERO_RATED_ITEMS_AND_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE: {
+    invoiceDiscountAmount: "0.00",
     totalChargeAmount: "0.00",
     totalVatAmount: "0.00",
-    totalExtensionAmount: "800.00",
-    totalTaxExclusiveAmount: "800.00",
-    totalTaxInclusiveAmount: "800.00",
+    totalExtensionAmount: "660.00",
+    totalTaxExclusiveAmount: "660.00",
+    totalTaxInclusiveAmount: "660.00",
     totalPrepaidAmount: "0.00",
-    totalPayableAmount: "800.00",
+    totalPayableAmount: "660.00",
     taxCategory: "Z",
     taxPercent: "0",
     discountReasonCode: "95",
     discountReason: "discount",
+    taxSubtotals: [
+      {
+        taxableAmount: "660.00",
+        taxAmount: "0.00",
+        taxCategory: "Z",
+        taxPercent: "0",
+        taxExemptionReasonCode: "VATEX-SA-35",
+        taxExemptionReason: "Medicines and medical equipment",
+      },
+    ],
     products: [
       {
         id: "1",
         productName: "O-ZITRONE ZN 18 001 17P نظارة طبية",
-        taxCategory: "Z",
-        taxExemptionReasonCode: "VATEX-SA-35",
-        taxExemptionReason: "Medicines and medical equipment",
         quantity: 1,
-        taxPercent: "0",
         netPrice: "400.00",
         unitCode: "EACH",
         discountAmount: "80.00",
         discountReasonCode: "95",
         discountReason: "Discount",
+        taxCategory: "Z",
+        taxPercent: "0",
         taxAmount: "0.00",
-        lineNetAmount: "400.00",
-        taxableAmount: "400.00",
-        taxRoundingAmount: "400.00",
+        lineNetAmount: "320.00",
+        taxRoundingAmount: "320.00",
         chargeAmount: "0.00",
       },
       {
         id: "2",
         productName: "CRIZAL 1.5 SPH -0.50 عدسات طبية",
-        taxCategory: "Z",
-        taxExemptionReasonCode: "VATEX-SA-35",
-        taxExemptionReason: "Medicines and medical equipment",
         quantity: 2,
         taxPercent: "0",
         netPrice: "200.00",
@@ -134,18 +171,19 @@ const TEST_DATA = {
         discountAmount: "60.00",
         discountReasonCode: "95",
         discountReason: "Discount",
+        taxCategory: "Z",
         taxAmount: "0.00",
-        lineNetAmount: "400.00",
-        taxableAmount: "400.00",
-        taxRoundingAmount: "400.00",
+        lineNetAmount: "340.00",
+        taxRoundingAmount: "340.00",
         chargeAmount: "0.00",
       },
     ],
   },
   TWO_ZERO_RATED_WITHOUT_DISCOUNT: {
+    // discountReasonCode: "95",
+    // discountReason: "discount",
     invoiceDiscountAmount: "0.00",
     totalChargeAmount: "0.00",
-    totalVatAmount: "0.00",
     totalExtensionAmount: "800.00",
     totalTaxExclusiveAmount: "800.00",
     totalTaxInclusiveAmount: "800.00",
@@ -153,41 +191,44 @@ const TEST_DATA = {
     totalPayableAmount: "800.00",
     taxCategory: "Z",
     taxPercent: "0",
-    // discountReasonCode: "95",
-    // discountReason: "discount",
+    totalVatAmount: "0.00",
+    taxSubtotals: [
+      {
+        taxableAmount: "400.00",
+        taxAmount: "0.00",
+        taxCategory: "Z",
+        taxPercent: "0",
+        taxExemptionReasonCode: "VATEX-SA-35",
+        taxExemptionReason: "Medicines and medical equipment",
+      },
+    ],
     products: [
       {
         id: "1",
         productName: "O-ZITRONE ZN 18 001 17P نظارة طبية",
-        taxCategory: "Z",
-        taxExemptionReasonCode: "VATEX-SA-35",
-        taxExemptionReason: "Medicines and medical equipment",
         quantity: 1,
-        taxPercent: "0",
         netPrice: "400.00",
         unitCode: "EACH",
         discountAmount: "0.00",
-        taxAmount: "0.00",
         lineNetAmount: "400.00",
-        taxableAmount: "400.00",
         taxRoundingAmount: "400.00",
+        taxCategory: "Z",
+        taxAmount: "0.00",
+        taxPercent: "0",
         chargeAmount: "0.00",
       },
       {
         id: "2",
         productName: "CRIZAL 1.5 SPH -0.50 عدسات طبية",
-        taxCategory: "Z",
-        taxExemptionReasonCode: "VATEX-SA-35",
-        taxExemptionReason: "Medicines and medical equipment",
         quantity: 2,
-        taxPercent: "0",
         netPrice: "200.00",
         unitCode: "EACH",
         discountAmount: "0.00",
-        taxAmount: "0.00",
         lineNetAmount: "400.00",
-        taxableAmount: "400.00",
         taxRoundingAmount: "400.00",
+        taxCategory: "Z",
+        taxAmount: "0.00",
+        taxPercent: "0",
         chargeAmount: "0.00",
       },
     ],
@@ -221,31 +262,8 @@ const baseInvoiceData = {
     countryIdCode: "SA",
   },
 
-  ...TEST_DATA.TWO_ZERO_RATED_WITHOUT_DISCOUNT,
+  ...TEST_DATA.TWO_ZERO_RATED_ITEMS_AND_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE,
 };
-
-// consider chargeAmount is 0.00 for now
-// if taxPercent doesn't exist set taxExemptionReasonCode and taxExemptionReason values
-
-// netPrice = the price after discount
-// discountAmount = the total discount for item all qty
-// lineNetAmount = netPrice * quantity => (netPrice × quantity) + chargeAmount
-// taxAmount = the total tax amount for item all qty => (taxableAmount * taxPercent / 100)
-// taxableAmount = lineNetAmount
-// taxRoundingAmount =  lineNetAmount + taxAmount
-
-// totalChargeAmount =  ∑(chargeAmount)
-
-// totalExtensionAmount = ∑(lineNetAmount)
-// invoiceDiscountAmount: the discount for document level
-// totalTaxExclusiveAmount = totalExtensionAmount - invoiceDiscountAmount
-// totalVatAmount = invoiceDiscountAmount ? totalTaxExclusiveAmount * taxPercent / 100 : ∑(taxAmount),
-// totalTaxInclusiveAmount = totalTaxExclusiveAmount + totalVatAmount
-
-// totalPrepaidAmount = 0.00
-// totalPayableAmount = totalTaxInclusiveAmount - totalPrepaidAmount
-
-// -------------------------------------------------------------------------------------
 
 const createInitialComplianceInvoiceData = ({
   transactionTypeCode,
@@ -258,6 +276,7 @@ const createInitialComplianceInvoiceData = ({
   paymentInstructionNote,
   products,
   deliveryDate,
+  latestDeliveryDate,
   invoiceDiscountAmount,
   totalVatAmount,
   totalExtensionAmount,
@@ -266,6 +285,7 @@ const createInitialComplianceInvoiceData = ({
   totalTaxInclusiveAmount,
   totalPrepaidAmount,
   totalPayableAmount,
+  taxSubtotals,
   discountReasonCode,
   discountReason,
   taxCategory,
@@ -300,9 +320,11 @@ const createInitialComplianceInvoiceData = ({
     totalTaxInclusiveAmount,
     totalPrepaidAmount,
     totalPayableAmount,
+    taxSubtotals,
     supplier,
     customer,
     deliveryDate,
+    latestDeliveryDate,
     discountReasonCode,
     discountReason,
     taxCategory,
