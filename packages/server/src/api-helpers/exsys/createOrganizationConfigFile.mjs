@@ -11,7 +11,7 @@ const createOrganizationConfigFile = async ({
   email,
   countryIdCode,
   vatName,
-  organizationNo,
+  // organizationNo,
   genralOrganizationName,
   organizationUnitName,
   vatNumber,
@@ -59,7 +59,7 @@ registeredAddress=${registeredAddress}
 businessCategory=${businessCategory}
 `;
 
-  const folderPath = await createRootFolder(`certs/${organizationNo}`);
+  const folderPath = await createRootFolder("certs");
 
   await writeFile(`${folderPath}/config.cnf`, configString);
   await createClientCerts(folderPath);

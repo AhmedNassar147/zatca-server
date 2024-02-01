@@ -3,10 +3,10 @@
  * Helper: `initInitialCnfFiles`.
  *
  */
-import { createCmdMessage, isArrayHasData } from "@zatca-server/helpers";
+import { createCmdMessage, isObjectHasData } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createOrganizationConfigFile from "./createOrganizationConfigFile.mjs";
-import writeCertsOrganizationsData from "../../helpers/writeCertsOrganizationsData.mjs";
+import writeCertsOrganizationData from "../../helpers/writeCertsOrganizationData.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
 const { FETCH_INITIAL_CONFIG_SUPPLIERS } = API_VALUES;
@@ -14,7 +14,7 @@ const { FETCH_INITIAL_CONFIG_SUPPLIERS } = API_VALUES;
 const initInitialCnfFiles = async (baseAPiUrl) => {
   createCmdMessage({
     type: "info",
-    message: `fetch organizations and creating it's certs...`,
+    message: `fetch organization and creating the certificates...`,
   });
 
   const { result } = await createFetchRequest({
@@ -23,42 +23,30 @@ const initInitialCnfFiles = async (baseAPiUrl) => {
     requestMethod: "GET",
   });
 
-  const { data } = result || {};
+  const { invoiceKind, vatName, vatNumber } = result || {};
 
-  if (!isArrayHasData(data)) {
+  if (!isObjectHasData(result)) {
     createCmdMessage({
       type: "error",
-      message: "the initial suppliers wasn't found",
+      message: "the initial supplier wasn't found",
     });
 
     process.kill(process.pid);
     process.exit(process.exitCode);
   }
 
-  const configPromises = data.map(createOrganizationConfigFile);
+  await createOrganizationConfigFile(result);
 
-  await Promise.all(configPromises);
-
-  const organizationCertsData = data.reduce(
-    (acc, { organizationNo, invoiceKind, vatName, vatNumber }) => {
-      acc[organizationNo] = {
-        ...(acc[organizationNo] || {}),
-        invoiceKind,
-        vatName,
-        vatNumber,
-        privateCertPath: `certs/${organizationNo}/privateKey.pem`,
-        publicCertPath: `certs/${organizationNo}/publicKey.pem`,
-        taxPayerPath: `certs/${organizationNo}/taxpayer.csr`,
-        csidData: {},
-        productionCsidData: {},
-      };
-
-      return acc;
-    },
-    {}
-  );
-
-  await writeCertsOrganizationsData(organizationCertsData);
+  await writeCertsOrganizationData({
+    invoiceKind,
+    vatName,
+    vatNumber,
+    privateCertPath: "certs/privateKey.pem",
+    publicCertPath: "certs/publicKey.pem",
+    taxPayerPath: "certs/taxpayer.csr",
+    csidData: {},
+    productionCsidData: {},
+  });
 };
 
 export default initInitialCnfFiles;

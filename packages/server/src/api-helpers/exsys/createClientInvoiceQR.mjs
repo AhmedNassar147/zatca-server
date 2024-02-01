@@ -11,7 +11,7 @@ import {
   createCmdMessage,
 } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
-import readCertsOrganizationsData from "../../helpers/readCertsOrganizationsData.mjs";
+import readCertsOrganizationData from "../../helpers/readCertsOrganizationData.mjs";
 import createInvoiceQRAndCertificateInfo from "../../helpers/createInvoiceQRAndCertificateInfo.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
@@ -20,7 +20,7 @@ const { FETCH_EXSYS_QR_INVOICE_DATA, POST_INVOICE_DATA_QR_RESULT_TO_EXSYS } =
 
 const TIMEOUT_MS = 2 * 1000;
 
-const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
+const createClientInvoiceQR = async (baseAPiUrl) => {
   const { result } = await createFetchRequest({
     baseAPiUrl,
     resourceNameUrl: FETCH_EXSYS_QR_INVOICE_DATA,
@@ -36,14 +36,14 @@ const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
       data: invoiceData,
     });
     await delayProcess(TIMEOUT_MS);
-    await createClientInvoiceQR(baseAPiUrl, organizationNo);
+    await createClientInvoiceQR(baseAPiUrl);
     return;
   }
 
   const {
     privateCertPath,
     csidData: { decodedToken: eInvoiceCertificate },
-  } = await readCertsOrganizationsData(organizationNo);
+  } = await readCertsOrganizationData();
 
   const { invoiceHash, qrBase64 } = await createInvoiceQRAndCertificateInfo({
     invoiceData,
@@ -85,7 +85,7 @@ const createClientInvoiceQR = async (baseAPiUrl, organizationNo) => {
     });
   }
 
-  await createClientInvoiceQR(baseAPiUrl, organizationNo);
+  await createClientInvoiceQR(baseAPiUrl);
 };
 
 export default createClientInvoiceQR;

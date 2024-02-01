@@ -9,16 +9,20 @@ import {
 } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import readCertsOrganizationsData from "../../helpers/readCertsOrganizationsData.mjs";
-import writeCertsOrganizationsData from "../../helpers/writeCertsOrganizationsData.mjs";
+import readCertsOrganizationData from "../../helpers/readCertsOrganizationData.mjs";
+import writeCertsOrganizationData from "../../helpers/writeCertsOrganizationData.mjs";
 import {
   BASE_API_HEADERS,
   SERVER_CONFIG,
   API_VALUES,
 } from "../../constants.mjs";
 
-const { otp } = SERVER_CONFIG;
-const { FETCH_FINAL_CSID, POST_ZATCA_COMPLIANCE_CSID } = API_VALUES;
+const { otp, authorization } = SERVER_CONFIG;
+const {
+  FETCH_FINAL_CSID,
+  POST_ZATCA_COMPLIANCE_CSID,
+  POST_IF_CLIENT_CERTIFIED,
+} = API_VALUES;
 
 const baseRequestHeaders = {
   ...BASE_API_HEADERS,
@@ -60,9 +64,9 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
   };
 };
 
-const issueCertificate = async (organizationNo, sandbox, isProductionCsid) => {
-  const organizationsData = await readCertsOrganizationsData();
-  const { taxPayerPath, csidData } = organizationsData[organizationNo];
+const issueCertificate = async (sandbox, isProductionCsid) => {
+  const organizationData = await readCertsOrganizationData();
+  const { taxPayerPath, csidData } = organizationData;
 
   let { bodyData, requestHeaders } =
     await createRequestHeadersAndBodyWithComplianceCsidData(
@@ -116,11 +120,40 @@ const issueCertificate = async (organizationNo, sandbox, isProductionCsid) => {
       decodedToken: `-----BEGIN CERTIFICATE-----\n${decodedToken}\n-----END CERTIFICATE-----`,
     };
 
-    const path = `${organizationNo}.${
-      isProductionCsid ? "productionCsidData" : "csidData"
-    }`;
+    const path = isProductionCsid ? "productionCsidData" : "csidData";
 
-    await writeCertsOrganizationsData(data, path, organizationsData);
+    await createFetchRequest({
+      resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
+      bodyData: {
+        certified: isProductionCsid ? "Y" : "N",
+        authorization,
+        productionCsidData_requestID: isProductionCsid ? requestID : "",
+        productionCsidData_dispositionMessage: isProductionCsid
+          ? dispositionMessage
+          : "",
+        productionCsidData_tokenType: isProductionCsid ? tokenType : "",
+        productionCsidData_secret: isProductionCsid ? secret : "",
+        productionCsidData_binarySecurityToken: isProductionCsid
+          ? binarySecurityToken
+          : "",
+        productionCsidData_decodedToken: isProductionCsid ? decodedToken : "",
+
+        csidData_requestID: isProductionCsid ? csidData.requestID : requestID,
+        csidData_dispositionMessage: isProductionCsid
+          ? csidData.dispositionMessage
+          : dispositionMessage,
+        csidData_tokenType: isProductionCsid ? csidData.tokenType : tokenType,
+        csidData_secret: isProductionCsid ? csidData.secret : secret,
+        csidData_binarySecurityToken: isProductionCsid
+          ? csidData.binarySecurityToken
+          : binarySecurityToken,
+        csidData_decodedToken: isProductionCsid
+          ? csidData.decodedToken
+          : decodedToken,
+      },
+    });
+
+    await writeCertsOrganizationData(data, path, organizationData);
   }
 
   return {

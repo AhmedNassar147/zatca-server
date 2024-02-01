@@ -10,7 +10,7 @@ import {
   createRootFolder,
 } from "@zatca-server/helpers";
 import createInitialComplianceInvoicesData from "./createInitialComplianceInvoicesData.mjs";
-import readCertsOrganizationsData from "../../helpers/readCertsOrganizationsData.mjs";
+import readCertsOrganizationData from "../../helpers/readCertsOrganizationData.mjs";
 import createFetchRequest from "../createFetchRequest.mjs";
 import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
 import { API_VALUES } from "../../constants.mjs";
@@ -18,7 +18,7 @@ import { API_VALUES } from "../../constants.mjs";
 const { POST_INITIAL_INVOICES, FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE } =
   API_VALUES;
 
-const printResultData = async (organizationNo, results) => {
+const printResultData = async (results) => {
   const { xmlFiles, data } = results.reduce(
     (acc, { signedInvoiceString, ...other }) => {
       acc.data.push(other);
@@ -32,7 +32,7 @@ const printResultData = async (organizationNo, results) => {
     }
   );
 
-  const basePaths = await createRootFolder(`results/${organizationNo}`);
+  const basePaths = await createRootFolder(`results`);
 
   await writeFile(`${basePaths}/result.json`, JSON.stringify(data, null, 2));
 
@@ -42,11 +42,7 @@ const printResultData = async (organizationNo, results) => {
   }
 };
 
-const sendZatcaInitialInvoices = async (
-  organizationNo,
-  sandbox,
-  logResults
-) => {
+const sendZatcaInitialInvoices = async (sandbox, logResults) => {
   const { result: initialInvoice, error } = await createFetchRequest({
     baseAPiUrl,
     resourceNameUrl: FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE,
@@ -63,7 +59,7 @@ const sendZatcaInitialInvoices = async (
     process.exit(process.exitCode);
   }
 
-  const { invoiceKind } = await readCertsOrganizationsData(organizationNo);
+  const { invoiceKind } = await readCertsOrganizationData();
 
   const invoicesData = createInitialComplianceInvoicesData(
     invoiceKind,
@@ -80,14 +76,13 @@ const sendZatcaInitialInvoices = async (
       resourceNameUrl,
       useProductionCsid: false,
       invoiceData,
-      organizationNo,
     });
 
     results.push(result);
   }
 
   if (logResults) {
-    await printResultData(organizationNo, results);
+    await printResultData(results);
   }
 
   return results;

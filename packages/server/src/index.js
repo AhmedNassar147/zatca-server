@@ -29,6 +29,7 @@ const organizationNo = "001";
     useInvoiceQrApi,
     skipInitiatingCnf,
     sendInitialInvoices,
+    useLogger,
   } = await collectProcessOptions();
 
   const sandbox = _sandbox || ZATCA_SANDBOX_TYPES.developer;
@@ -50,11 +51,12 @@ const organizationNo = "001";
   }
 
   await stopTheProcessIfCertificateNotFound();
+  return;
 
   const { isCertified } = await checkIfClientZatcaCertified(EXSYS_BASE_URL);
 
   if (!skipInitiatingCnf) {
-    const { errors } = await issueCertificate(organizationNo, sandbox);
+    const { errors } = await issueCertificate(sandbox);
     if (errors) {
       createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
       process.exit(process.exitCode);
@@ -62,11 +64,11 @@ const organizationNo = "001";
   }
 
   if (useInvoiceQrApi) {
-    (async () => await createClientInvoiceQR(EXSYS_BASE_URL, organizationNo))();
+    (async () => await createClientInvoiceQR(EXSYS_BASE_URL))();
   }
 
   if (sendInitialInvoices && !isCertified) {
-    await sendZatcaInitialInvoices(organizationNo, sandbox);
+    await sendZatcaInitialInvoices(sandbox, useLogger);
   }
 
   // const { errors: _, ...productionCsidData } = await issueCertificate(

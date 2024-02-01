@@ -9,10 +9,11 @@ import {
   checkPathExists,
   createCmdMessage,
 } from "@zatca-server/helpers";
-import readCertsOrganizationsData from "./readCertsOrganizationsData.mjs";
+import readCertsOrganizationData from "./readCertsOrganizationData.mjs";
 
 const stopTheProcessIfCertificateNotFound = async () => {
-  const organizationsData = await readCertsOrganizationsData();
+  const { privateCertPath, publicCertPath, taxPayerPath } =
+    await readCertsOrganizationData();
   const rootYarnWorkSpaces = await findRootYarnWorkSpaces();
 
   createCmdMessage({
@@ -20,15 +21,7 @@ const stopTheProcessIfCertificateNotFound = async () => {
     message: "checking certificates ...",
   });
 
-  const values = Object.values(organizationsData);
-
-  const paths = values
-    .map(({ privateCertPath, publicCertPath, taxPayerPath }) => [
-      privateCertPath,
-      publicCertPath,
-      taxPayerPath,
-    ])
-    .flat();
+  const paths = [privateCertPath, publicCertPath, taxPayerPath];
 
   const configPromises = paths.map(async (fullPath) => {
     const doesFileExsist = await checkPathExists(
@@ -41,17 +34,24 @@ const stopTheProcessIfCertificateNotFound = async () => {
 
   const errors = (await Promise.all(configPromises)).filter(Boolean);
 
-  if (errors.length) {
-    errors.forEach((error) =>
-      createCmdMessage({
-        type: "error",
-        message: error,
-      })
-    );
+  if (!errors.length) {
+    createCmdMessage({
+      type: "success",
+      message: "certificates checked ☺",
+    });
 
-    process.kill(process.pid);
-    process.exit(process.exitCode);
+    return;
   }
+
+  errors.forEach((error) =>
+    createCmdMessage({
+      type: "error",
+      message: error,
+    })
+  );
+
+  process.kill(process.pid);
+  process.exit(process.exitCode);
 };
 
 export default stopTheProcessIfCertificateNotFound;
