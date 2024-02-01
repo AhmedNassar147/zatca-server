@@ -332,7 +332,7 @@ const baseInvoiceData = {
     countryIdCode: "SA",
   },
 
-  ...TEST_DATA.TWO_ZERO_RATED_WITHOUT_VAT_OR_DISCOUNT_WITHOUT_INVOICE_ALLOWANCE,
+  ...TEST_DATA.TWO_DIFFERENT_CATEGORIES_WITHOUT_INVOICE_ALLOWANCE,
 };
 
 const createInitialComplianceInvoiceData = ({
