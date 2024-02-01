@@ -13,21 +13,29 @@ import { getCurrentDate } from "@zatca-server/helpers";
 // discountAmount = the total discount for item all qty
 // lineNetAmount = (netPrice * quantity) -  discountAmount
 // taxAmount = the total tax amount for item all qty => (taxableAmount * taxPercent / 100)
-// taxableAmount = lineNetAmount
 // taxRoundingAmount =  lineNetAmount + taxAmount
-
 // totalChargeAmount =  ∑(chargeAmount)
+
+// taxSubtotals[*].taxableAmount = ∑(lineNetAmount for current category) (- invoiceDiscountAmount for current category IF category is "s")
+// taxSubtotals[*].taxAmount = (taxSubtotals.taxableAmount * taxPercent / 100)
 
 // totalExtensionAmount = ∑(lineNetAmount)
 // invoiceDiscountAmount: the discount for document level
 // totalTaxExclusiveAmount = totalExtensionAmount - invoiceDiscountAmount
-// totalVatAmount = invoiceDiscountAmount ? totalTaxExclusiveAmount * taxPercent / 100 : ∑(taxAmount),
+// totalVatAmount = ∑(taxSubtotals[*].taxAmount),
 // totalTaxInclusiveAmount = totalTaxExclusiveAmount + totalVatAmount
 
 // totalPrepaidAmount = 0.00
 // totalPayableAmount = totalTaxInclusiveAmount - totalPrepaidAmount
 
 // -------------------------------------------------------------------------------------
+
+// z
+// line: 80 + 100 = 180
+// TaxAmount: 0
+// s
+// line: 90 + 100 = 190
+// TaxAmount: 13.50 + 15 = 28.5
 
 const TEST_DATA = {
   ONE_STANDARD_ITEM_TAX_WITHOUT_DISCOUNT_OR_INVOICE_ALLOWANCE: {
@@ -228,6 +236,69 @@ const TEST_DATA = {
         taxCategory: "Z",
         taxAmount: "0.00",
         taxPercent: "0",
+        chargeAmount: "0.00",
+      },
+    ],
+  },
+  TWO_DIFFERENT_CATEGORIES_WITHOUT_INVOICE_ALLOWANCE: {
+    // discountReasonCode: "95",
+    // discountReason: "discount",
+    invoiceDiscountAmount: "0.00",
+    totalChargeAmount: "0.00",
+    totalExtensionAmount: "70.00",
+    totalTaxExclusiveAmount: "70.00",
+    totalTaxInclusiveAmount: "78.40",
+    AllowanceTotalAmount: "0.00",
+    totalPrepaidAmount: "0.00",
+    totalPayableAmount: "78.40",
+    taxCategory: "Z",
+    taxPercent: "0",
+    totalVatAmount: "8.40",
+    taxSubtotals: [
+      {
+        taxableAmount: "56.00",
+        taxAmount: "8.40",
+        taxCategory: "S",
+        taxPercent: 15,
+      },
+      {
+        taxableAmount: "14.00",
+        taxAmount: "0.00",
+        taxCategory: "Z",
+        taxPercent: 0,
+        taxExemptionReasonCode: "VATEX-SA-35",
+        taxExemptionReason: "Medicines and medical equipment",
+      },
+    ],
+    products: [
+      {
+        id: "1",
+        productName: "DOCTOR CONSULTAION",
+        taxCategory: "Z",
+        taxExemptionReasonCode: "VATEX-SA-35",
+        taxExemptionReason: "Medicines and medical equipment",
+        quantity: 1,
+        taxPercent: "0",
+        netPrice: "14.00",
+        unitCode: "EACH",
+        discountAmount: "0.00",
+        lineNetAmount: "14.00",
+        taxAmount: "0.00",
+        taxRoundingAmount: "14.00",
+        chargeAmount: "0.00",
+      },
+      {
+        id: "2",
+        productName: "DOCTOR CONSULTAION",
+        taxCategory: "S",
+        quantity: 1,
+        taxPercent: "15",
+        netPrice: "56.00",
+        unitCode: "EACH",
+        discountAmount: "0.00",
+        lineNetAmount: "56.00",
+        taxAmount: "8.40",
+        taxRoundingAmount: "64.40",
         chargeAmount: "0.00",
       },
     ],

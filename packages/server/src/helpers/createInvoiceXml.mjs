@@ -167,14 +167,16 @@ const createProductLineXml = ({
   taxAmount,
   taxRoundingAmount,
 }) => {
-  const allowanceChargeXml = createAllowanceChargeXml({
-    discountAmount,
-    discountReasonCode,
-    discountReason,
-    taxCategory,
-    taxPercent,
-    useVatCategory: false,
-  });
+  const allowanceChargeXml = hasNoNumberValue(discountAmount)
+    ? ""
+    : createAllowanceChargeXml({
+        discountAmount,
+        discountReasonCode,
+        discountReason,
+        taxCategory,
+        taxPercent,
+        useVatCategory: false,
+      });
 
   return `<cac:InvoiceLine>
   <cbc:ID>${id}</cbc:ID>
