@@ -32,6 +32,7 @@ const initInitialCnfFiles = async (baseAPiUrl) => {
     });
 
     process.kill(process.pid);
+    process.exit(process.exitCode);
   }
 
   const configPromises = data.map(createOrganizationConfigFile);
