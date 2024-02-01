@@ -3,29 +3,25 @@
  * server: `zatca-server`.
  *
  */
-import { writeFile } from "fs/promises";
 
 // import express from "express";
 // import cors from "cors";
 // import bodyParser from "body-parser";
-import {
-  collectProcessOptions,
-  createCmdMessage,
-  findRootYarnWorkSpaces,
-} from "@zatca-server/helpers";
+import { collectProcessOptions, createCmdMessage } from "@zatca-server/helpers";
 import { ZATCA_SANDBOX_TYPES, ZATCA_SANDBOX_TYPES_KEYS } from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import {
   initInitialCnfFiles,
   createClientInvoiceQR,
   issueCertificate,
-  certifyZatcaUser,
+  sendZatcaInitialInvoices,
   sendZatcaInvoice,
+  checkIfClientZatcaCertified,
 } from "./api-helpers/index.mjs";
 const organizationNo = "001";
 
 (async () => {
-  // --exsys-base-url --sandbox=developer|simulation --port=9090 --qrOnly
+  // --exsys-base-url --sandbox=developer|simulation --port=9090 --skip-initiating-cnf --use-invoice-qr-api
   const {
     exsysBaseUrl,
     sandbox: _sandbox,
@@ -55,6 +51,8 @@ const organizationNo = "001";
 
   await stopTheProcessIfCertificateNotFound();
 
+  const { isCertified } = await checkIfClientZatcaCertified(EXSYS_BASE_URL);
+
   if (!skipInitiatingCnf) {
     const { errors } = await issueCertificate(organizationNo, sandbox);
     if (errors) {
@@ -67,42 +65,12 @@ const organizationNo = "001";
     (async () => await createClientInvoiceQR(EXSYS_BASE_URL, organizationNo))();
   }
 
-  if (sendInitialInvoices) {
-    const results = await certifyZatcaUser(organizationNo, sandbox);
-
-    const { xmlFiles, data } = results.reduce(
-      (acc, { signedInvoiceString, ...other }) => {
-        acc.data.push(other);
-        acc.xmlFiles.push(signedInvoiceString);
-
-        return acc;
-      },
-      {
-        xmlFiles: [],
-        data: [],
-      }
-    );
-
-    const root = await findRootYarnWorkSpaces();
-    await writeFile(
-      `${root}/results/sandbox_res.json`,
-      JSON.stringify(data, null, 2)
-    );
-
-    for (let index = 0; index < xmlFiles.length; index++) {
-      const fileData = xmlFiles[index];
-      await writeFile(
-        `${root}/results/sandbox_invoice_${index + 1}.xml`,
-        fileData
-      );
-    }
+  if (sendInitialInvoices && !isCertified) {
+    await sendZatcaInitialInvoices(organizationNo, sandbox);
   }
 
-  // const {
-  //   response: { status },
-  // } = complianceInvoiceData;
-
   // const { errors: _, ...productionCsidData } = await issueCertificate(
+  //   organizationNo,
   //   sandbox,
   //   true
   // );

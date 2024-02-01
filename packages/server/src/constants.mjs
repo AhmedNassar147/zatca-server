@@ -32,6 +32,12 @@ export const API_IDS_NAMES = {
   REPORT_ACTUAL_SIMPLIFIED_INVOICE: "REPORT_ACTUAL_SIMPLIFIED_INVOICE",
   REPORT_ACTUAL_STANDARD_INVOICE: "REPORT_ACTUAL_STANDARD_INVOICE",
   FETCH_INITIAL_CONFIG_SUPPLIERS: "FETCH_INITIAL_CONFIG_SUPPLIERS",
+  FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE:
+    "FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE",
+
+  CHECK_IS_CURRENT_CLIENT_CERTIFIED: "CHECK_IS_CURRENT_CLIENT_CERTIFIED",
+  POST_IF_CLIENT_CERTIFIED: "POST_IF_CLIENT_CERTIFIED",
+
   FETCH_INVOICE_DATA: "FETCH_INVOICE_DATA",
   POST_REPORTED_INVOICE_DATA_TO_EXSYS: "POST_REPORTED_INVOICE_DATA_TO_EXSYS",
   FETCH_EXSYS_QR_INVOICE_DATA: "FETCH_EXSYS_QR_INVOICE_DATA",
@@ -55,6 +61,14 @@ export const API_VALUES = {
 
   // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_config_file
   [API_IDS_NAMES.FETCH_INITIAL_CONFIG_SUPPLIERS]: "ex_zatca/zatca_config_file",
+  // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/get_initial_invoice_compliance
+  [API_IDS_NAMES.FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE]:
+    "ex_zatca/get_initial_invoice_compliance",
+  // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/is_zatca_certified?authorization=111111
+  [API_IDS_NAMES.CHECK_IS_CURRENT_CLIENT_CERTIFIED]:
+    "ex_zatca/is_zatca_certified",
+  // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_certified_dml
+  [API_IDS_NAMES.POST_IF_CLIENT_CERTIFIED]: "ex_zatca/zatca_certified_dml",
   // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_invoice_not_send
   [API_IDS_NAMES.FETCH_INVOICE_DATA]: "ex_zatca/zatca_invoice_not_send",
   // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_invoice_response_dml {"trx_pk": 1,"status":"S" }
