@@ -4,15 +4,23 @@
  *
  */
 import { writeFile } from "fs/promises";
-import { setIn } from "@zatca-server/helpers";
 import getOrganizationsDataJsonFilePath from "./getOrganizationDataJsonFilePath.mjs";
+import readCertsOrganizationData from "./readCertsOrganizationData.mjs";
 
-const writeCertsOrganizationData = async (value, path, source) => {
+const writeCertsOrganizationData = async (newValues) => {
   const filePath = await getOrganizationsDataJsonFilePath();
+  const organizationData = await readCertsOrganizationData();
 
-  const newData = path ? setIn(value, path, source) : value;
+  const newData = JSON.stringify(
+    {
+      ...organizationData,
+      ...newValues,
+    },
+    null,
+    2
+  );
 
-  await writeFile(filePath, JSON.stringify(newData, null, 2));
+  await writeFile(filePath, newData);
 };
 
 export default writeCertsOrganizationData;

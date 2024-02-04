@@ -6,6 +6,7 @@
 import {
   decodeBase64ToString,
   readAndEncodeCertToBase64,
+  createCmdMessage,
 } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
@@ -27,6 +28,45 @@ const {
 const baseRequestHeaders = {
   ...BASE_API_HEADERS,
   "Accept-Version": "V2",
+};
+
+const DEFAULT_DATA = {
+  requestID: "",
+  dispositionMessage: "",
+  tokenType: "",
+  secret: "",
+  binarySecurityToken: "",
+  decodedToken: "",
+};
+
+const updateOrganizationData = async (values, csidData, isProductionCsid) => {
+  const path = isProductionCsid ? "productionCsidData" : "csidData";
+
+  const exsysCsidData = Object.keys(values).reduce((acc, key) => {
+    const value = values[key];
+    acc[`${path}_${key}`] = value;
+
+    if (isProductionCsid) {
+      acc[`csidData_${key}`] = csidData[key];
+    }
+
+    if (!isProductionCsid) {
+      acc[`productionCsidData_${key}`] = DEFAULT_DATA[key];
+    }
+
+    return acc;
+  }, {});
+
+  await writeCertsOrganizationData({ [path]: values });
+
+  await createFetchRequest({
+    resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
+    bodyData: {
+      certified: isProductionCsid ? "Y" : "N",
+      authorization,
+      ...exsysCsidData,
+    },
+  });
 };
 
 const createRequestHeadersAndBodyWithComplianceCsidData = async (
@@ -65,6 +105,13 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
 };
 
 const issueCertificate = async (sandbox, isProductionCsid) => {
+  createCmdMessage({
+    type: "info",
+    message: `issue ${
+      isProductionCsid ? "production csid data" : "initial csid data"
+    }`,
+  });
+
   const organizationData = await readCertsOrganizationData();
   const { taxPayerPath, csidData } = organizationData;
 
@@ -100,6 +147,8 @@ const issueCertificate = async (sandbox, isProductionCsid) => {
   const _errors = errors || error;
 
   if (_errors) {
+    await updateOrganizationData(result || {}, csidData, isProductionCsid);
+
     return {
       requestHeaders,
       bodyData,
@@ -120,40 +169,7 @@ const issueCertificate = async (sandbox, isProductionCsid) => {
       decodedToken: `-----BEGIN CERTIFICATE-----\n${decodedToken}\n-----END CERTIFICATE-----`,
     };
 
-    const path = isProductionCsid ? "productionCsidData" : "csidData";
-
-    await createFetchRequest({
-      resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
-      bodyData: {
-        certified: isProductionCsid ? "Y" : "N",
-        authorization,
-        productionCsidData_requestID: isProductionCsid ? requestID : "",
-        productionCsidData_dispositionMessage: isProductionCsid
-          ? dispositionMessage
-          : "",
-        productionCsidData_tokenType: isProductionCsid ? tokenType : "",
-        productionCsidData_secret: isProductionCsid ? secret : "",
-        productionCsidData_binarySecurityToken: isProductionCsid
-          ? binarySecurityToken
-          : "",
-        productionCsidData_decodedToken: isProductionCsid ? decodedToken : "",
-
-        csidData_requestID: isProductionCsid ? csidData.requestID : requestID,
-        csidData_dispositionMessage: isProductionCsid
-          ? csidData.dispositionMessage
-          : dispositionMessage,
-        csidData_tokenType: isProductionCsid ? csidData.tokenType : tokenType,
-        csidData_secret: isProductionCsid ? csidData.secret : secret,
-        csidData_binarySecurityToken: isProductionCsid
-          ? csidData.binarySecurityToken
-          : binarySecurityToken,
-        csidData_decodedToken: isProductionCsid
-          ? csidData.decodedToken
-          : decodedToken,
-      },
-    });
-
-    await writeCertsOrganizationData(data, path, organizationData);
+    await updateOrganizationData(data, csidData, isProductionCsid);
   }
 
   return {

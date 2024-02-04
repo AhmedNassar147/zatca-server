@@ -51,11 +51,11 @@ const organizationNo = "001";
   }
 
   await stopTheProcessIfCertificateNotFound();
-  return;
 
-  const { isCertified } = await checkIfClientZatcaCertified(EXSYS_BASE_URL);
+  const { isCertified, shouldIssueInitialCertificate } =
+    await checkIfClientZatcaCertified(EXSYS_BASE_URL);
 
-  if (!skipInitiatingCnf) {
+  if (shouldIssueInitialCertificate) {
     const { errors } = await issueCertificate(sandbox);
     if (errors) {
       createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
@@ -66,16 +66,17 @@ const organizationNo = "001";
   if (useInvoiceQrApi) {
     (async () => await createClientInvoiceQR(EXSYS_BASE_URL))();
   }
+  return;
 
   if (sendInitialInvoices && !isCertified) {
     await sendZatcaInitialInvoices(sandbox, useLogger);
   }
 
-  // const { errors: _, ...productionCsidData } = await issueCertificate(
-  //   organizationNo,
-  //   sandbox,
-  //   true
-  // );
+  const { errors: _, response } = await issueCertificate(
+    organizationNo,
+    sandbox,
+    true
+  );
 
   // const reportData = await reportInvoice({
   //   isSimplified: true,
