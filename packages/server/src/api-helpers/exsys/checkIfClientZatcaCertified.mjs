@@ -40,7 +40,7 @@ const checkIfClientZatcaCertified = async (baseAPiUrl) => {
 
   return {
     isCertified,
-    shouldIssueInitialCertificate: !isObjectHasData(csidData),
+    shouldIssueInitialCsid: !isObjectHasData(csidData),
   };
 };
 

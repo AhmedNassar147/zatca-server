@@ -44,21 +44,6 @@ const createOrganizationDataUpdater =
     const path = isProductionCsid ? "productionCsidData" : "csidData";
     const values = _values || {};
 
-    const exsysCsidData = Object.keys(values).reduce((acc, key) => {
-      const value = values[key];
-      acc[`${path}_${key}`] = value;
-
-      if (isProductionCsid) {
-        acc[`csidData_${key}`] = csidData[key];
-      }
-
-      if (!isProductionCsid) {
-        acc[`productionCsidData_${key}`] = DEFAULT_DATA[key];
-      }
-
-      return acc;
-    }, {});
-
     await writeCertsOrganizationData({ [path]: values });
     const { binarySecurityToken, secret } = values;
 
@@ -69,7 +54,8 @@ const createOrganizationDataUpdater =
         certified:
           isProductionCsid && !!binarySecurityToken && !!secret ? "Y" : "N",
         authorization,
-        ...exsysCsidData,
+        csidData: isProductionCsid ? csidData : values,
+        productionCsidData: isProductionCsid ? values : {},
       },
     });
   };
@@ -159,6 +145,14 @@ const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
 
   if (_errors) {
     await updateOrganizationData(result);
+
+    createCmdMessage({
+      type: "error",
+      message: `error when creating the ${
+        isProductionCsid ? "production" : "initial"
+      } csid data`,
+      data: errors,
+    });
 
     return {
       requestHeaders,

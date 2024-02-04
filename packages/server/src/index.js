@@ -52,13 +52,12 @@ const organizationNo = "001";
 
   await stopTheProcessIfCertificateNotFound();
 
-  const { isCertified, shouldIssueInitialCertificate } =
+  const { isCertified, shouldIssueInitialCsid } =
     await checkIfClientZatcaCertified(EXSYS_BASE_URL);
 
-  if (shouldIssueInitialCertificate) {
+  if (shouldIssueInitialCsid) {
     const { errors } = await issueCertificate(EXSYS_BASE_URL, sandbox);
     if (errors) {
-      createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
       process.exit(process.exitCode);
     }
   }
@@ -71,13 +70,14 @@ const organizationNo = "001";
     await sendZatcaInitialInvoices(EXSYS_BASE_URL, sandbox, useLogger);
   }
 
-  const { errors: _, response } = await issueCertificate(
-    EXSYS_BASE_URL,
-    sandbox,
-    true
-  );
+  if (!isCertified) {
+    const { errors } = await issueCertificate(EXSYS_BASE_URL, sandbox, true);
 
-  console.log("response", response);
+    if (errors) {
+      process.exit(process.exitCode);
+    }
+  }
+
   return;
 
   // const reportData = await reportInvoice({
