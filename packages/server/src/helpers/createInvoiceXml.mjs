@@ -211,7 +211,7 @@ const createInvoiceXml = ({
   invoiceTypeCode,
   invoiceNote,
   invoiceNoteLang = "ar",
-  cancelledInvoiceNo,
+  billingReferenceId,
   paymentMeansCode,
   paymentInstructionNote,
   invoiceCounterNo,
@@ -256,10 +256,10 @@ const createInvoiceXml = ({
       </cac:PaymentMeans>`
     : "";
 
-  const billingReferenceXml = !!cancelledInvoiceNo
+  const billingReferenceXml = !!billingReferenceId
     ? `<cac:BillingReference>
         <cac:InvoiceDocumentReference>
-          <cbc:ID>${cancelledInvoiceNo}</cbc:ID>
+          <cbc:ID>${billingReferenceId}</cbc:ID>
         </cac:InvoiceDocumentReference>
       </cac:BillingReference>`
     : "";

@@ -34,7 +34,7 @@ const createInitialComplianceInvoiceData = ({
   transactionTypeCode,
   invoiceTypeCode,
   invoiceCounterNo,
-  cancelledInvoiceNo,
+  billingReferenceId,
   supplier,
   customer,
   paymentMeansCode,
@@ -73,7 +73,7 @@ const createInitialComplianceInvoiceData = ({
     invoiceNoteLang,
     invoiceNote: "compliance invoice note",
     invoiceCounterNo,
-    cancelledInvoiceNo,
+    billingReferenceId,
     paymentMeansCode,
     paymentInstructionNote,
     previousInvoiceHash,
@@ -138,6 +138,7 @@ const createInitialComplianceInvoicesData = (invoiceKind, initialInvoice) => {
           ...initialInvoice,
           transactionTypeCode,
           invoiceTypeCode: "381",
+          billingReferenceId: "0",
           invoiceCounterNo: invoiceCounterNo + 2,
         })
       );
