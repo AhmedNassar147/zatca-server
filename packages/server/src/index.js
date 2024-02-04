@@ -71,13 +71,14 @@ const organizationNo = "001";
     await sendZatcaInitialInvoices(EXSYS_BASE_URL, sandbox, useLogger);
   }
 
-  return;
-
   const { errors: _, response } = await issueCertificate(
     EXSYS_BASE_URL,
     sandbox,
     true
   );
+
+  console.log("response", response);
+  return;
 
   // const reportData = await reportInvoice({
   //   isSimplified: true,

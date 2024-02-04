@@ -60,12 +60,14 @@ const createOrganizationDataUpdater =
     }, {});
 
     await writeCertsOrganizationData({ [path]: values });
+    const { binarySecurityToken, secret } = values;
 
     await createFetchRequest({
       baseAPiUrl,
       resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
       bodyData: {
-        certified: isProductionCsid ? "Y" : "N",
+        certified:
+          isProductionCsid && !!binarySecurityToken && !!secret ? "Y" : "N",
         authorization,
         ...exsysCsidData,
       },
