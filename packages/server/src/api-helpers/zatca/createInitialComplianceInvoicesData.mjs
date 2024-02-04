@@ -132,6 +132,8 @@ const createInitialComplianceInvoicesData = (invoiceKind, initialInvoice) => {
           ...initialInvoice,
           transactionTypeCode,
           invoiceTypeCode: "383",
+          billingReferenceId: "0",
+          paymentInstructionNote: "anything",
           invoiceCounterNo: invoiceCounterNo + 1,
         }),
         createInitialComplianceInvoiceData({
@@ -139,6 +141,7 @@ const createInitialComplianceInvoicesData = (invoiceKind, initialInvoice) => {
           transactionTypeCode,
           invoiceTypeCode: "381",
           billingReferenceId: "0",
+          paymentInstructionNote: "anything",
           invoiceCounterNo: invoiceCounterNo + 2,
         })
       );
