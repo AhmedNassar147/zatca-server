@@ -30,15 +30,6 @@ const baseRequestHeaders = {
   "Accept-Version": "V2",
 };
 
-const DEFAULT_DATA = {
-  requestID: "",
-  dispositionMessage: "",
-  tokenType: "",
-  secret: "",
-  binarySecurityToken: "",
-  decodedToken: "",
-};
-
 const createOrganizationDataUpdater =
   (baseAPiUrl, csidData, isProductionCsid) => async (_values) => {
     const path = isProductionCsid ? "productionCsidData" : "csidData";
@@ -65,7 +56,7 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
   csidData,
   isProductionCsid
 ) => {
-  const { binarySecurityToken, secret, requestID } = csidData;
+  const { binarySecurityToken, secret, requestID } = csidData || {};
 
   if (!isProductionCsid) {
     // don't remove cert headers
