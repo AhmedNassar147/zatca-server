@@ -56,7 +56,7 @@ const organizationNo = "001";
     await checkIfClientZatcaCertified(EXSYS_BASE_URL);
 
   if (shouldIssueInitialCertificate) {
-    const { errors } = await issueCertificate(sandbox);
+    const { errors } = await issueCertificate(EXSYS_BASE_URL, sandbox);
     if (errors) {
       createCmdMessage({ type: "error", message: "CSID ERRORS", data: errors });
       process.exit(process.exitCode);
@@ -73,7 +73,7 @@ const organizationNo = "001";
   }
 
   const { errors: _, response } = await issueCertificate(
-    organizationNo,
+    EXSYS_BASE_URL,
     sandbox,
     true
   );

@@ -39,35 +39,38 @@ const DEFAULT_DATA = {
   decodedToken: "",
 };
 
-const updateOrganizationData = async (values, csidData, isProductionCsid) => {
-  const path = isProductionCsid ? "productionCsidData" : "csidData";
+const createOrganizationDataUpdater =
+  (baseAPiUrl, csidData, isProductionCsid) => async (_values) => {
+    const path = isProductionCsid ? "productionCsidData" : "csidData";
+    const values = _values || {};
 
-  const exsysCsidData = Object.keys(values).reduce((acc, key) => {
-    const value = values[key];
-    acc[`${path}_${key}`] = value;
+    const exsysCsidData = Object.keys(values).reduce((acc, key) => {
+      const value = values[key];
+      acc[`${path}_${key}`] = value;
 
-    if (isProductionCsid) {
-      acc[`csidData_${key}`] = csidData[key];
-    }
+      if (isProductionCsid) {
+        acc[`csidData_${key}`] = csidData[key];
+      }
 
-    if (!isProductionCsid) {
-      acc[`productionCsidData_${key}`] = DEFAULT_DATA[key];
-    }
+      if (!isProductionCsid) {
+        acc[`productionCsidData_${key}`] = DEFAULT_DATA[key];
+      }
 
-    return acc;
-  }, {});
+      return acc;
+    }, {});
 
-  await writeCertsOrganizationData({ [path]: values });
+    await writeCertsOrganizationData({ [path]: values });
 
-  await createFetchRequest({
-    resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
-    bodyData: {
-      certified: isProductionCsid ? "Y" : "N",
-      authorization,
-      ...exsysCsidData,
-    },
-  });
-};
+    await createFetchRequest({
+      baseAPiUrl,
+      resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
+      bodyData: {
+        certified: isProductionCsid ? "Y" : "N",
+        authorization,
+        ...exsysCsidData,
+      },
+    });
+  };
 
 const createRequestHeadersAndBodyWithComplianceCsidData = async (
   taxPayerPath,
@@ -104,7 +107,7 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
   };
 };
 
-const issueCertificate = async (sandbox, isProductionCsid) => {
+const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
   createCmdMessage({
     type: "info",
     message: `issue ${
@@ -133,6 +136,12 @@ const issueCertificate = async (sandbox, isProductionCsid) => {
     zatcaSandbox: sandbox,
   });
 
+  const updateOrganizationData = createOrganizationDataUpdater(
+    baseAPiUrl,
+    csidData,
+    isProductionCsid
+  );
+
   const { result, error } = response;
 
   const {
@@ -147,7 +156,7 @@ const issueCertificate = async (sandbox, isProductionCsid) => {
   const _errors = errors || error;
 
   if (_errors) {
-    await updateOrganizationData(result || {}, csidData, isProductionCsid);
+    await updateOrganizationData(result);
 
     return {
       requestHeaders,
@@ -169,7 +178,7 @@ const issueCertificate = async (sandbox, isProductionCsid) => {
       decodedToken: `-----BEGIN CERTIFICATE-----\n${decodedToken}\n-----END CERTIFICATE-----`,
     };
 
-    await updateOrganizationData(data, csidData, isProductionCsid);
+    await updateOrganizationData(data);
   }
 
   return {
