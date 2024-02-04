@@ -42,7 +42,7 @@ const printResultData = async (results) => {
   }
 };
 
-const sendZatcaInitialInvoices = async (sandbox, logResults) => {
+const sendZatcaInitialInvoices = async (baseAPiUrl, sandbox, logResults) => {
   const { result: initialInvoice, error } = await createFetchRequest({
     baseAPiUrl,
     resourceNameUrl: FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE,

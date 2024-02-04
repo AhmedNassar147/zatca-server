@@ -66,11 +66,12 @@ const organizationNo = "001";
   if (useInvoiceQrApi) {
     (async () => await createClientInvoiceQR(EXSYS_BASE_URL))();
   }
-  return;
 
   if (sendInitialInvoices && !isCertified) {
-    await sendZatcaInitialInvoices(sandbox, useLogger);
+    await sendZatcaInitialInvoices(EXSYS_BASE_URL, sandbox, useLogger);
   }
+
+  return;
 
   const { errors: _, response } = await issueCertificate(
     EXSYS_BASE_URL,
