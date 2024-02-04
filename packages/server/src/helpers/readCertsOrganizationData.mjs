@@ -3,14 +3,18 @@
  * Helper: `readCertsOrganizationData`.
  *
  */
-import { readJsonFile } from "@zatca-server/helpers";
+import { writeFile } from "fs/promises";
+import { checkPathExists, readJsonFile } from "@zatca-server/helpers";
 import getOrganizationDataJsonFilePath from "./getOrganizationDataJsonFilePath.mjs";
 
 const readCertsOrganizationData = async () => {
-  const filePath = await getOrganizationDataJsonFilePath();
-  const _organizationData = await readJsonFile(filePath, true);
+  const organizationFilePath = await getOrganizationDataJsonFilePath();
 
-  return _organizationData || {};
+  if (!(await checkPathExists(organizationFilePath))) {
+    await writeFile(organizationFilePath, JSON.stringify({}, null, 2));
+  }
+
+  return await readJsonFile(organizationFilePath, true);
 };
 
 export default readCertsOrganizationData;
