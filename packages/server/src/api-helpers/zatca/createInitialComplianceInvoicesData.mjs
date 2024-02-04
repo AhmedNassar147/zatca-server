@@ -5,6 +5,9 @@
  */
 import { randomUUID } from "crypto";
 import { getCurrentDate } from "@zatca-server/helpers";
+import { ZATCA_INVOICE_TYPE_CODE } from "../../constants.mjs";
+
+const { SIMPLIFIED, STANDARD } = ZATCA_INVOICE_TYPE_CODE;
 
 // consider chargeAmount is 0.00 for now
 // if taxPercent doesn't exist set taxExemptionReasonCode and taxExemptionReason values
@@ -106,11 +109,11 @@ const createInitialComplianceInvoicesData = (invoiceKind, initialInvoice) => {
   const invoicesData = [];
 
   if (usesSimpleInvoices || usesBothInvoices) {
-    invoicesData.push("0200000");
+    invoicesData.push(SIMPLIFIED);
   }
 
   if (usesStandardInvoices || usesBothInvoices) {
-    invoicesData.push("0100000");
+    invoicesData.push(STANDARD);
   }
 
   const length = invoicesData.length;

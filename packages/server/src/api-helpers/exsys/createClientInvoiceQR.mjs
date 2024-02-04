@@ -3,7 +3,6 @@
  * Helper: `createClientInvoiceQR`.
  *
  */
-
 import {
   delayProcess,
   isObjectHasData,

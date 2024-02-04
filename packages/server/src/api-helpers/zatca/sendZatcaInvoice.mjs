@@ -77,8 +77,8 @@ const sendZatcaInvoice = async ({
   });
 
   return {
-    requestHeaders,
     qrBase64,
+    requestHeaders,
     bodyData,
     response,
     signedInvoiceString,
