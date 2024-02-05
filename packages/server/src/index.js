@@ -15,8 +15,8 @@ import {
   createClientInvoiceQR,
   issueCertificate,
   sendZatcaInitialInvoices,
-  sendZatcaInvoice,
   checkIfClientZatcaCertified,
+  reportInvoicePoll,
 } from "./api-helpers/index.mjs";
 const organizationNo = "001";
 
@@ -77,6 +77,8 @@ const organizationNo = "001";
       process.exit(process.exitCode);
     }
   }
+
+  await reportInvoicePoll(baseAPiUrl, sandbox);
 
   return;
 

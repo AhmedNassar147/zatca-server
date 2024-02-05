@@ -81,3 +81,5 @@ const reportInvoicePoll = async (baseAPiUrl, sandbox) => {
 
   // await reportInvoicePoll(baseAPiUrl);
 };
+
+export default reportInvoicePoll;

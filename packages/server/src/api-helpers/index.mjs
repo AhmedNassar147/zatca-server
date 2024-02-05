@@ -4,6 +4,7 @@ import checkIfClientZatcaCertified from "./exsys/checkIfClientZatcaCertified.mjs
 import issueCertificate from "./zatca/issueCertificate.mjs";
 import sendZatcaInitialInvoices from "./zatca/sendZatcaInitialInvoices.mjs";
 import sendZatcaInvoice from "./zatca/sendZatcaInvoice.mjs";
+import reportInvoicePoll from "./zatca/reportInvoicePoll.mjs";
 
 export {
   initInitialCnfFiles,
@@ -12,4 +13,5 @@ export {
   sendZatcaInitialInvoices,
   sendZatcaInvoice,
   createClientInvoiceQR,
+  reportInvoicePoll,
 };
