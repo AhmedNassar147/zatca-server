@@ -3,30 +3,89 @@
  * Helper: `reportInvoice`.
  *
  */
+import { isArrayHasData, writeResultFile } from "@zatca-server/helpers";
+import createFetchRequest from "../createFetchRequest.mjs";
 import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
 import { API_VALUES, ZATCA_INVOICE_TYPE_CODE } from "../../constants.mjs";
 
-const { REPORT_ACTUAL_SIMPLIFIED_INVOICE, REPORT_ACTUAL_STANDARD_INVOICE } =
+const { POST_ZATCA_FINIAL_INVOICES, POST_REPORTED_INVOICE_DATA_TO_EXSYS } =
   API_VALUES;
 
 const { SIMPLIFIED } = ZATCA_INVOICE_TYPE_CODE;
 
-const reportInvoice = async (sandbox, invoiceData) => {
-  const { transactionTypeCode } = invoiceData;
-  const isSimplified = transactionTypeCode === SIMPLIFIED;
+const createWarningOrErrorMessages = (values, initial) => {
+  let message;
 
-  const resourceNameUrl = isSimplified
-    ? REPORT_ACTUAL_SIMPLIFIED_INVOICE
-    : REPORT_ACTUAL_STANDARD_INVOICE;
+  if (isArrayHasData(values)) {
+    message = values.reduce((acc, { message }) => {
+      acc += ` --- ${message}`;
 
-  const response = await sendZatcaInvoice({
+      return acc;
+    }, initial || "");
+  }
+
+  return message;
+};
+
+const reportInvoice = async (baseAPiUrl, sandbox, invoiceData) => {
+  const { transactionTypeCode, trx_pk, uuid } = invoiceData;
+
+  const resourceNameUrl =
+    POST_ZATCA_FINIAL_INVOICES[sandbox][transactionTypeCode];
+
+  const {
+    qrBase64,
+    signedInvoiceString,
+    bodyData: { invoiceHash },
+    response,
+  } = await sendZatcaInvoice({
     resourceNameUrl,
     sandbox,
     invoiceData,
     useProductionCsid: true,
   });
 
-  return response;
+  const { error, result, validationResults } = response || {};
+  const { reportingStatus, clearanceStatus } = result || {};
+  const { status, warningMessages, errorMessages } = validationResults || {};
+
+  const _errorMessages = createWarningOrErrorMessages(errorMessages, error);
+  const _warningMessages = createWarningOrErrorMessages(warningMessages);
+
+  const requestParams = {
+    trx_pk,
+    invoiceHash,
+    qrBase64,
+    status,
+    errorMessages: _errorMessages,
+    warningMessages: _warningMessages,
+    reportingORclearanceStatus: reportingStatus || clearanceStatus,
+  };
+
+  const bodyData = {
+    ...requestParams,
+    uuid,
+    isSimplified: transactionTypeCode === SIMPLIFIED,
+    invoiceData,
+    zatcaResults: result,
+    signedInvoiceString,
+  };
+
+  const exsysUpdateResponse = await createFetchRequest({
+    baseAPiUrl,
+    resourceNameUrl: POST_REPORTED_INVOICE_DATA_TO_EXSYS,
+    requestParams,
+    bodyData,
+  });
+
+  await writeResultFile({
+    folderName: "reportInvoice-TEST",
+    data: {
+      exsysUpdateResponse,
+      paramsSentToPostExsys: requestParams,
+      bodyDataSentToPostExsys: bodyData,
+    },
+  });
 };
 
 export default reportInvoice;

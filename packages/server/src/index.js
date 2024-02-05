@@ -21,7 +21,7 @@ import {
 const organizationNo = "001";
 
 (async () => {
-  // --exsys-base-url --sandbox=developer|simulation --port=9090 --skip-initiating-cnf --use-invoice-qr-api
+  // --exsys-base-url --sandbox=developer|simulation|production --port=9090 --skip-initiating-cnf --use-invoice-qr-api
   const {
     exsysBaseUrl,
     sandbox: _sandbox,
@@ -81,11 +81,6 @@ const organizationNo = "001";
   await reportInvoicePoll(EXSYS_BASE_URL, sandbox);
 
   return;
-
-  // const reportData = await reportInvoice({
-  //   isSimplified: true,
-  //   ...finalInvoiceData,
-  // });
 
   // const app = express();
   // app.use(cors());

@@ -1,22 +1,19 @@
-/**
+/*
  *
  * Helper: `reportInvoicePoll`.
  *
  */
-import { writeFile } from "fs/promises";
 import {
   delayProcess,
   isObjectHasData,
-  writeResultFile,
   createCmdMessage,
-  findRootYarnWorkSpaces,
 } from "@zatca-server/helpers";
 import reportInvoice from "./reportInvoice.mjs";
 import { API_VALUES } from "../../constants.mjs";
 import createFetchRequest from "../createFetchRequest.mjs";
-const { FETCH_INVOICE_DATA, POST_REPORTED_INVOICE_DATA_TO_EXSYS } = API_VALUES;
+const { FETCH_INVOICE_DATA } = API_VALUES;
 
-const TIMEOUT_MS = 2 * 1000;
+const TIMEOUT_MS = 1 * 1000;
 
 const reportInvoicePoll = async (baseAPiUrl, sandbox) => {
   const { result } = await createFetchRequest({
@@ -38,57 +35,8 @@ const reportInvoicePoll = async (baseAPiUrl, sandbox) => {
     return;
   }
 
-  // const { trx_pk } = invoiceData;
-  const reportResult = await reportInvoice(sandbox, invoiceData);
-
-  const root = await findRootYarnWorkSpaces();
-  await writeFile(
-    `${root}/results/__report_data__.xml`,
-    reportResult.signedInvoiceString
-  );
-
-  await writeResultFile({
-    folderName: "report_data",
-    data: {
-      exsysInvoiceData: invoiceData,
-      reportResult,
-      // dataSentToExsys: bodyData,
-    },
-  });
-
-  // const bodyData = {
-  //   trx_pk,
-  //   qrBase64,
-  //   invoiceHash,
-  // };
-
-  // const { result: postResult, error } = await createFetchRequest({
-  //   baseAPiUrl,
-  //   resourceNameUrl: POST_REPORTED_INVOICE_DATA_TO_EXSYS,
-  //   bodyData,
-  // });
-
-  // const { status } = postResult || {};
-  // const isPostedToExsys = status === "success";
-
-  // await writeResultFile({
-  //   folderName: "qr_data",
-  //   data: {
-  //     exsysInvoiceData: invoiceData,
-  //     isPostedToExsys,
-  //     dataSentToExsys: bodyData,
-  //   },
-  // });
-
-  // if (!isPostedToExsys) {
-  //   createCmdMessage({
-  //     type: "error",
-  //     message: "some error happened when posting QR data to exsys",
-  //     data: error,
-  //   });
-  // }
-
-  // await reportInvoicePoll(baseAPiUrl);
+  await reportInvoice(baseAPiUrl, sandbox, invoiceData);
+  await reportInvoicePoll(baseAPiUrl, sandbox);
 };
 
 export default reportInvoicePoll;

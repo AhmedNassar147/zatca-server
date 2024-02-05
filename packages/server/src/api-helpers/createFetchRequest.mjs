@@ -10,11 +10,9 @@ import {
   BASE_API_HEADERS,
   HTTP_STATUS_CODE,
   API_BASE_URLS,
-  ZATCA_SANDBOX_TYPES,
 } from "../constants.mjs";
 
-const { ZATCA_SIMULATION, ZATCA_DEV_PORTAL } = API_BASE_URLS;
-const { simulation } = ZATCA_SANDBOX_TYPES;
+const { ZATCA_BASE_URL } = API_BASE_URLS;
 
 const createFetchRequest = (options) => {
   const {
@@ -34,8 +32,7 @@ const createFetchRequest = (options) => {
   let baseAPiUrl = _baseAPiUrl;
 
   if (zatcaSandbox) {
-    baseAPiUrl =
-      zatcaSandbox === simulation ? ZATCA_SIMULATION : ZATCA_DEV_PORTAL;
+    baseAPiUrl = ZATCA_BASE_URL;
   }
 
   if (!resourceNameUrl) {

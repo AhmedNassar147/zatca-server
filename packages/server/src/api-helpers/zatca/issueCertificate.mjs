@@ -20,8 +20,8 @@ import {
 
 const { otp, authorization } = SERVER_CONFIG;
 const {
-  FETCH_FINAL_CSID,
-  POST_ZATCA_COMPLIANCE_CSID,
+  FETCH_ZATCA_INITIAL_CSID,
+  FETCH_ZATCA_PRODUCTION_CSID,
   POST_IF_CLIENT_CERTIFIED,
 } = API_VALUES;
 
@@ -104,9 +104,9 @@ const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
       isProductionCsid
     );
 
-  const resourceNameUrl = isProductionCsid
-    ? FETCH_FINAL_CSID[sandbox]
-    : POST_ZATCA_COMPLIANCE_CSID;
+  const resourceNameUrl = (
+    isProductionCsid ? FETCH_ZATCA_PRODUCTION_CSID : FETCH_ZATCA_INITIAL_CSID
+  )[sandbox];
 
   const response = await createFetchRequest({
     resourceNameUrl,

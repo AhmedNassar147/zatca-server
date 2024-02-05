@@ -70,7 +70,7 @@ const sendZatcaInvoice = async ({
     ...BASE_API_HEADERS,
     "Accept-Version": "V2",
     "Accept-Language": "en",
-    ...(useProductionCsid ? { "Clearance-Status": "0" } : null),
+    // ...(useProductionCsid ? { "Clearance-Status": "0" } : null),
     ...createZatcaAuthHeaders(...options),
   };
 

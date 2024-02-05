@@ -15,8 +15,10 @@ import createFetchRequest from "../createFetchRequest.mjs";
 import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
-const { POST_INITIAL_INVOICES, FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE } =
-  API_VALUES;
+const {
+  POST_ZATCA_INITIAL_INVOICES,
+  FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE,
+} = API_VALUES;
 
 const printResultData = async (results) => {
   const { xmlFiles, data } = results.reduce(
@@ -66,7 +68,7 @@ const sendZatcaInitialInvoices = async (baseAPiUrl, sandbox, logResults) => {
     initialInvoice
   );
 
-  const resourceNameUrl = POST_INITIAL_INVOICES[sandbox];
+  const resourceNameUrl = POST_ZATCA_INITIAL_INVOICES[sandbox];
   let results = [];
 
   while (invoicesData.length) {
