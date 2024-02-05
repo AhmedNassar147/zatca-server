@@ -11,6 +11,7 @@ import {
 } from "@zatca-server/helpers";
 import reportInvoice from "./reportInvoice.mjs";
 import { API_VALUES } from "../../constants.mjs";
+import createFetchRequest from "../createFetchRequest.mjs";
 const { FETCH_INVOICE_DATA, POST_REPORTED_INVOICE_DATA_TO_EXSYS } = API_VALUES;
 
 const TIMEOUT_MS = 2 * 1000;
@@ -31,7 +32,7 @@ const reportInvoicePoll = async (baseAPiUrl, sandbox) => {
       data: invoiceData,
     });
     await delayProcess(TIMEOUT_MS);
-    await reportInvoicePoll(baseAPiUrl);
+    await reportInvoicePoll(baseAPiUrl, sandbox);
     return;
   }
 
