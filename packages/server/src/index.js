@@ -78,7 +78,7 @@ const organizationNo = "001";
     }
   }
 
-  await reportInvoicePoll(baseAPiUrl, sandbox);
+  await reportInvoicePoll(EXSYS_BASE_URL, sandbox);
 
   return;
 
