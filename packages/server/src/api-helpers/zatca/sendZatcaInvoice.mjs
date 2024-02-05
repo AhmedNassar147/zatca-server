@@ -26,11 +26,19 @@ const sendZatcaInvoice = async ({
     productionCsidData,
   } = await readCertsOrganizationData();
 
+  const {
+    binarySecurityToken: productionBinarySecurityToken,
+    secret: productionSecret,
+    decodedToken: productionEInvoiceCertificate,
+  } = productionCsidData || {};
+
   const { invoiceHash, encodedInvoiceXml, signedInvoiceString, qrBase64 } =
     await generateSignedXMLString({
       invoiceData,
-      eInvoiceCertificate,
       privateCertPath,
+      eInvoiceCertificate: useProductionCsid
+        ? productionEInvoiceCertificate
+        : eInvoiceCertificate,
     });
 
   const { uuid } = invoiceData;
@@ -41,14 +49,11 @@ const sendZatcaInvoice = async ({
     invoice: encodedInvoiceXml,
   };
 
-  const {
-    binarySecurityToken: productionBinarySecurityToken,
-    secret: productionSecret,
-  } = productionCsidData || {};
-
-  const options = useProductionCsid
-    ? [productionBinarySecurityToken, productionSecret]
-    : [binarySecurityToken, secret];
+  const options = (
+    useProductionCsid
+      ? [productionBinarySecurityToken, productionSecret]
+      : [binarySecurityToken, secret]
+  ).filter(Boolean);
 
   if (!options.length) {
     createCmdMessage({

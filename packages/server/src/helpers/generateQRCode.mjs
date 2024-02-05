@@ -27,13 +27,8 @@ const generateQRCode = ({
   totalVatAmount,
   totalTaxInclusiveAmount,
   formattedDatetime,
-}) => {
-  // Detect if simplified invoice or not (not used currently assuming all simplified tax invoice)
-  // const invoice_type = invoiceXml
-  //   .get("Invoice/cbc:InvoiceTypeCode")?.[0]
-  //   ["@_name"].toString();
-
-  const qr_tlv = TLV([
+}) =>
+  TLV([
     supplierVatName,
     supplierVatNumber,
     formattedDatetime,
@@ -43,9 +38,6 @@ const generateQRCode = ({
     Buffer.from(digitalSignature),
     certificatePublicKeyBuffer,
     certificateSignature,
-  ]);
-
-  return qr_tlv.toString("base64");
-};
+  ]).toString("base64");
 
 export default generateQRCode;
