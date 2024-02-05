@@ -27,8 +27,20 @@ const generateQRCode = ({
   totalVatAmount,
   totalTaxInclusiveAmount,
   formattedDatetime,
-}) =>
-  TLV([
+}) => {
+  console.log({
+    digitalSignature,
+    certificatePublicKeyBuffer,
+    certificateSignature,
+    invoiceHash,
+    supplierVatName,
+    supplierVatNumber,
+    totalVatAmount,
+    totalTaxInclusiveAmount,
+    formattedDatetime,
+  });
+
+  return TLV([
     supplierVatName,
     supplierVatNumber,
     formattedDatetime,
@@ -39,5 +51,6 @@ const generateQRCode = ({
     certificatePublicKeyBuffer,
     certificateSignature,
   ]).toString("base64");
+};
 
 export default generateQRCode;
