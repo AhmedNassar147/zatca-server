@@ -3,11 +3,13 @@
  * Helper: `reportInvoicePoll`.
  *
  */
+import { writeFile } from "fs/promises";
 import {
   delayProcess,
   isObjectHasData,
   writeResultFile,
   createCmdMessage,
+  findRootYarnWorkSpaces,
 } from "@zatca-server/helpers";
 import reportInvoice from "./reportInvoice.mjs";
 import { API_VALUES } from "../../constants.mjs";
@@ -38,6 +40,12 @@ const reportInvoicePoll = async (baseAPiUrl, sandbox) => {
 
   // const { trx_pk } = invoiceData;
   const reportResult = await reportInvoice(sandbox, invoiceData);
+
+  const root = await findRootYarnWorkSpaces();
+  await writeFile(
+    `${root}/results/__report_data__.xml`,
+    reportResult.signedInvoiceString
+  );
 
   await writeResultFile({
     folderName: "report_data",

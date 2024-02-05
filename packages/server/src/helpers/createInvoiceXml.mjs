@@ -282,6 +282,10 @@ const createInvoiceXml = ({
       </cac:Delivery>`
     : "";
 
+  const invoiceNoteXml = !!invoiceNote
+    ? `<cbc:Note languageID="${invoiceNoteLang}">${invoiceNote}</cbc:Note>`
+    : "";
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
   <ext:UBLExtensions>
@@ -293,7 +297,7 @@ const createInvoiceXml = ({
   <cbc:IssueDate>${issueDate}</cbc:IssueDate>
   <cbc:IssueTime>${issueTime}</cbc:IssueTime>
   <cbc:InvoiceTypeCode name="${transactionTypeCode}">${invoiceTypeCode}</cbc:InvoiceTypeCode>
-  <cbc:Note languageID="${invoiceNoteLang}">${invoiceNote || ""}</cbc:Note>
+  ${invoiceNoteXml}
   <cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>
   <cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>
   ${billingReferenceXml}

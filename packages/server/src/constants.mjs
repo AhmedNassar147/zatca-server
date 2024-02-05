@@ -55,7 +55,7 @@ export const API_VALUES = {
     [ZATCA_SANDBOX_TYPES.simulation]: "precompliance/invoice",
   },
   [API_IDS_NAMES.REPORT_ACTUAL_SIMPLIFIED_INVOICE]: "invoices/reporting/single",
-  [API_IDS_NAMES.REPORT_ACTUAL_STANDARD_INVOICE]: "invoices/clearance/single",
+  [API_IDS_NAMES.REPORT_ACTUAL_STANDARD_INVOICE]: "invoices/reporting/single",
 
   // ----------------------------- exsys --------------------------------------------------------
 
