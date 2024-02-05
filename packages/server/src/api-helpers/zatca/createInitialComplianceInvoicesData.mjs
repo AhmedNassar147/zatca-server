@@ -118,21 +118,30 @@ const createInitialComplianceInvoicesData = (invoiceKind, initialInvoice) => {
 
   const length = invoicesData.length;
 
+  const { customer, ...otherInvoiceData } = initialInvoice;
+  const { vatNumber, ...otherCustomerData } = customer;
+
   return invoicesData
     .reduce((acc, transactionTypeCode, index) => {
       const isZeroIndex = !index;
       const counter = index + 1;
       const invoiceCounterNo = isZeroIndex ? counter : length + counter;
+      const isSimplified = transactionTypeCode === SIMPLIFIED;
+
+      const invoiceData = {
+        ...otherInvoiceData,
+        ...(isSimplified ? otherCustomerData : customer),
+      };
 
       acc.push(
         createInitialComplianceInvoiceData({
-          ...initialInvoice,
+          ...invoiceData,
           transactionTypeCode,
           invoiceTypeCode: "388",
           invoiceCounterNo: invoiceCounterNo,
         }),
         createInitialComplianceInvoiceData({
-          ...initialInvoice,
+          ...invoiceData,
           transactionTypeCode,
           invoiceTypeCode: "383",
           billingReferenceId: "0",
@@ -140,7 +149,7 @@ const createInitialComplianceInvoicesData = (invoiceKind, initialInvoice) => {
           invoiceCounterNo: invoiceCounterNo + 1,
         }),
         createInitialComplianceInvoiceData({
-          ...initialInvoice,
+          ...invoiceData,
           transactionTypeCode,
           invoiceTypeCode: "381",
           billingReferenceId: "0",
