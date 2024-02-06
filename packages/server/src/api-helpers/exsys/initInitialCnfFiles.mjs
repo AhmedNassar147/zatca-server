@@ -3,10 +3,14 @@
  * Helper: `initInitialCnfFiles`.
  *
  */
-import { createCmdMessage, isObjectHasData } from "@zatca-server/helpers";
+import {
+  createCmdMessage,
+  isObjectHasData,
+  createRootFolder,
+} from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
-import createOrganizationConfigFile from "./createOrganizationConfigFile.mjs";
 import checkIfCertificatesExists from "../../helpers/checkIfCertificatesExists.mjs";
+import createOrganizationConfigFile from "./createOrganizationConfigFile.mjs";
 import writeCertsOrganizationData from "../../helpers/writeCertsOrganizationData.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
@@ -46,7 +50,8 @@ const initInitialCnfFiles = async (baseAPiUrl, forceInitiatingCnf) => {
     process.exit(process.exitCode);
   }
 
-  await createOrganizationConfigFile(result);
+  const certsFolderPath = await createRootFolder("certs");
+  await createOrganizationConfigFile(result, certsFolderPath);
 
   await writeCertsOrganizationData({
     invoiceKind,

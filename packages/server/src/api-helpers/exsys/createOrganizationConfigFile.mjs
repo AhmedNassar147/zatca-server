@@ -4,22 +4,23 @@
  *
  */
 import { writeFile } from "fs/promises";
-import { createRootFolder } from "@zatca-server/helpers";
 import createClientCerts from "./createClientCerts.mjs";
 
-const createOrganizationConfigFile = async ({
-  email,
-  countryIdCode,
-  vatName,
-  // organizationNo,
-  genralOrganizationName,
-  organizationUnitName,
-  vatNumber,
-  registeredAddress,
-  businessCategory,
-  invoiceKind,
-  serialNumber,
-}) => {
+const createOrganizationConfigFile = async (options, certsFolderPath) => {
+  const {
+    email,
+    countryIdCode,
+    vatName,
+    // organizationNo,
+    genralOrganizationName,
+    organizationUnitName,
+    vatNumber,
+    registeredAddress,
+    businessCategory,
+    invoiceKind,
+    serialNumber,
+  } = options;
+
   const configString = `oid_section = OIDs
 [ OIDs ]
 certificateTemplateName= 1.3.6.1.4.1.311.20.2
@@ -59,10 +60,8 @@ registeredAddress=${registeredAddress}
 businessCategory=${businessCategory}
 `;
 
-  const folderPath = await createRootFolder("certs");
-
-  await writeFile(`${folderPath}/config.cnf`, configString);
-  await createClientCerts(folderPath);
+  await writeFile(`${certsFolderPath}/config.cnf`, configString);
+  await createClientCerts(certsFolderPath);
 };
 
 export default createOrganizationConfigFile;

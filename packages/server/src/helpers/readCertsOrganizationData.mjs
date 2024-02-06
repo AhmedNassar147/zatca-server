@@ -12,6 +12,8 @@ const readCertsOrganizationData = async () => {
 
   if (!(await checkPathExists(organizationFilePath))) {
     await writeFile(organizationFilePath, JSON.stringify({}, null, 2));
+
+    return {};
   }
 
   return await readJsonFile(organizationFilePath, true);
