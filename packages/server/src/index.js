@@ -18,16 +18,15 @@ import {
   checkIfClientZatcaCertified,
   reportInvoicePoll,
 } from "./api-helpers/index.mjs";
-const organizationNo = "001";
 
 (async () => {
-  // --exsys-base-url --sandbox=developer|simulation|production --port=9090 --skip-initiating-cnf --use-invoice-qr-api
+  // --exsys-base-url --sandbox=developer|simulation|production --port=9090 --force-initiating-cnf --use-invoice-qr-api
   const {
     exsysBaseUrl,
     sandbox: _sandbox,
     port,
     useInvoiceQrApi,
-    skipInitiatingCnf,
+    forceInitiatingCnf,
     sendInitialInvoices,
     useLogger,
   } = await collectProcessOptions();
@@ -46,14 +45,11 @@ const organizationNo = "001";
   const API_URL_PORT = port || 9090;
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
-  if (!skipInitiatingCnf) {
-    await initInitialCnfFiles(EXSYS_BASE_URL);
-  }
-
+  await initInitialCnfFiles(EXSYS_BASE_URL, forceInitiatingCnf);
   await stopTheProcessIfCertificateNotFound();
 
   const { isCertified, shouldIssueInitialCsid } =
-    await checkIfClientZatcaCertified(EXSYS_BASE_URL);
+    await checkIfClientZatcaCertified(EXSYS_BASE_URL, sandbox);
 
   if (shouldIssueInitialCsid) {
     const { errors } = await issueCertificate(EXSYS_BASE_URL, sandbox);

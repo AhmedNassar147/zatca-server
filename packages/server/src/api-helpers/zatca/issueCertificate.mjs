@@ -31,7 +31,8 @@ const baseRequestHeaders = {
 };
 
 const createOrganizationDataUpdater =
-  (baseAPiUrl, csidData, isProductionCsid) => async (_values) => {
+  ({ baseAPiUrl, sandbox, csidData, isProductionCsid }) =>
+  async (_values) => {
     const path = isProductionCsid ? "productionCsidData" : "csidData";
     const values = _values || {};
 
@@ -42,6 +43,7 @@ const createOrganizationDataUpdater =
       baseAPiUrl,
       resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
       bodyData: {
+        sandbox,
         certified:
           isProductionCsid && !!binarySecurityToken && !!secret ? "Y" : "N",
         authorization,
@@ -115,11 +117,12 @@ const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
     zatcaSandbox: sandbox,
   });
 
-  const updateOrganizationData = createOrganizationDataUpdater(
+  const updateOrganizationData = createOrganizationDataUpdater({
     baseAPiUrl,
+    sandbox,
     csidData,
-    isProductionCsid
-  );
+    isProductionCsid,
+  });
 
   const { result, error, isSuccess } = response;
 

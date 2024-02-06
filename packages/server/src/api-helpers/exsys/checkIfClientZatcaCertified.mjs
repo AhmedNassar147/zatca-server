@@ -11,13 +11,14 @@ import writeCertsOrganizationData from "../../helpers/writeCertsOrganizationData
 const { CHECK_IS_CURRENT_CLIENT_CERTIFIED } = API_VALUES;
 const { authorization } = SERVER_CONFIG;
 
-const checkIfClientZatcaCertified = async (baseAPiUrl) => {
+const checkIfClientZatcaCertified = async (baseAPiUrl, sandbox) => {
   const { result, error } = await createFetchRequest({
     baseAPiUrl,
     resourceNameUrl: CHECK_IS_CURRENT_CLIENT_CERTIFIED,
     requestMethod: "GET",
     requestParams: {
       authorization,
+      sandbox,
     },
   });
 
