@@ -42,8 +42,10 @@ const createOrganizationDataUpdater =
     await createFetchRequest({
       baseAPiUrl,
       resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
-      bodyData: {
+      requestParams: {
         sandbox,
+      },
+      bodyData: {
         certified:
           isProductionCsid && !!binarySecurityToken && !!secret ? "Y" : "N",
         authorization,
