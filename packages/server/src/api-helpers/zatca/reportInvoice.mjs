@@ -45,8 +45,8 @@ const reportInvoice = async (baseAPiUrl, sandbox, invoiceData) => {
     useProductionCsid: true,
   });
 
-  const { error, result, validationResults } = response || {};
-  const { reportingStatus, clearanceStatus } = result || {};
+  const { error, result } = response || {};
+  const { validationResults, reportingStatus, clearanceStatus } = result || {};
   const { status, warningMessages, errorMessages } = validationResults || {};
 
   const _errorMessages = createWarningOrErrorMessages(errorMessages, error);

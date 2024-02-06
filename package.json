@@ -15,7 +15,7 @@
     "reset": "yarn clean && yarn clean-locks && yarn bootstrap",
     "prepare": "yarn workspace @zatca-server/start-zatca-server start",
     "start": "yarn workspace @zatca-server/server start",
-    "dev": "yarn start --exsys-base-url=http://149.102.140.8 --send-initial-invoices  --use-logger",
+    "dev": "yarn start --exsys-base-url=http://149.102.140.8 --send-initial-invoices --sandbox=simulation --use-logger",
     "dev-qr": "yarn start --exsys-base-url=http://149.102.140.8 --skip-initiating-cnf --use-invoice-qr-api --use-logger",
     "prod": "yarn start --production"
   },
