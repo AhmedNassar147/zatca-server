@@ -16,6 +16,10 @@ const initInitialCnfFiles = async (baseAPiUrl, forceInitiatingCnf) => {
   const errors = await checkIfCertificatesExists();
 
   if (!errors.length && !forceInitiatingCnf) {
+    createCmdMessage({
+      type: "info",
+      message: `skip initiating the organization certificates...`,
+    });
     return;
   }
 
