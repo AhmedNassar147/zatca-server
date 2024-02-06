@@ -16,6 +16,7 @@
     "prepare": "yarn workspace @zatca-server/start-zatca-server start",
     "start": "yarn workspace @zatca-server/server start",
     "dev": "yarn start --exsys-base-url=http://149.102.140.8 --send-initial-invoices --use-logger",
+    "fyh": "yarn start --exsys-base-url=http://192.168.10.11 --send-initial-invoices --sandbox=simulation --use-logger",
     "dev-qr": "yarn start --exsys-base-url=http://149.102.140.8 --use-invoice-qr-api --use-logger",
     "prod": "yarn start --production"
   },
