@@ -25,6 +25,7 @@
     "genkey",
     "noout",
     "precompliance",
+    "predev",
     "pubout",
     "secp",
     "Subentity",

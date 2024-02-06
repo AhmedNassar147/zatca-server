@@ -3,7 +3,6 @@
  * server: `zatca-server`.
  *
  */
-
 // import express from "express";
 // import cors from "cors";
 // import bodyParser from "body-parser";
@@ -39,6 +38,7 @@ import {
       message: `sandbox should be one of ${ZATCA_SANDBOX_TYPES_KEYS.join(",")}`,
     });
     process.kill(process.pid);
+    process.exit();
   }
 
   const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
@@ -46,6 +46,7 @@ import {
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
   await initInitialCnfFiles(EXSYS_BASE_URL, forceInitiatingCnf);
+
   await stopTheProcessIfCertificateNotFound();
 
   const { isCertified, shouldIssueInitialCsid } =

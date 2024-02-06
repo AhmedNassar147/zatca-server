@@ -3,12 +3,12 @@
  * Helper: `getOrganizationDataJsonFilePath`.
  *
  */
-import { findRootYarnWorkSpaces } from "@zatca-server/helpers";
+import getCertsFolderPath from "./getCertsFolderPath.mjs";
 
 const getOrganizationDataJsonFilePath = async () => {
-  const rootYarnWorkSpacePath = await findRootYarnWorkSpaces();
+  const certsFolderPath = await getCertsFolderPath();
 
-  return `${rootYarnWorkSpacePath}/certs/organization.json`;
+  return `${certsFolderPath}/organization.json`;
 };
 
 export default getOrganizationDataJsonFilePath;

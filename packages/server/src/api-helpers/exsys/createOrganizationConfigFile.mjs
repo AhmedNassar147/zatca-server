@@ -5,21 +5,22 @@
  */
 import { writeFile } from "fs/promises";
 import createClientCerts from "./createClientCerts.mjs";
+import getCertsFolderPath from "../../helpers/getCertsFolderPath.mjs";
 
-const createOrganizationConfigFile = async (options, certsFolderPath) => {
-  const {
-    email,
-    countryIdCode,
-    vatName,
-    // organizationNo,
-    genralOrganizationName,
-    organizationUnitName,
-    vatNumber,
-    registeredAddress,
-    businessCategory,
-    invoiceKind,
-    serialNumber,
-  } = options;
+const createOrganizationConfigFile = async ({
+  email,
+  countryIdCode,
+  vatName,
+  // organizationNo,
+  genralOrganizationName,
+  organizationUnitName,
+  vatNumber,
+  registeredAddress,
+  businessCategory,
+  invoiceKind,
+  serialNumber,
+}) => {
+  const certsFolderPath = await getCertsFolderPath();
 
   const configString = `oid_section = OIDs
 [ OIDs ]
