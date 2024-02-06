@@ -121,7 +121,7 @@ const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
     isProductionCsid
   );
 
-  const { result, error } = response;
+  const { result, error, isSuccess } = response;
 
   const {
     requestID,
@@ -132,17 +132,20 @@ const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
     errors,
   } = result || {};
 
-  const _errors = errors || error;
+  const _errors = [errors, isSuccess ? error : result]
+    .filter(Boolean)
+    .flat()
+    .join(" ");
 
   if (_errors) {
-    await updateOrganizationData(result);
+    await updateOrganizationData();
 
     createCmdMessage({
       type: "error",
       message: `error when creating the ${
         isProductionCsid ? "production" : "initial"
       } csid data`,
-      data: errors,
+      data: _errors,
     });
 
     return {
