@@ -109,48 +109,43 @@ const createInitialComplianceInvoicesData = (invoiceKind, initialInvoice) => {
   const invoicesData = [];
 
   if (usesSimpleInvoices || usesBothInvoices) {
-    invoicesData.push(SIMPLIFIED);
+    const { customer, ...otherInvoiceData } = initialInvoice;
+    const { vatNumber, ...otherCustomerData } = customer;
+
+    invoicesData.push({
+      ...otherInvoiceData,
+      transactionTypeCode: SIMPLIFIED,
+      customer: otherCustomerData,
+    });
   }
 
   if (usesStandardInvoices || usesBothInvoices) {
-    invoicesData.push(STANDARD);
+    invoicesData.push({ ...initialInvoice, transactionTypeCode: STANDARD });
   }
 
   const length = invoicesData.length;
 
-  const { customer, ...otherInvoiceData } = initialInvoice;
-  const { vatNumber, ...otherCustomerData } = customer;
-
   return invoicesData
-    .reduce((acc, transactionTypeCode, index) => {
+    .reduce((acc, invoiceValues, index) => {
       const isZeroIndex = !index;
       const counter = index + 1;
       const invoiceCounterNo = isZeroIndex ? counter : length + counter;
-      const isSimplified = transactionTypeCode === SIMPLIFIED;
-
-      const invoiceData = {
-        ...otherInvoiceData,
-        ...(isSimplified ? otherCustomerData : customer),
-      };
 
       acc.push(
         createInitialComplianceInvoiceData({
-          ...invoiceData,
-          transactionTypeCode,
+          ...invoiceValues,
           invoiceTypeCode: "388",
           invoiceCounterNo: invoiceCounterNo,
         }),
         createInitialComplianceInvoiceData({
-          ...invoiceData,
-          transactionTypeCode,
+          ...invoiceValues,
           invoiceTypeCode: "383",
           billingReferenceId: "0",
           paymentInstructionNote: "anything",
           invoiceCounterNo: invoiceCounterNo + 1,
         }),
         createInitialComplianceInvoiceData({
-          ...invoiceData,
-          transactionTypeCode,
+          ...invoiceValues,
           invoiceTypeCode: "381",
           billingReferenceId: "0",
           paymentInstructionNote: "anything",
