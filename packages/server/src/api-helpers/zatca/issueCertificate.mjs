@@ -137,6 +137,12 @@ const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
     errors,
   } = result || {};
 
+  console.log({
+    bodyData,
+    requestHeaders,
+    result,
+  });
+
   const _errors = [errors, isSuccess ? error : result]
     .filter(Boolean)
     .flat()

@@ -34,6 +34,20 @@ const initInitialCnfFiles = async (baseAPiUrl, forceInitiatingCnf) => {
     requestMethod: "GET",
   });
 
+  //   const result = {
+  //     "organizationNo": "00",
+  //     "countryIdCode": "SA",
+  //     "organizationUnitName": "3009510732",
+  //     "vatName": "شركة مجموعة الفيحاء للخدمات الطبية",
+  //     "genralOrganizationName": "شركة مجموعة الفيحاء للخدمات الطبية",
+  //     "vatNumber": "300951073200003",
+  //     "registeredAddress": "الرياض",
+  //     "businessCategory": "Health Care",
+  //     "invoiceKind": "1100",
+  //     "serialNumber": "1-Device|2-234|3-fyh",
+  //     "email": "HANYGAMEEL@FAIHAGROUP.COM"
+  // }
+
   const { invoiceKind, vatName, vatNumber } = result || {};
 
   if (!isObjectHasData(result)) {

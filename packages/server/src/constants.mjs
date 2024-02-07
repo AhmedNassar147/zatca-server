@@ -63,14 +63,7 @@ export const API_VALUES = {
     // https://gw-fatoora.zatca.gov.sa/e-invoicing/core/compliance
     [ZATCA_SANDBOX_TYPES.production]: "core/compliance",
   },
-  [API_IDS_NAMES.FETCH_ZATCA_PRODUCTION_CSID]: {
-    // https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/production/csids
-    [ZATCA_SANDBOX_TYPES.developer]: "developer-portal/production/csids",
-    // https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/core/csids
-    [ZATCA_SANDBOX_TYPES.simulation]: "simulation/core/csids",
-    // https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/production/csids
-    [ZATCA_SANDBOX_TYPES.production]: "simulation/production/csids",
-  },
+  // https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/compliance/invoices
   [API_IDS_NAMES.POST_ZATCA_INITIAL_INVOICES]: {
     // https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/compliance/invoices
     [ZATCA_SANDBOX_TYPES.developer]: "developer-portal/compliance/invoices",
@@ -78,6 +71,14 @@ export const API_VALUES = {
     [ZATCA_SANDBOX_TYPES.simulation]: "simulation/compliance/invoices",
     // https://gw-fatoora.zatca.gov.sa/e-invoicing/core/compliance/invoices
     [ZATCA_SANDBOX_TYPES.production]: "core/compliance/invoices",
+  },
+  [API_IDS_NAMES.FETCH_ZATCA_PRODUCTION_CSID]: {
+    // https://gw-fatoora.zatca.gov.sa/e-invoicing/developer-portal/production/csids
+    [ZATCA_SANDBOX_TYPES.developer]: "developer-portal/production/csids",
+    // https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/core/csids
+    [ZATCA_SANDBOX_TYPES.simulation]: "simulation/core/csids",
+    // https://gw-fatoora.zatca.gov.sa/e-invoicing/simulation/production/csids
+    [ZATCA_SANDBOX_TYPES.production]: "simulation/production/csids",
   },
   [API_IDS_NAMES.POST_ZATCA_FINIAL_INVOICES]: {
     [ZATCA_SANDBOX_TYPES.developer]: {
