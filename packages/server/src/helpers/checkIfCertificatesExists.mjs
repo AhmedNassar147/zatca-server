@@ -27,7 +27,7 @@ const checkCertFile = async (rootYarnWorkSpaces, filePath) => {
 
 const checkIfCertificatesExists = async () => {
   const rootYarnWorkSpaces = await findRootYarnWorkSpaces();
-  const clients = await readClientsConfigData();
+  const { clients } = await readClientsConfigData();
 
   const keys = Object.keys(clients);
 
