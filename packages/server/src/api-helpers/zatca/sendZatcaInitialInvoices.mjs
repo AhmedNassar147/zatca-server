@@ -56,7 +56,9 @@ const sendZatcaInitialInvoices = async ({
 
   const {
     sharedInvoiceData,
-    [client]: { invoiceKind, supplier },
+    clients: {
+      [client]: { invoiceKind, supplier },
+    },
   } = await readClientsConfigData();
 
   const initialInvoice = {

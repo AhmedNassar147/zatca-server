@@ -210,7 +210,7 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
     ...clientsConfigsFilesPromises.map(
       async (options) => await createClientConfigFile(...options)
     ),
-    await writeClientsConfigData(clientsConfig),
+    await writeClientsConfigData({ clients: clientsConfig, sharedInvoiceData }),
   ]);
 
   await stopTheProcessIfCertificateNotFound();

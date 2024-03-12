@@ -10,10 +10,10 @@ import readClientsConfigData from "./readClientsConfigData.mjs";
 
 const writeClientsConfigData = async (value, keyPath) => {
   const filePath = await getClientsFilePath();
-  const clientsData = await readClientsConfigData();
+  const clientsConfigData = await readClientsConfigData();
 
   if (typeof value === "function") {
-    const newValues = await value(clientsData);
+    const newValues = await value(clientsConfigData);
     const newData = JSON.stringify(newValues, null, 2);
     await writeFile(filePath, newData);
 

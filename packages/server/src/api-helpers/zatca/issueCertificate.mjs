@@ -47,11 +47,11 @@ const createOrganizationDataUpdater =
 
     const _childNames = childNames || [client];
 
-    await writeClientsConfigData(async (clients) =>
+    await writeClientsConfigData(async (config) =>
       _childNames.reduce((acc, clientName) => {
-        acc = setIn(bodyData, clientName, clients);
+        acc = setIn(bodyData, `clients.${clientName}`, config);
         return acc;
-      }, clients)
+      }, config)
     );
 
     await createFetchRequest({
@@ -111,10 +111,10 @@ const issueCertificate = async ({
   isProductionCsid,
 }) => {
   createCmdMessage({
-    type: "error",
-    message: `when issue ${
+    type: "info",
+    message: `issue ${
       isProductionCsid ? "production csid data" : "initial csid data"
-    } for client=${client} and client=${client}`,
+    } for client=${client} and sandbox=${sandbox}`,
   });
 
   const { taxPayerPath, csidData, childNames } = await readClientsConfigData(
@@ -171,7 +171,7 @@ const issueCertificate = async ({
       type: "error",
       message: `error when creating the ${
         isProductionCsid ? "production" : "initial"
-      } csid data`,
+      } csid data for client=${client} and sandbox=${sandbox}`,
       data: _errors,
     });
 

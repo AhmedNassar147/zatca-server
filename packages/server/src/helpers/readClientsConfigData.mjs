@@ -16,9 +16,11 @@ const readClientsConfigData = async (clientName) => {
     return {};
   }
 
-  const clientsData = await readJsonFile(clientsFilePath, true);
+  const clientsConfigData = await readJsonFile(clientsFilePath, true);
 
-  return clientName ? clientsData[clientName] : clientsData;
+  const { clients } = clientsConfigData || {};
+
+  return clientName ? clients[clientName] || {} : clientsData;
 };
 
 export default readClientsConfigData;
