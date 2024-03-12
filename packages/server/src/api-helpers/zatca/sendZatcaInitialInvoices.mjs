@@ -4,23 +4,16 @@
  *
  */
 import { writeFile } from "fs/promises";
-import {
-  isObjectHasData,
-  createCmdMessage,
-  createRootFolder,
-} from "@zatca-server/helpers";
+import { createRootFolder } from "@zatca-server/helpers";
+import issueCertificate from "./issueCertificate.mjs";
 import createInitialComplianceInvoicesData from "./createInitialComplianceInvoicesData.mjs";
-import readCertsOrganizationData from "../../helpers/readCertsOrganizationData.mjs";
-import createFetchRequest from "../createFetchRequest.mjs";
+import readClientsConfigData from "../../helpers/readClientsConfigData.mjs";
 import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
-const {
-  POST_ZATCA_INITIAL_INVOICES,
-  FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE,
-} = API_VALUES;
+const { POST_ZATCA_INITIAL_INVOICES } = API_VALUES;
 
-const printResultData = async (results) => {
+const printResultData = async (results, client) => {
   const { xmlFiles, data } = results.reduce(
     (acc, { signedInvoiceString, ...other }) => {
       acc.data.push(other);
@@ -34,34 +27,42 @@ const printResultData = async (results) => {
     }
   );
 
-  const basePaths = await createRootFolder(`results`);
+  const basePath = await createRootFolder(`results/${client}/initial-invoices`);
 
-  await writeFile(`${basePaths}/result.json`, JSON.stringify(data, null, 2));
+  await writeFile(`${basePath}/result.json`, JSON.stringify(data, null, 2));
 
   for (let index = 0; index < xmlFiles.length; index++) {
     const fileData = xmlFiles[index];
-    await writeFile(`${basePaths}/invoice_${index + 1}.xml`, fileData);
+    await writeFile(`${basePath}/${index + 1}.xml`, fileData);
   }
 };
 
-const sendZatcaInitialInvoices = async (baseAPiUrl, sandbox, logResults) => {
-  const { result: initialInvoice, error } = await createFetchRequest({
+const sendZatcaInitialInvoices = async ({
+  baseAPiUrl,
+  client,
+  sandbox,
+  issueProductionCsid,
+}) => {
+  const { errors } = await issueCertificate({
     baseAPiUrl,
-    resourceNameUrl: FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE,
-    requestMethod: "GET",
+    client,
+    sandbox,
+    isProductionCsid: false,
   });
 
-  const hasError = !isObjectHasData(initialInvoice) || !!error;
-
-  if (hasError) {
-    createCmdMessage({
-      type: "error",
-      message: error || "initial invoice for compliance not found",
-    });
-    process.exit(process.exitCode);
+  if (errors) {
+    return Promise.resolve(errors);
   }
 
-  const { invoiceKind } = await readCertsOrganizationData();
+  const {
+    sharedInvoiceData,
+    [client]: { invoiceKind, supplier },
+  } = await readClientsConfigData();
+
+  const initialInvoice = {
+    ...sharedInvoiceData,
+    supplier,
+  };
 
   const invoicesData = createInitialComplianceInvoicesData(
     invoiceKind,
@@ -78,16 +79,26 @@ const sendZatcaInitialInvoices = async (baseAPiUrl, sandbox, logResults) => {
       resourceNameUrl,
       useProductionCsid: false,
       invoiceData,
+      client,
     });
 
     results.push(result);
   }
 
-  if (logResults) {
-    await printResultData(results);
-  }
+  await printResultData(results, client);
 
-  return results;
+  if (issueProductionCsid) {
+    const { errors } = await issueCertificate({
+      baseAPiUrl,
+      client,
+      sandbox,
+      isProductionCsid: true,
+    });
+
+    if (errors) {
+      return Promise.resolve(errors);
+    }
+  }
 };
 
 export default sendZatcaInitialInvoices;

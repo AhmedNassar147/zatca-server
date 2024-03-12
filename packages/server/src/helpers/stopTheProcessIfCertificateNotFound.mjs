@@ -17,7 +17,7 @@ const stopTheProcessIfCertificateNotFound = async () => {
   if (!errors.length) {
     createCmdMessage({
       type: "success",
-      message: "certificates checked ☺",
+      message: "certificates checked",
     });
 
     return;

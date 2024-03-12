@@ -6,38 +6,56 @@
 import { readFile } from "fs/promises";
 import chalk from "chalk";
 import { findRootYarnWorkSpaces, checkPathExists } from "@zatca-server/helpers";
-import readCertsOrganizationData from "./readCertsOrganizationData.mjs";
+import readClientsConfigData from "./readClientsConfigData.mjs";
+
+const boldWhite = chalk.bold.white;
+
+const checkCertFile = async (rootYarnWorkSpaces, filePath) => {
+  const fullFilePath = `${rootYarnWorkSpaces}/${filePath}`;
+
+  const doesFileExsist = await checkPathExists(fullFilePath);
+
+  if (doesFileExsist) {
+    const fileContent = await readFile(fullFilePath, "utf-8");
+    return fileContent && /[a-zA-Z]|\d/gm.test(fileContent)
+      ? false
+      : `${boldWhite(fullFilePath)} is empty .`;
+  }
+
+  return `${boldWhite(fullFilePath)} doesn't exist .`;
+};
 
 const checkIfCertificatesExists = async () => {
-  const { privateCertPath, publicCertPath, taxPayerPath, cnfFilePath } =
-    await readCertsOrganizationData();
-
   const rootYarnWorkSpaces = await findRootYarnWorkSpaces();
+  const clients = await readClientsConfigData();
 
-  const paths = [privateCertPath, publicCertPath, taxPayerPath, cnfFilePath];
+  const keys = Object.keys(clients);
 
-  const configPromises = paths.map(async (fullPath) => {
-    const fullFilePath = `${rootYarnWorkSpaces}/${fullPath}`;
+  if (!keys.length) {
+    return ["clients not found."];
+  }
 
-    const doesFileExsist = await checkPathExists(
-      `${rootYarnWorkSpaces}/${fullPath}`
+  let configPromises = [];
+
+  for (let index = 0; index < keys.length; index++) {
+    const clientName = keys[index];
+
+    const { privateCertPath, publicCertPath, taxPayerPath, cnfFilePath } =
+      clients[clientName];
+
+    configPromises = configPromises.concat(
+      checkCertFile(rootYarnWorkSpaces, privateCertPath),
+      checkCertFile(rootYarnWorkSpaces, publicCertPath),
+      checkCertFile(rootYarnWorkSpaces, taxPayerPath),
+      checkCertFile(rootYarnWorkSpaces, cnfFilePath)
     );
+  }
 
-    if (doesFileExsist) {
-      const fileContent = await readFile(fullFilePath, "utf-8");
-      return fileContent && /[a-zA-Z]|\d/gm.test(fileContent)
-        ? false
-        : `${chalk.bold.white(fullPath)} is empty.`;
-    }
-
-    return `${chalk.bold.white(fullPath)} doesn't exist.`;
-  });
+  configPromises = configPromises.flat().filter(Boolean);
 
   const errors = (await Promise.all(configPromises)).filter(Boolean);
 
   return errors;
 };
-
-await checkIfCertificatesExists();
 
 export default checkIfCertificatesExists;

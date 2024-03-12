@@ -10,7 +10,7 @@ import {
   createCmdMessage,
 } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
-import readCertsOrganizationData from "../../helpers/readCertsOrganizationData.mjs";
+import readClientsConfigData from "../../helpers/readClientsConfigData.mjs";
 import createInvoiceQRAndCertificateInfo from "../../helpers/createInvoiceQRAndCertificateInfo.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
@@ -42,7 +42,7 @@ const createClientInvoiceQR = async (baseAPiUrl) => {
   const {
     privateCertPath,
     csidData: { decodedToken: eInvoiceCertificate },
-  } = await readCertsOrganizationData();
+  } = await readClientsConfigData();
 
   const { invoiceHash, qrBase64 } = await createInvoiceQRAndCertificateInfo({
     invoiceData,

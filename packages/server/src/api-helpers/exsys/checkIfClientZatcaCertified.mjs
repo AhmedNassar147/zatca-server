@@ -6,12 +6,12 @@
 import { createCmdMessage, isObjectHasData } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import { API_VALUES, SERVER_CONFIG } from "../../constants.mjs";
-import writeCertsOrganizationData from "../../helpers/writeCertsOrganizationData.mjs";
+import writeClientsConfigData from "../../helpers/writeClientsConfigData.mjs";
 
 const { CHECK_IS_CURRENT_CLIENT_CERTIFIED } = API_VALUES;
 const { authorization } = SERVER_CONFIG;
 
-const checkIfClientZatcaCertified = async (baseAPiUrl, sandbox) => {
+const checkIfClientZatcaCertified = async (baseAPiUrl, client, sandbox) => {
   const { result, error } = await createFetchRequest({
     baseAPiUrl,
     resourceNameUrl: CHECK_IS_CURRENT_CLIENT_CERTIFIED,
@@ -19,6 +19,7 @@ const checkIfClientZatcaCertified = async (baseAPiUrl, sandbox) => {
     requestParams: {
       authorization,
       sandbox,
+      client,
     },
   });
 
@@ -29,15 +30,18 @@ const checkIfClientZatcaCertified = async (baseAPiUrl, sandbox) => {
   if (!isCertified) {
     createCmdMessage({
       type: "info",
-      message: "client is not zatca certified yet!",
+      message: `client=${client} is not zatca certified yet!`,
       data: error,
     });
   }
 
-  await writeCertsOrganizationData({
-    csidData,
-    productionCsidData,
-  });
+  await writeClientsConfigData(
+    {
+      csidData: csidData || {},
+      productionCsidData: productionCsidData || {},
+    },
+    client
+  );
 
   return {
     isCertified,

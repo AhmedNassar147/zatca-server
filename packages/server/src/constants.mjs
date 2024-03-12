@@ -13,6 +13,9 @@ export const SERVER_CONFIG = await readJsonFile(configFilePath, true);
 
 export const FILES_ENCODING_LIMIT = "60mb";
 
+export const DB_DEFAULT_PORT = 9090;
+export const DB_DEFAULT_DOMAIN = "http://94.97.253.213";
+
 export const SERVER_PORT = 5050;
 export const RETRY_TIMES = 1;
 export const RETRY_DELAY = 10000;
@@ -34,8 +37,6 @@ export const ZATCA_SANDBOX_TYPES_KEYS = Object.keys(ZATCA_SANDBOX_TYPES);
 export const API_IDS_NAMES = {
   FETCH_INITIAL_CONFIG_SUPPLIERS: "FETCH_INITIAL_CONFIG_SUPPLIERS",
   FETCH_ZATCA_INITIAL_CSID: "FETCH_ZATCA_INITIAL_CSID",
-  FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE:
-    "FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE",
   FETCH_ZATCA_PRODUCTION_CSID: "FETCH_ZATCA_PRODUCTION_CSID",
   POST_ZATCA_INITIAL_INVOICES: "POST_ZATCA_INITIAL_INVOICES",
   POST_ZATCA_FINIAL_INVOICES: "POST_ZATCA_FINIAL_INVOICES",
@@ -109,9 +110,6 @@ export const API_VALUES = {
 
   // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/zatca_config_file
   [API_IDS_NAMES.FETCH_INITIAL_CONFIG_SUPPLIERS]: "ex_zatca/zatca_config_file",
-  // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/get_initial_invoice_compliance
-  [API_IDS_NAMES.FETCH_INVOICE_DATA_FOR_INITIAL_COMPLIANCE]:
-    "ex_zatca/get_initial_invoice_compliance",
   // http://149.102.140.8:9090/ords/exsys_api/ex_zatca/is_zatca_certified?authorization=111111
   [API_IDS_NAMES.CHECK_IS_CURRENT_CLIENT_CERTIFIED]:
     "ex_zatca/is_zatca_certified",

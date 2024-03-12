@@ -7,11 +7,12 @@ import {
   decodeBase64ToString,
   readAndEncodeCertToBase64,
   createCmdMessage,
+  setIn,
 } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import readCertsOrganizationData from "../../helpers/readCertsOrganizationData.mjs";
-import writeCertsOrganizationData from "../../helpers/writeCertsOrganizationData.mjs";
+import readClientsConfigData from "../../helpers/readClientsConfigData.mjs";
+import writeClientsConfigData from "../../helpers/writeClientsConfigData.mjs";
 import {
   BASE_API_HEADERS,
   SERVER_CONFIG,
@@ -31,26 +32,39 @@ const baseRequestHeaders = {
 };
 
 const createOrganizationDataUpdater =
-  ({ baseAPiUrl, sandbox, csidData, isProductionCsid }) =>
+  ({ baseAPiUrl, sandbox, client, csidData, isProductionCsid, childNames }) =>
   async (_values) => {
-    const path = isProductionCsid ? "productionCsidData" : "csidData";
     const values = _values || {};
-
-    await writeCertsOrganizationData({ [path]: values });
     const { binarySecurityToken, secret } = values;
+
+    const certified = !!isProductionCsid && !!binarySecurityToken && !!secret;
+
+    const bodyData = {
+      certified,
+      csidData: isProductionCsid ? csidData : values,
+      productionCsidData: isProductionCsid ? values : {},
+    };
+
+    const _childNames = childNames || [client];
+
+    await writeClientsConfigData(async (clients) =>
+      _childNames.reduce((acc, clientName) => {
+        acc = setIn(bodyData, clientName, clients);
+        return acc;
+      }, clients)
+    );
 
     await createFetchRequest({
       baseAPiUrl,
       resourceNameUrl: POST_IF_CLIENT_CERTIFIED,
       requestParams: {
+        client,
         sandbox,
       },
       bodyData: {
-        certified:
-          isProductionCsid && !!binarySecurityToken && !!secret ? "Y" : "N",
         authorization,
-        csidData: isProductionCsid ? csidData : values,
-        productionCsidData: isProductionCsid ? values : {},
+        ...bodyData,
+        certified: certified ? "Y" : "N",
       },
     });
   };
@@ -90,18 +104,24 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
   };
 };
 
-const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
+const issueCertificate = async ({
+  baseAPiUrl,
+  client,
+  sandbox,
+  isProductionCsid,
+}) => {
   createCmdMessage({
-    type: "info",
-    message: `issue ${
+    type: "error",
+    message: `when issue ${
       isProductionCsid ? "production csid data" : "initial csid data"
-    }`,
+    } for client=${client} and client=${client}`,
   });
 
-  const organizationData = await readCertsOrganizationData();
-  const { taxPayerPath, csidData } = organizationData;
+  const { taxPayerPath, csidData, childNames } = await readClientsConfigData(
+    client
+  );
 
-  let { bodyData, requestHeaders } =
+  const { bodyData, requestHeaders } =
     await createRequestHeadersAndBodyWithComplianceCsidData(
       taxPayerPath,
       csidData,
@@ -122,8 +142,10 @@ const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
   const updateOrganizationData = createOrganizationDataUpdater({
     baseAPiUrl,
     sandbox,
+    client,
     csidData,
     isProductionCsid,
+    childNames,
   });
 
   const { result, error, isSuccess } = response;
@@ -136,12 +158,6 @@ const issueCertificate = async (baseAPiUrl, sandbox, isProductionCsid) => {
     tokenType,
     errors,
   } = result || {};
-
-  console.log({
-    bodyData,
-    requestHeaders,
-    result,
-  });
 
   const _errors = [errors, isSuccess ? error : result]
     .filter(Boolean)

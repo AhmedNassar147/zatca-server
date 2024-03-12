@@ -7,14 +7,19 @@
 // import cors from "cors";
 // import bodyParser from "body-parser";
 import { collectProcessOptions, createCmdMessage } from "@zatca-server/helpers";
-import { ZATCA_SANDBOX_TYPES, ZATCA_SANDBOX_TYPES_KEYS } from "./constants.mjs";
+import {
+  ZATCA_SANDBOX_TYPES,
+  ZATCA_SANDBOX_TYPES_KEYS,
+  DB_DEFAULT_PORT,
+  DB_DEFAULT_DOMAIN,
+} from "./constants.mjs";
 import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import {
   initInitialCnfFiles,
   createClientInvoiceQR,
   issueCertificate,
   sendZatcaInitialInvoices,
-  checkIfClientZatcaCertified,
+  // checkIfClientZatcaCertified,
   reportInvoicePoll,
 } from "./api-helpers/index.mjs";
 
@@ -25,9 +30,9 @@ import {
     sandbox: _sandbox,
     port,
     useInvoiceQrApi,
-    forceInitiatingCnf,
-    sendInitialInvoices,
-    useLogger,
+    // sendInitialInvoices,
+    // useLogger,
+    // client,
   } = await collectProcessOptions();
 
   const sandbox = _sandbox || ZATCA_SANDBOX_TYPES.developer;
@@ -41,38 +46,16 @@ import {
     process.exit();
   }
 
-  const BASE_API_IP_ADDRESS = exsysBaseUrl || "http://localhost";
-  const API_URL_PORT = port || 9090;
+  const BASE_API_IP_ADDRESS = exsysBaseUrl || DB_DEFAULT_DOMAIN;
+  const API_URL_PORT = port || DB_DEFAULT_PORT;
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
-  await initInitialCnfFiles(EXSYS_BASE_URL, forceInitiatingCnf);
+  await initInitialCnfFiles(EXSYS_BASE_URL, sandbox);
 
-  await stopTheProcessIfCertificateNotFound();
-
-  const { isCertified, shouldIssueInitialCsid } =
-    await checkIfClientZatcaCertified(EXSYS_BASE_URL, sandbox);
-
-  if (shouldIssueInitialCsid) {
-    const { errors } = await issueCertificate(EXSYS_BASE_URL, sandbox);
-    if (errors) {
-      process.exit(process.exitCode);
-    }
-  }
+  return;
 
   if (useInvoiceQrApi) {
     (async () => await createClientInvoiceQR(EXSYS_BASE_URL))();
-  }
-
-  if (sendInitialInvoices && !isCertified) {
-    await sendZatcaInitialInvoices(EXSYS_BASE_URL, sandbox, useLogger);
-  }
-
-  if (!isCertified) {
-    const { errors } = await issueCertificate(EXSYS_BASE_URL, sandbox, true);
-
-    if (errors) {
-      process.exit(process.exitCode);
-    }
   }
 
   // await reportInvoicePoll(EXSYS_BASE_URL, sandbox);

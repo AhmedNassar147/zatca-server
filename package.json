@@ -15,12 +15,12 @@
     "reset": "yarn clean && yarn clean-locks && yarn bootstrap",
     "prepare": "yarn workspace @zatca-server/start-zatca-server start",
     "start": "yarn workspace @zatca-server/server start",
-    "dev": "yarn start --exsys-base-url=http://149.102.140.8 --send-initial-invoices --use-logger",
-    "fyh": "yarn start --exsys-base-url=http://192.168.10.11 --send-initial-invoices --sandbox=simulation --use-logger",
-    "fyh-dev": "yarn start --exsys-base-url=http://192.168.10.11 --send-initial-invoices --sandbox=developer --use-logger",
-    "fyh-cent": "yarn start --exsys-base-url=http://94.97.253.213 --port=9090 --send-initial-invoices --sandbox=simulation --use-logger",
-    "fyh-cent-dev": "yarn start --exsys-base-url=http://94.97.253.213 --port=9090 --send-initial-invoices --sandbox=developer --use-logger",
-    "dev-qr": "yarn start --exsys-base-url=http://149.102.140.8 --use-invoice-qr-api --use-logger",
+    "start-dev": "yarn start --sandbox=developer",
+    "exsys-dev": "yarn start --send-initial-invoices --client=exsys --sandbox=developer --use-logger",
+    "exsys-sim": "yarn start --send-initial-invoices --client=exsys --sandbox=simulation --use-logger",
+    "fyha-dev": "yarn start --send-initial-invoices --client=fyha --sandbox=developer --use-logger",
+    "fyha-sim": "yarn start --send-initial-invoices --client=fyha --sandbox=simulation --use-logger",
+    "dev-qr": "yarn start --use-invoice-qr-api --use-logger",
     "prod": "yarn start --production"
   },
   "dependencies": {

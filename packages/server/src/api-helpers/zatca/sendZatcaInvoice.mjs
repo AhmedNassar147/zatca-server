@@ -6,7 +6,7 @@
 import { createCmdMessage } from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createZatcaAuthHeaders from "./createZatcaAuthHeaders.mjs";
-import readCertsOrganizationData from "../../helpers/readCertsOrganizationData.mjs";
+import readClientsConfigData from "../../helpers/readClientsConfigData.mjs";
 import generateSignedXMLString from "../../helpers/generateSignedXMLString.mjs";
 import { BASE_API_HEADERS } from "../../constants.mjs";
 
@@ -15,6 +15,7 @@ const sendZatcaInvoice = async ({
   resourceNameUrl,
   useProductionCsid,
   invoiceData,
+  client,
 }) => {
   const {
     privateCertPath,
@@ -24,7 +25,7 @@ const sendZatcaInvoice = async ({
       decodedToken: eInvoiceCertificate,
     },
     productionCsidData,
-  } = await readCertsOrganizationData();
+  } = await readClientsConfigData(client);
 
   const {
     binarySecurityToken: productionBinarySecurityToken,

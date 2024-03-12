@@ -3,7 +3,6 @@
  * Helper: `createInvoiceXml`.
  *
  */
-
 const defaultTaxCatTag = "cac:TaxCategory";
 
 const hasNoNumberValue = (value) =>
