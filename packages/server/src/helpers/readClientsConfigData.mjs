@@ -20,7 +20,7 @@ const readClientsConfigData = async (clientName) => {
 
   const { clients } = clientsConfigData || {};
 
-  return clientName ? clients[clientName] || {} : clientsData;
+  return clientName ? clients[clientName] || {} : clientsConfigData;
 };
 
 export default readClientsConfigData;
