@@ -37,6 +37,7 @@ import covertDateToStandardDate from "./covertDateToStandardDate.mjs";
 import toFixedNoRounding from "./toFixedNoRounding.mjs";
 import createRootFolder from "./createRootFolder.mjs";
 import setIn from "./setIn.mjs";
+import getLastPathSegment from "./getLastPathSegment.mjs";
 
 export {
   capitalizeFirstLetter,
@@ -73,6 +74,7 @@ export {
   toFixedNoRounding,
   createRootFolder,
   setIn,
+  getLastPathSegment,
 };
 
 export * from "./constants.mjs";

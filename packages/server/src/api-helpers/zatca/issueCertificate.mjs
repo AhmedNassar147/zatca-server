@@ -45,12 +45,13 @@ const createOrganizationDataUpdater =
       productionCsidData: isProductionCsid ? values : {},
     };
 
-    const _childNames = childNames || [client];
+    const _childNames = [client, childNames].flat().filter(Boolean);
 
-    await writeClientsConfigData(async (config) =>
+    await writeClientsConfigData((config) =>
       _childNames.reduce((acc, clientName) => {
-        acc = setIn(bodyData, `clients.${clientName}`, config);
-        return acc;
+        const clientConfig = config.clients[clientName];
+        const newData = { ...clientConfig, ...bodyData };
+        return setIn(newData, `clients.${clientName}`, acc);
       }, config)
     );
 

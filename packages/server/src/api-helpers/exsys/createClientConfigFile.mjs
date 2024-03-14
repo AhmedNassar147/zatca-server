@@ -4,7 +4,12 @@
  *
  */
 import { writeFile } from "fs/promises";
-import { createRootFolder } from "@zatca-server/helpers";
+import chalk from "chalk";
+import {
+  createCmdMessage,
+  createRootFolder,
+  getLastPathSegment,
+} from "@zatca-server/helpers";
 import createClientCerts from "./createClientCerts.mjs";
 
 const createClientConfigFile = async (
@@ -60,6 +65,13 @@ title=${invoiceKind}
 registeredAddress=${registeredAddress}
 businessCategory=${businessCategory}
 `;
+
+  const client = getLastPathSegment(certsFolderPath);
+
+  createCmdMessage({
+    type: "info",
+    message: `Creating ${chalk.bold.green(client)} client certificates .`,
+  });
 
   await createRootFolder(certsFolderPath, true);
   await writeFile(`${certsFolderPath}/config.cnf`, configString);

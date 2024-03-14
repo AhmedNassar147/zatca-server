@@ -13,12 +13,9 @@ import {
   DB_DEFAULT_PORT,
   DB_DEFAULT_DOMAIN,
 } from "./constants.mjs";
-import stopTheProcessIfCertificateNotFound from "./helpers/stopTheProcessIfCertificateNotFound.mjs";
 import {
-  initInitialCnfFiles,
+  initiateClients,
   createClientInvoiceQR,
-  issueCertificate,
-  sendZatcaInitialInvoices,
   // checkIfClientZatcaCertified,
   reportInvoicePoll,
 } from "./api-helpers/index.mjs";
@@ -50,7 +47,7 @@ import {
   const API_URL_PORT = port || DB_DEFAULT_PORT;
   const EXSYS_BASE_URL = `${BASE_API_IP_ADDRESS}:${API_URL_PORT}/ords/exsys_api`;
 
-  await initInitialCnfFiles(EXSYS_BASE_URL, sandbox);
+  await initiateClients(EXSYS_BASE_URL, sandbox);
 
   return;
 

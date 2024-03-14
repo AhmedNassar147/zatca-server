@@ -1,20 +1,25 @@
 /*
  *
- * Helper: `initInitialCnfFiles`.
+ * Helper: `initiateClients`.
  *
  */
-import { createCmdMessage, isObjectHasData } from "@zatca-server/helpers";
+import {
+  createCmdMessage,
+  isObjectHasData,
+  findRootYarnWorkSpaces,
+} from "@zatca-server/helpers";
 import createFetchRequest from "../createFetchRequest.mjs";
 import createClientConfigFile from "./createClientConfigFile.mjs";
 import getCertsFolderPath from "../../helpers/getCertsFolderPath.mjs";
 import writeClientsConfigData from "../../helpers/writeClientsConfigData.mjs";
+import { areClientCertificatesExist } from "../../helpers/checkIfCertificatesExists.mjs";
 import stopTheProcessIfCertificateNotFound from "../../helpers/stopTheProcessIfCertificateNotFound.mjs";
 import sendZatcaInitialInvoices from "../zatca/sendZatcaInitialInvoices.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
 const { FETCH_INITIAL_CONFIG_SUPPLIERS } = API_VALUES;
 
-const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
+const initiateClients = async (baseAPiUrl, sandbox) => {
   createCmdMessage({
     type: "info",
     message: `Fetching clients initial data...`,
@@ -53,6 +58,7 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
   }
 
   const certsFolderPath = await getCertsFolderPath();
+  const rootYarnWorkSpaces = await findRootYarnWorkSpaces();
 
   const keys = Object.keys(clients);
 
@@ -69,7 +75,6 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
 
     const {
       organizationNo,
-      useThisOrganizationForZatcaCertification,
       vatName,
       vatNumber,
       streetName,
@@ -103,14 +108,13 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
 
     const certified = _certified === "Y";
     const _csidData = csidData || {};
-    const shouldIssueInitialCsid = !isObjectHasData(csidData);
+    const shouldIssueInitialCsid = !isObjectHasData(csidData) || !certified;
 
     return {
       invoiceKind,
       vatName,
       vatNumber,
       organizationNo,
-      useThisOrganizationForZatcaCertification,
       parentName,
       // you will find `childNames` when it's parent and useThisOrganizationForZatcaCertification === "Y" && has child related to it
       childNames,
@@ -119,7 +123,7 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
       publicCertPath: `certs/${curredClient}/publicKey.pem`,
       taxPayerPath: `certs/${curredClient}/taxpayer.csr`,
       cnfFilePath: `certs/${curredClient}/config.cnf`,
-      shouldIssueInitialCsid: shouldIssueInitialCsid || !certified,
+      shouldIssueInitialCsid,
       clientsConfigsFileOptions: {
         email,
         countryIdCode,
@@ -159,13 +163,16 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
   } = keys.reduce(
     (acc, clientName) => {
       const clientConfig = clients[clientName];
-      const { parentName, childNames } = clientConfig;
+      const {
+        parentName,
+        childNames,
+        useThisOrganizationForZatcaCertification,
+      } = clientConfig;
 
       const {
         shouldIssueInitialCsid,
         certified,
         clientsConfigsFileOptions,
-        useThisOrganizationForZatcaCertification,
         curredClient,
         ...extraClientConfig
       } = getClientConfigData(clientName, parentName, childNames, clientConfig);
@@ -178,13 +185,14 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
         acc.clientsConfigsFilesPromises.push([
           mainCertsFolderPath,
           clientsConfigsFileOptions,
+          extraClientConfig,
         ]);
       }
 
       if (shouldCreateCertificatesForCurrentBranch && shouldIssueInitialCsid) {
         acc.clientsThatShouldSendInitialInvoices.push({
           client: curredClient,
-          issueProductionCsid: shouldIssueInitialCsid || !certified,
+          issueProductionCsid: shouldIssueInitialCsid,
         });
       }
 
@@ -206,10 +214,31 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
     }
   );
 
+  const filteredClientsConfigsFilesPromises = clientsConfigsFilesPromises
+    .map(
+      async ([
+        mainCertsFolderPath,
+        clientsConfigsFileOptions,
+        extraClientConfig,
+      ]) => {
+        const areCertsAlreadyCreated = await areClientCertificatesExist(
+          rootYarnWorkSpaces,
+          extraClientConfig
+        );
+
+        return areCertsAlreadyCreated
+          ? false
+          : createClientConfigFile(
+              mainCertsFolderPath,
+              clientsConfigsFileOptions
+            );
+      }
+    )
+    .flat()
+    .filter(Boolean);
+
   await Promise.all([
-    ...clientsConfigsFilesPromises.map(
-      async (options) => await createClientConfigFile(...options)
-    ),
+    ...filteredClientsConfigsFilesPromises,
     await writeClientsConfigData({ clients: clientsConfig, sharedInvoiceData }),
   ]);
 
@@ -230,4 +259,4 @@ const initInitialCnfFiles = async (baseAPiUrl, sandbox) => {
   }
 };
 
-export default initInitialCnfFiles;
+export default initiateClients;

@@ -16,6 +16,7 @@
     "prepare": "yarn workspace @zatca-server/start-zatca-server start",
     "start": "yarn workspace @zatca-server/server start",
     "start-dev": "yarn start --sandbox=developer",
+    "start-sim": "yarn start --sandbox=simulation",
     "exsys-dev": "yarn start --send-initial-invoices --client=exsys --sandbox=developer --use-logger",
     "exsys-sim": "yarn start --send-initial-invoices --client=exsys --sandbox=simulation --use-logger",
     "fyha-dev": "yarn start --send-initial-invoices --client=fyha --sandbox=developer --use-logger",

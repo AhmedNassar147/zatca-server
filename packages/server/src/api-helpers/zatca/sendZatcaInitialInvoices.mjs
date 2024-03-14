@@ -4,7 +4,8 @@
  *
  */
 import { writeFile } from "fs/promises";
-import { createRootFolder } from "@zatca-server/helpers";
+import chalk from "chalk";
+import { createCmdMessage, createRootFolder } from "@zatca-server/helpers";
 import issueCertificate from "./issueCertificate.mjs";
 import createInitialComplianceInvoicesData from "./createInitialComplianceInvoicesData.mjs";
 import readClientsConfigData from "../../helpers/readClientsConfigData.mjs";
@@ -13,7 +14,7 @@ import { API_VALUES } from "../../constants.mjs";
 
 const { POST_ZATCA_INITIAL_INVOICES } = API_VALUES;
 
-const printResultData = async (results, client) => {
+const printResultData = async (results, client, sandbox) => {
   const { xmlFiles, data } = results.reduce(
     (acc, { signedInvoiceString, ...other }) => {
       acc.data.push(other);
@@ -27,7 +28,9 @@ const printResultData = async (results, client) => {
     }
   );
 
-  const basePath = await createRootFolder(`results/${client}/initial-invoices`);
+  const basePath = await createRootFolder(
+    `results/${client}/${sandbox}/initial-invoices`
+  );
 
   await writeFile(`${basePath}/result.json`, JSON.stringify(data, null, 2));
 
@@ -74,6 +77,17 @@ const sendZatcaInitialInvoices = async ({
   const resourceNameUrl = POST_ZATCA_INITIAL_INVOICES[sandbox];
   let results = [];
 
+  const invoicesLength = invoicesData.length;
+
+  if (invoicesLength) {
+    createCmdMessage({
+      type: "info",
+      message: `Sending initial invoice (${chalk.bold.white(
+        invoicesLength
+      )}) for client=${client} and sandbox=${sandbox}`,
+    });
+  }
+
   while (invoicesData.length) {
     const [invoiceData] = invoicesData.splice(0, 1);
     const result = await sendZatcaInvoice({
@@ -87,7 +101,7 @@ const sendZatcaInitialInvoices = async ({
     results.push(result);
   }
 
-  await printResultData(results, client);
+  await printResultData(results, client, sandbox);
 
   if (issueProductionCsid) {
     const { errors } = await issueCertificate({
