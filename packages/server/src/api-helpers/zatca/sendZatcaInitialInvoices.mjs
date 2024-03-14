@@ -46,17 +46,24 @@ const sendZatcaInitialInvoices = async ({
   baseAPiUrl,
   client,
   sandbox,
-  issueProductionCsid,
+  shouldIssueInitialCsid,
+  shouldIssueProductionCsid,
 }) => {
-  const { errors } = await issueCertificate({
-    baseAPiUrl,
-    client,
-    sandbox,
-    isProductionCsid: false,
-  });
+  let initialComplianceError;
 
-  if (errors) {
-    return Promise.resolve(errors);
+  if (shouldIssueInitialCsid) {
+    const { errors } = await issueCertificate({
+      baseAPiUrl,
+      client,
+      sandbox,
+      isProductionCsid: false,
+    });
+
+    initialComplianceError = errors;
+  }
+
+  if (initialComplianceError) {
+    return Promise.resolve(initialComplianceError);
   }
 
   const {
@@ -105,7 +112,7 @@ const sendZatcaInitialInvoices = async ({
 
   await printResultData(results, client, sandbox);
 
-  if (issueProductionCsid) {
+  if (shouldIssueProductionCsid) {
     const { errors } = await issueCertificate({
       baseAPiUrl,
       client,

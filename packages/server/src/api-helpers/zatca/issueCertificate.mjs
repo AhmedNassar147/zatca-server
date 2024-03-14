@@ -178,14 +178,9 @@ const issueCertificate = async ({
     .join(" ");
 
   if (_errors) {
-    await updateOrganizationData();
-
     createCmdMessage({
       type: "error",
-      message: `error when creating the ${
-        isProductionCsid ? "production" : "initial"
-      } csid for client=${boldWhite(client)} and sandbox=${boldWhite(sandbox)}`,
-      data: _errors,
+      message: _errors,
     });
 
     return {

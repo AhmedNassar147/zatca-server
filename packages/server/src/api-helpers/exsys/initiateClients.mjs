@@ -108,7 +108,9 @@ const initiateClients = async (baseAPiUrl, sandbox) => {
 
     const certified = _certified === "Y";
     const _csidData = csidData || {};
-    const shouldIssueInitialCsid = !isObjectHasData(csidData) || !certified;
+    const shouldIssueInitialCsid = !isObjectHasData(csidData);
+    const shouldIssueProductionCsid =
+      !isObjectHasData(productionCsidData) || !certified;
 
     return {
       invoiceKind,
@@ -124,6 +126,7 @@ const initiateClients = async (baseAPiUrl, sandbox) => {
       taxPayerPath: `certs/${curredClient}/taxpayer.csr`,
       cnfFilePath: `certs/${curredClient}/config.cnf`,
       shouldIssueInitialCsid,
+      shouldIssueProductionCsid,
       clientsConfigsFileOptions: {
         email,
         countryIdCode,
@@ -171,7 +174,7 @@ const initiateClients = async (baseAPiUrl, sandbox) => {
 
       const {
         shouldIssueInitialCsid,
-        certified,
+        shouldIssueProductionCsid,
         clientsConfigsFileOptions,
         curredClient,
         ...extraClientConfig
@@ -189,10 +192,14 @@ const initiateClients = async (baseAPiUrl, sandbox) => {
         ]);
       }
 
-      if (shouldCreateCertificatesForCurrentBranch && shouldIssueInitialCsid) {
+      if (
+        shouldCreateCertificatesForCurrentBranch &&
+        (shouldIssueInitialCsid || shouldIssueProductionCsid)
+      ) {
         acc.clientsThatShouldSendInitialInvoices.push({
           client: curredClient,
-          issueProductionCsid: shouldIssueInitialCsid,
+          shouldIssueInitialCsid,
+          shouldIssueProductionCsid,
         });
       }
 
@@ -200,7 +207,6 @@ const initiateClients = async (baseAPiUrl, sandbox) => {
         ...acc.clientsConfig,
         [clientName]: {
           shouldCreateCertificatesForCurrentBranch,
-          certified,
           ...extraClientConfig,
         },
       };
@@ -247,12 +253,11 @@ const initiateClients = async (baseAPiUrl, sandbox) => {
   if (clientsThatShouldSendInitialInvoices.length) {
     await Promise.all(
       clientsThatShouldSendInitialInvoices.map(
-        async ({ client, issueProductionCsid }) =>
+        async (props) =>
           await sendZatcaInitialInvoices({
             baseAPiUrl,
-            client,
             sandbox,
-            issueProductionCsid,
+            ...props,
           })
       )
     );
