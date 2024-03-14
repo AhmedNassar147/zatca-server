@@ -12,6 +12,8 @@ import readClientsConfigData from "../../helpers/readClientsConfigData.mjs";
 import sendZatcaInvoice from "./sendZatcaInvoice.mjs";
 import { API_VALUES } from "../../constants.mjs";
 
+const boldWhite = chalk.bold.white;
+
 const { POST_ZATCA_INITIAL_INVOICES } = API_VALUES;
 
 const printResultData = async (results, client, sandbox) => {
@@ -82,9 +84,9 @@ const sendZatcaInitialInvoices = async ({
   if (invoicesLength) {
     createCmdMessage({
       type: "info",
-      message: `Sending initial invoice (${chalk.bold.white(
+      message: `Sending initial invoice (${boldWhite(
         invoicesLength
-      )}) for client=${client} and sandbox=${sandbox}`,
+      )}) for client=${boldWhite(client)} and sandbox=${boldWhite(sandbox)}`,
     });
   }
 

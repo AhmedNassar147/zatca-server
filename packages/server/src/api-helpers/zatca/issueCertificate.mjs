@@ -3,6 +3,7 @@
  * Helper: `issueCertificate`.
  *
  */
+import chalk from "chalk";
 import {
   decodeBase64ToString,
   readAndEncodeCertToBase64,
@@ -17,14 +18,23 @@ import {
   BASE_API_HEADERS,
   SERVER_CONFIG,
   API_VALUES,
+  ZATCA_SANDBOX_TYPES,
 } from "../../constants.mjs";
 
-const { otp, authorization } = SERVER_CONFIG;
+const boldWhite = chalk.bold.white;
+
+const { authorization, otp, sotp, potp } = SERVER_CONFIG;
 const {
   FETCH_ZATCA_INITIAL_CSID,
   FETCH_ZATCA_PRODUCTION_CSID,
   POST_IF_CLIENT_CERTIFIED,
 } = API_VALUES;
+
+const OTP_BASED_SANDBOX = {
+  [ZATCA_SANDBOX_TYPES.developer]: otp,
+  [ZATCA_SANDBOX_TYPES.simulation]: sotp,
+  [ZATCA_SANDBOX_TYPES.production]: potp,
+};
 
 const baseRequestHeaders = {
   ...BASE_API_HEADERS,
@@ -72,6 +82,7 @@ const createOrganizationDataUpdater =
 
 const createRequestHeadersAndBodyWithComplianceCsidData = async (
   taxPayerPath,
+  otp,
   csidData,
   isProductionCsid
 ) => {
@@ -115,7 +126,7 @@ const issueCertificate = async ({
     type: "info",
     message: `issue ${
       isProductionCsid ? "production csid data" : "initial csid data"
-    } for client=${client} and sandbox=${sandbox}`,
+    } for client=${boldWhite(client)} and sandbox=${boldWhite(sandbox)}`,
   });
 
   const { taxPayerPath, csidData, childNames } = await readClientsConfigData(
@@ -125,6 +136,7 @@ const issueCertificate = async ({
   const { bodyData, requestHeaders } =
     await createRequestHeadersAndBodyWithComplianceCsidData(
       taxPayerPath,
+      OTP_BASED_SANDBOX[sandbox],
       csidData,
       isProductionCsid
     );
@@ -172,7 +184,7 @@ const issueCertificate = async ({
       type: "error",
       message: `error when creating the ${
         isProductionCsid ? "production" : "initial"
-      } csid data for client=${client} and sandbox=${sandbox}`,
+      } csid for client=${boldWhite(client)} and sandbox=${boldWhite(sandbox)}`,
       data: _errors,
     });
 

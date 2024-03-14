@@ -14,34 +14,50 @@ const createFinalUblExtensionsSectionXml = ({
   digitalSignature,
   cleanedCertificate,
 }) => {
-  const defaultUBLExtensionsXml = `<xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
+  const defaultUBLExtensionsSignedPropertiesForSigningXml = `<xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
 		<xades:SignedSignatureProperties>
 			<xades:SigningTime>${signTimestamp}</xades:SigningTime>
 			<xades:SigningCertificate>
 				<xades:Cert>
 					<xades:CertDigest>
-						<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-							<ds:DigestValue xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateHash}</ds:DigestValue>
-						</xades:CertDigest>
-						<xades:IssuerSerial>
-							<ds:X509IssuerName xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateIssuer}</ds:X509IssuerName>
-							<ds:X509SerialNumber xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateSerialNumber}</ds:X509SerialNumber>
-						</xades:IssuerSerial>
+						<ds:DigestMethod xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+						<ds:DigestValue xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateHash}</ds:DigestValue>
+					</xades:CertDigest>
+					<xades:IssuerSerial>
+						<ds:X509IssuerName xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateIssuer}</ds:X509IssuerName>
+						<ds:X509SerialNumber xmlns:ds="http://www.w3.org/2000/09/xmldsig#">${certificateSerialNumber}</ds:X509SerialNumber>
+					</xades:IssuerSerial>
+				</xades:Cert>
+			</xades:SigningCertificate>
+		</xades:SignedSignatureProperties>
+</xades:SignedProperties>`;
+
+  const signedPropertiesBytes = Buffer.from(
+    defaultUBLExtensionsSignedPropertiesForSigningXml
+  );
+  let signedPropertiesHash = createHash("sha256")
+    .update(signedPropertiesBytes)
+    .digest("hex");
+
+  signedPropertiesHash = Buffer.from(signedPropertiesHash).toString("base64");
+
+  const ublSignatureSignedPropertiesXmlString = `<xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
+	<xades:SignedSignatureProperties>
+			<xades:SigningTime>${signTimestamp}</xades:SigningTime>
+			<xades:SigningCertificate>
+					<xades:Cert>
+							<xades:CertDigest>
+									<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>
+									<ds:DigestValue>${certificateHash}</ds:DigestValue>
+							</xades:CertDigest>
+							<xades:IssuerSerial>
+									<ds:X509IssuerName>${certificateIssuer}</ds:X509IssuerName>
+									<ds:X509SerialNumber>${certificateSerialNumber}</ds:X509SerialNumber>
+							</xades:IssuerSerial>
 					</xades:Cert>
-				</xades:SigningCertificate>
-			</xades:SignedSignatureProperties>
-		</xades:SignedProperties>`;
-
-  const signedPropertiesBytes = Buffer.from(defaultUBLExtensionsXml);
-
-  const signedPropertiesHash = Buffer.from(
-    createHash("sha256").update(signedPropertiesBytes).digest("hex")
-  ).toString("base64");
-
-  // <sig:UBLDocumentSignatures
-  // xmlns:sac="urn:oasis:names:specification:ubl:schema:xsd:SignatureAggregateComponents-2"
-  // xmlns:sbc="urn:oasis:names:specification:ubl:schema:xsd:SignatureBasicComponents-2"
-  // xmlns:sig="urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2">
+			</xades:SigningCertificate>
+	</xades:SignedSignatureProperties>
+</xades:SignedProperties>`;
 
   const mainTemplate = `<ext:UBLExtension>
 		<ext:ExtensionURI>urn:oasis:names:specification:ubl:dsig:enveloped:xades</ext:ExtensionURI>
@@ -83,23 +99,7 @@ const createFinalUblExtensionsSectionXml = ({
 						</ds:KeyInfo>
 						<ds:Object>
 							<xades:QualifyingProperties Target="signature" xmlns:xades="http://uri.etsi.org/01903/v1.3.2#">
-								<xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
-									<xades:SignedSignatureProperties>
-										<xades:SigningTime>${signTimestamp}</xades:SigningTime>
-										<xades:SigningCertificate>
-											<xades:Cert>
-												<xades:CertDigest>
-													<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
-													<ds:DigestValue>${certificateHash}</ds:DigestValue>
-												</xades:CertDigest>
-												<xades:IssuerSerial>
-													<ds:X509IssuerName>${certificateIssuer}</ds:X509IssuerName>
-													<ds:X509SerialNumber>${certificateSerialNumber}</ds:X509SerialNumber>
-												</xades:IssuerSerial>
-											</xades:Cert>
-										</xades:SigningCertificate>
-									</xades:SignedSignatureProperties>
-								</xades:SignedProperties>
+								${ublSignatureSignedPropertiesXmlString}
 							</xades:QualifyingProperties>
 						</ds:Object>
 					</ds:Signature>
