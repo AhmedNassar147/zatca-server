@@ -97,6 +97,8 @@ const createRequestHeadersAndBodyWithComplianceCsidData = async (
       OTP: otp,
     };
 
+    console.log("otp", otp);
+
     return {
       requestHeaders,
       bodyData: {
@@ -171,6 +173,9 @@ const issueCertificate = async ({
     tokenType,
     errors,
   } = result || {};
+
+  console.log("old csidData", csidData);
+  console.log("result", result);
 
   const _errors = [errors, isSuccess ? error : result]
     .filter(Boolean)

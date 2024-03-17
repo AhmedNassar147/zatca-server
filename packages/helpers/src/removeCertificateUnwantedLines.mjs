@@ -4,7 +4,7 @@
  *
  */
 const removeCertificateUnwantedLines = (certificateString, removeHeaders) => {
-  let rawCertContent = certificateString;
+  let rawCertContent = certificateString || "";
 
   if (removeHeaders) {
     rawCertContent = rawCertContent.replace(/-----\w.+-----(\n)?/gm, "");

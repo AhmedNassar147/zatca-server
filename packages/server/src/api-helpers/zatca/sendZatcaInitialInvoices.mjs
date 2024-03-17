@@ -113,16 +113,12 @@ const sendZatcaInitialInvoices = async ({
   await printResultData(results, client, sandbox);
 
   if (shouldIssueProductionCsid) {
-    const { errors } = await issueCertificate({
+    await issueCertificate({
       baseAPiUrl,
       client,
       sandbox,
       isProductionCsid: true,
     });
-
-    if (errors) {
-      return Promise.resolve(errors);
-    }
   }
 };
 
