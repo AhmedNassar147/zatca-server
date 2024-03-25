@@ -68,8 +68,10 @@ const generateSignedXMLString = async ({
 
   const signedInvoice = new XMLDocument(signedInvoiceString).toString();
 
-  const signedInvoiceIndentationFixedString =
-    fixSignedPropertiesIndentation(signedInvoice);
+  // const signedInvoiceIndentationFixedString =
+  //   fixSignedPropertiesIndentation(signedInvoice);
+
+  const signedInvoiceIndentationFixedString = signedInvoice;
 
   const encodedInvoiceXml = encodeStringToBase64(
     signedInvoiceIndentationFixedString
