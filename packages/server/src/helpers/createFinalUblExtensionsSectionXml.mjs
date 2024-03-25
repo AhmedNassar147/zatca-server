@@ -14,7 +14,7 @@ const createFinalUblExtensionsSectionXml = ({
   digitalSignature,
   cleanedCertificate,
 }) => {
-  const defaultUBLExtensionsSignedPropertiesForSigningXml = `<xades:SignedProperties Id="xadesSignedProperties">
+  const defaultUBLExtensionsSignedPropertiesForSigningXml = `<xades:SignedProperties xmlns:xades="http://uri.etsi.org/01903/v1.3.2#" Id="xadesSignedProperties">
 		<xades:SignedSignatureProperties>
 			<xades:SigningTime>${signTimestamp}</xades:SigningTime>
 			<xades:SigningCertificate>
