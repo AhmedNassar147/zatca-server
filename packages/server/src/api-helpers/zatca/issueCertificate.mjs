@@ -176,6 +176,8 @@ const issueCertificate = async ({
 
   console.log("old csidData", csidData);
   console.log("result", result);
+  console.log("error", error);
+  console.log("errors", errors);
 
   const _errors = [errors, isSuccess ? error : result]
     .filter(Boolean)

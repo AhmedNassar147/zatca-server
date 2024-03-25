@@ -49,6 +49,9 @@ const sendZatcaInitialInvoices = async ({
   shouldIssueInitialCsid,
   shouldIssueProductionCsid,
 }) => {
+  console.log("shouldIssueInitialCsid", shouldIssueInitialCsid);
+  console.log("shouldIssueProductionCsid", shouldIssueProductionCsid);
+
   let initialComplianceError;
 
   if (shouldIssueInitialCsid) {
